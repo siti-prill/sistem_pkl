@@ -1,0 +1,279 @@
+/* Test CSS - Hapus ini setelah berhasil */
+body {
+    background-color: #f0f2f5 !important;
+}
+
+.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    width: 260px !important;
+    background: #1a1a2e !important;
+    color: white !important;
+    z-index: 1050 !important;
+    overflow-y: auto !important;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.sidebar-brand {
+    padding: 20px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.sidebar-brand i {
+    font-size: 28px !important;
+    color: #4f46e5 !important;
+}
+
+.sidebar-brand h3 {
+    font-weight: 700 !important;
+    font-size: 20px !important;
+    margin: 0 !important;
+    color: white !important;
+}
+
+.sidebar-brand small {
+    font-size: 11px !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    display: block !important;
+}
+
+.sidebar-menu {
+    padding: 20px 12px !important;
+}
+
+.sidebar-menu .menu-label {
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    color: rgba(255, 255, 255, 0.3) !important;
+    padding: 0 12px !important;
+    margin: 15px 0 8px !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+}
+
+.sidebar-menu .menu-label:first-child {
+    margin-top: 0 !important;
+}
+
+.sidebar-menu .nav-item {
+    margin-bottom: 2px !important;
+}
+
+.sidebar-menu .nav-link {
+    color: rgba(255, 255, 255, 0.7) !important;
+    padding: 10px 16px !important;
+    border-radius: 10px !important;
+    transition: all 0.3s ease !important;
+    font-size: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    text-decoration: none !important;
+}
+
+.sidebar-menu .nav-link i {
+    width: 20px !important;
+    text-align: center !important;
+    font-size: 16px !important;
+}
+
+.sidebar-menu .nav-link:hover {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.sidebar-menu .nav-link.active {
+    color: white !important;
+    background: rgba(79, 70, 229, 0.15) !important;
+    border-right: 3px solid #4f46e5 !important;
+}
+
+.main-content {
+    margin-left: 260px !important;
+    min-height: 100vh !important;
+}
+
+.top-header {
+    background: white !important;
+    padding: 15px 30px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1040 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.top-header .page-title h4 {
+    margin: 0 !important;
+    font-weight: 600 !important;
+    color: #1a1a2e !important;
+}
+
+.top-header .page-title small {
+    color: #6c757d !important;
+    font-size: 13px !important;
+}
+
+.top-header .header-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+}
+
+.top-header .header-actions .btn-icon {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
+    border: none !important;
+    background: #f0f2f5 !important;
+    color: #6c757d !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.top-header .header-actions .btn-icon:hover {
+    background: #4f46e5 !important;
+    color: white !important;
+}
+
+.top-header .user-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 5px 15px 5px 10px !important;
+    border-radius: 10px !important;
+    background: #f0f2f5 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    color: #1a1a2e !important;
+}
+
+.top-header .user-info .avatar {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background: #4f46e5 !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+}
+
+.content-wrapper {
+    padding: 25px 30px !important;
+}
+
+.stat-card {
+    background: white !important;
+    border-radius: 16px !important;
+    padding: 20px 24px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid #e5e7eb !important;
+    height: 100% !important;
+}
+
+.stat-number {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    margin: 4px 0 2px !important;
+}
+
+.stat-label {
+    font-size: 13px !important;
+    color: #6c757d !important;
+    font-weight: 500 !important;
+}
+
+.stat-change.up {
+    color: #22c55e !important;
+}
+
+.sidebar-toggle {
+    display: none !important;
+    background: none !important;
+    border: none !important;
+    font-size: 24px !important;
+    color: #1a1a2e !important;
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%) !important;
+    }
+    .sidebar.show {
+        transform: translateX(0) !important;
+    }
+    .main-content {
+        margin-left: 0 !important;
+    }
+    .sidebar-toggle {
+        display: block !important;
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body.dark-mode .stat-card {
+    background: #1a1a2e !important;
+    border-color: #2d2d4a !important;
+}
+
+body.dark-mode .top-header {
+    background: #1a1a2e !important;
+}
+
+body.dark-mode .top-header .page-title h4 {
+    color: #f0f2f5 !important;
+}
+
+body.dark-mode .top-header .header-actions .btn-icon {
+    background: #12122a !important;
+    color: #9ca3af !important;
+}
+
+body.dark-mode .top-header .user-info {
+    background: #12122a !important;
+    color: #f0f2f5 !important;
+}
+
+body.dark-mode .stat-label {
+    color: #9ca3af !important;
+}
+
+.chart-container {
+    background: white !important;
+    border-radius: 16px !important;
+    padding: 20px 24px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+body.dark-mode .chart-container {
+    background: #1a1a2e !important;
+    border-color: #2d2d4a !important;
+}
