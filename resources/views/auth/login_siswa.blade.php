@@ -45,6 +45,16 @@
             border-radius: 50%;
         }
 
+        .login-card .logo img {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            object-fit: contain;
+            background: rgba(79, 70, 229, 0.1);
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.25);
+        }
+
         .login-card .logo h3 {
             margin-top: 15px;
             font-weight: 700;
@@ -106,7 +116,7 @@
     <div class="login-container">
         <div class="login-card">
             <div class="logo">
-                <i class="fas fa-user-graduate"></i>
+                <img src="{{ logo_url() }}" alt="Logo SMK 2">
                 <h3>Login Siswa</h3>
                 <p>Masuk dengan NIS dan Password</p>
             </div>

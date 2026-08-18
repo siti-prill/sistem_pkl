@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SiswaRequest;
+use App\Models\Kompetensi;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -41,7 +42,15 @@ class SiswaController extends Controller
 
     public function create()
     {
-        return view('admin.siswa.create');
+        $jurusanList = [
+            'XII RPL',
+            'XII TKJ 1',
+            'XII TKJ 2',
+            'XII DKV 1',
+            'XII DKV 2',
+            'XII PSPT',
+        ];
+        return view('admin.siswa.create', compact('jurusanList'));
     }
 
     public function store(SiswaRequest $request)
@@ -59,7 +68,6 @@ class SiswaController extends Controller
             'user_id' => $user->id,
             'nis' => $request->nis,
             'nama_siswa' => $request->nama_siswa,
-            'kelas' => $request->kelas,
             'jurusan' => $request->jurusan,
             'no_telepon' => $request->no_telepon,
             'alamat' => $request->alamat,
@@ -76,7 +84,15 @@ class SiswaController extends Controller
 
     public function edit(Siswa $siswa)
     {
-        return view('admin.siswa.edit', compact('siswa'));
+        $jurusanList = [
+            'XII RPL',
+            'XII TKJ 1',
+            'XII TKJ 2',
+            'XII DKV 1',
+            'XII DKV 2',
+            'XII PSPT',
+        ];
+        return view('admin.siswa.edit', compact('siswa', 'jurusanList'));
     }
 
     public function update(SiswaRequest $request, Siswa $siswa)
@@ -99,7 +115,6 @@ class SiswaController extends Controller
         $siswa->update([
             'nis' => $data['nis'],
             'nama_siswa' => $data['nama_siswa'],
-            'kelas' => $data['kelas'],
             'jurusan' => $data['jurusan'],
             'no_telepon' => $data['no_telepon'] ?? null,
             'alamat' => $data['alamat'] ?? null,

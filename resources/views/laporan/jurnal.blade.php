@@ -18,7 +18,7 @@
 
     <!-- Filter -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mb-6">
-        <form method="GET" action="{{ route('laporan.jurnal') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <form method="GET" action="{{ route('laporan.jurnal') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Mulai</label>
                 <input type="date" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}" class="form-input">
@@ -40,7 +40,7 @@
                     </select>
                 </div>
             @endif
-            <div class="flex gap-2 items-end">
+            <div class="flex gap-3 items-end">
                 <button type="submit" class="btn-primary flex-1">
                     <i class="fas fa-search mr-2"></i> Filter
                 </button>

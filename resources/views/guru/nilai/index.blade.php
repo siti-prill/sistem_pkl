@@ -15,7 +15,7 @@
 
     <!-- Search & Filter -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mb-6">
-        <form method="GET" action="{{ route('guru.nilai.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <form method="GET" action="{{ route('guru.nilai.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="relative">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 <input type="text" name="search" value="{{ request('search') }}" 
@@ -28,7 +28,7 @@
                     <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
                 </select>
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-3">
                 <button type="submit" class="btn-primary flex-1">
                     <i class="fas fa-search mr-2"></i> Filter
                 </button>

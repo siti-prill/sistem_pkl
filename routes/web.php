@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\KompetensiController;
 use App\Http\Controllers\Admin\PenempatanController;
 use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\Admin\PengajuanController as AdminPengajuanController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Guru\MonitoringController;
 use App\Http\Controllers\Guru\NilaiController;
 use App\Http\Controllers\LandingPageController;
@@ -57,20 +58,24 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pengajuan/{id}', [AdminPengajuanController::class, 'show'])->name('pengajuan.show');
         Route::put('/pengajuan/{id}', [AdminPengajuanController::class, 'update'])->name('pengajuan.update');
 
-        // Profile (boleh diakses admin)
-        Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+        // Route Pengaturan (logo, dll)
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
     });
 
     // ==================== SISWA ROUTES ====================
     Route::middleware(['role:siswa'])->prefix('siswa')->name('siswa.')->group(function () {
         Route::get('/dashboard', function () {
-            $siswa = auth()->user()->siswa;
-            $pengajuan = \App\Models\PengajuanPkl::where('siswa_id', $siswa->id)->first();
+            if (session('login_mode') === 'pengajuan') {
+                $siswa = auth()->user()->siswa;
+                $pengajuan = \App\Models\PengajuanPkl::where('siswa_id', $siswa->id)->first();
 
-            if (!$pengajuan) {
-                return redirect()->route('siswa.pengajuan.create');
-            } elseif ($pengajuan->status !== 'diterima') {
-                return redirect()->route('siswa.pengajuan.index');
+                if (!$pengajuan) {
+                    return redirect()->route('siswa.pengajuan.create');
+                } elseif ($pengajuan->status !== 'diterima') {
+                    return redirect()->route('siswa.pengajuan.index');
+                }
             }
 
             return redirect()->route('siswa.jurnal.index');
@@ -103,6 +108,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/jurnal/pdf', [LaporanController::class, 'jurnalPdf'])->name('jurnal.pdf');
         Route::get('/nilai/pdf', [LaporanController::class, 'nilaiPdf'])->name('nilai.pdf');
     });
+
+    // Profile (Breeze - bisa diakses semua role: admin, guru, siswa)
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 }); // <-- Tutup middleware auth
 
 require __DIR__ . '/auth.php';

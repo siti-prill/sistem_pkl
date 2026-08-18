@@ -14,16 +14,24 @@ class PengajuanPkl extends Model
     protected $fillable = [
         'siswa_id',
         'pilihan_1',
+        'industri_1',
         'pilihan_2',
+        'industri_2',
         'jurusan',
+        'pekerjaan_orang_tua',
         'penghasilan_ortu',
+        'alamat',
         'status',
         'tempat_diterima',
-        'catatan_admin'
+        'catatan_admin',
     ];
 
     public function siswa()
     {
         return $this->belongsTo(Siswa::class);
+    }
+    public function penempatan()
+    {
+        return $this->belongsTo(PenempatanPkl::class, 'penempatan_id');
     }
 }

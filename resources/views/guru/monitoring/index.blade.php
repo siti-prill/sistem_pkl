@@ -68,7 +68,7 @@
 
     <!-- Search -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mb-6">
-        <form method="GET" action="{{ route('guru.monitoring.index') }}" class="flex flex-col sm:flex-row gap-4">
+        <form method="GET" action="{{ route('guru.monitoring.index') }}" class="flex flex-col sm:flex-row gap-6">
             <div class="flex-1">
                 <div class="relative">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>

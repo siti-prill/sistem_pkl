@@ -31,7 +31,6 @@ class SiswaRequest extends FormRequest
                 'max:100',
                 Rule::unique('users')->ignore($userId),
             ],
-            'kelas' => 'required|string|max:50',
             'jurusan' => 'required|string|max:100',
             'no_telepon' => 'nullable|string|max:20',
             'alamat' => 'nullable|string',

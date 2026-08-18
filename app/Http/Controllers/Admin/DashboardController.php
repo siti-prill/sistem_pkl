@@ -58,6 +58,15 @@ class DashboardController extends Controller
             $jurnalPerMinggu['data'][] = $count;
         }
 
+        // Data untuk Chart Jurnal Minggu Lalu
+        $jurnalMingguLalu = [];
+
+        for ($i = 0; $i < 7; $i++) {
+            $date = now()->startOfWeek()->subWeek()->addDays($i);
+            $count = JurnalHarian::whereDate('tanggal', $date)->count();
+            $jurnalMingguLalu[] = $count;
+        }
+
         // Data untuk Chart Perusahaan Teratas
         $topIndustri = Industri::withCount('penempatan')
             ->orderBy('penempatan_count', 'desc')
@@ -78,6 +87,7 @@ class DashboardController extends Controller
             'siswaBelumJurnal',
             'statusData',
             'jurnalPerMinggu',
+            'jurnalMingguLalu',
             'topIndustri'
         ));
     }

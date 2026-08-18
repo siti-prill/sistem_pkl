@@ -26,15 +26,6 @@
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $siswa->nama_siswa }}</p>
                     </div>
                     <div>
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Kelas</h3>
-                        <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                            <span
-                                class="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
-                                {{ $siswa->kelas }}
-                            </span>
-                        </p>
-                    </div>
-                    <div>
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Jurusan</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <span

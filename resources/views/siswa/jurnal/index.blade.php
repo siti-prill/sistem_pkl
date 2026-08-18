@@ -71,7 +71,7 @@
                             <option value="submitted" {{ request('status') == 'submitted' ? 'selected' : '' }}>Submitted</option>
                         </select>
                     </div>
-                    <div class="col-md-4 d-flex align-items-end gap-2">
+                    <div class="col-md-4 d-flex align-items-end gap-3">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-search me-2"></i> Filter
                         </button>

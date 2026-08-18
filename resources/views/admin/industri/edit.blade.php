@@ -43,6 +43,25 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Lokasi / Kota <span class="text-red-500">*</span>
+                    </label>
+                    <select name="lokasi" class="form-input" required>
+                        <option value="">Pilih Lokasi</option>
+                        <option value="Padang" {{ old('lokasi', $industri->lokasi) == 'Padang' ? 'selected' : '' }}>Padang</option>
+                        <option value="Bandung" {{ old('lokasi', $industri->lokasi) == 'Bandung' ? 'selected' : '' }}>Bandung</option>
+                        <option value="Yogyakarta" {{ old('lokasi', $industri->lokasi) == 'Yogyakarta' ? 'selected' : '' }}>Yogyakarta</option>
+                        <option value="Pekanbaru" {{ old('lokasi', $industri->lokasi) == 'Pekanbaru' ? 'selected' : '' }}>Pekanbaru</option>
+                        <option value="Batam" {{ old('lokasi', $industri->lokasi) == 'Batam' ? 'selected' : '' }}>Batam</option>
+                        <option value="Jakarta" {{ old('lokasi', $industri->lokasi) == 'Jakarta' ? 'selected' : '' }}>Jakarta</option>
+                        <option value="Lainnya" {{ old('lokasi', $industri->lokasi) == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                    </select>
+                    @error('lokasi')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Alamat <span class="text-red-500">*</span>
                     </label>
                     <textarea name="alamat" rows="3" class="form-input" 

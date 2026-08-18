@@ -62,34 +62,15 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Kelas <span class="text-danger">*</span></label>
-                            <select name="kelas" class="form-control @error('kelas') is-invalid @enderror" required>
-                                <option value="">Pilih Kelas</option>
-                                <option value="X" {{ old('kelas', $siswa->kelas) == 'X' ? 'selected' : '' }}>X</option>
-                                <option value="XI" {{ old('kelas', $siswa->kelas) == 'XI' ? 'selected' : '' }}>XI
-                                </option>
-                                <option value="XII" {{ old('kelas', $siswa->kelas) == 'XII' ? 'selected' : '' }}>XII
-                                </option>
-                            </select>
-                            @error('kelas')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
                             <label class="form-label">Jurusan <span class="text-danger">*</span></label>
                             <select name="jurusan" class="form-control @error('jurusan') is-invalid @enderror" required>
                                 <option value="">Pilih Jurusan</option>
-                                <option value="RPL" {{ old('jurusan', $siswa->jurusan) == 'RPL' ? 'selected' : '' }}>RPL
-                                </option>
-                                <option value="TKJ" {{ old('jurusan', $siswa->jurusan) == 'TKJ' ? 'selected' : '' }}>TKJ
-                                </option>
-                                <option value="MM" {{ old('jurusan', $siswa->jurusan) == 'MM' ? 'selected' : '' }}>MM
-                                </option>
-                                <option value="AKL" {{ old('jurusan', $siswa->jurusan) == 'AKL' ? 'selected' : '' }}>AKL
-                                </option>
-                                <option value="OTKP" {{ old('jurusan', $siswa->jurusan) == 'OTKP' ? 'selected' : '' }}>
-                                    OTKP</option>
+                                @foreach ($jurusanList as $j)
+                                    <option value="{{ $j }}"
+                                        {{ old('jurusan', $siswa->jurusan) == $j ? 'selected' : '' }}>
+                                        {{ $j }}
+                                    </option>
+                                @endforeach
                             </select>
                             @error('jurusan')
                                 <div class="invalid-feedback">{{ $message }}</div>

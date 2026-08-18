@@ -19,7 +19,7 @@
         <!-- Search & Filter -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mb-6">
             <form method="GET" action="{{ route('admin.siswa.index') }}"
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="relative">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari siswa..."
@@ -52,7 +52,6 @@
                             <th class="table-header">No</th>
                             <th class="table-header">NIS</th>
                             <th class="table-header">Nama Siswa</th>
-                            <th class="table-header">Kelas</th>
                             <th class="table-header">Jurusan</th>
                             <th class="table-header">Email</th>
                             <th class="table-header text-center">Aksi</th>
@@ -64,12 +63,6 @@
                                 <td class="table-cell">{{ $siswas->firstItem() + $index }}</td>
                                 <td class="table-cell font-medium">{{ $siswa->nis }}</td>
                                 <td class="table-cell">{{ $siswa->nama_siswa }}</td>
-                                <td class="table-cell">
-                                    <span
-                                        class="px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
-                                        {{ $siswa->kelas }}
-                                    </span>
-                                </td>
                                 <td class="table-cell">
                                     <span
                                         class="px-2 py-1 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">

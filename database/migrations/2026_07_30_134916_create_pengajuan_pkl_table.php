@@ -14,11 +14,14 @@ return new class extends Migration
             $table->string('pilihan_1');
             $table->string('pilihan_2');
             $table->string('jurusan');
-            $table->decimal('penghasilan_ortu', 15, 2)->nullable();
+            $table->string('pekerjaan_orang_tua');
+            $table->string('penghasilan_ortu');
+            $table->string('alamat');
             $table->enum('status', ['pending', 'diterima', 'ditolak'])->default('pending');
             $table->string('tempat_diterima')->nullable();
             $table->text('catatan_admin')->nullable();
             $table->timestamps();
+            $table->foreignId('penempatan_id')->nullable()->constrained('penempatan_pkl')->nullOnDelete();
         });
     }
 

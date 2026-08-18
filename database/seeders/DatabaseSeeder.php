@@ -12,54 +12,100 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Daftar jurusan/kelas yang dipakai PKL (kelas XII).
+     * Data ini juga jadi pilihan dropdown jurusan di form pengajuan
+     * dan form siswa admin, dikelola lewat menu "Data Kompetensi".
+     */
+    protected array $jurusanList = [
+        'XII RPL',
+        'XII TKJ 1',
+        'XII TKJ 2',
+        'XII DKV 1',
+        'XII DKV 2',
+        'XII PSPT',
+    ];
+
     public function run(): void
     {
-        // Buat Admin
-        $admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        // ==================== DATA DASAR (Permanen) ====================
+        // Semua pakai firstOrCreate/updateOrCreate supaya aman dijalankan
+        // ulang lewat `php artisan db:seed` tanpa menghapus data lain.
+        // CATATAN: jangan pakai `migrate:fresh --seed` kecuali struktur
+        // database berubah, karena itu menghapus SEMUA data termasuk
+        // data yang kamu isi lewat aplikasi.
 
-        // Buat data dummy
-        Guru::factory(5)->create();
-        Siswa::factory(20)->create();
-        Kompetensi::factory(10)->create();
-        Industri::factory(10)->create();
+        // Buat Admin
+        User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
 
         // Buat guru tambahan untuk login
-        $guruUser = User::create([
-            'name' => 'Guru Pembimbing',
-            'email' => 'guru@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'guru',
-        ]);
+        $guruUser = User::updateOrCreate(
+            ['email' => 'guru@gmail.com'],
+            [
+                'name' => 'Guru Pembimbing',
+                'password' => Hash::make('password'),
+                'role' => 'guru',
+            ]
+        );
 
-        Guru::create([
-            'user_id' => $guruUser->id,
-            'nip' => 'NIP001',
-            'nama_guru' => 'Guru Pembimbing',
-            'no_telepon' => '08123456789',
-            'alamat' => 'Jl. Guru No. 1',
-        ]);
+        Guru::updateOrCreate(
+            ['nip' => 'NIP001'],
+            [
+                'user_id' => $guruUser->id,
+                'nama_guru' => 'Guru Pembimbing',
+                'no_telepon' => '08123456789',
+                'alamat' => 'Jl. Guru No. 1',
+            ]
+        );
 
         // Buat siswa tambahan untuk login
-        $siswaUser = User::create([
-            'name' => 'Siswa PKL',
-            'email' => 'siswa@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'siswa',
-        ]);
+        $siswaUser = User::updateOrCreate(
+            ['email' => 'siswa@gmail.com'],
+            [
+                'name' => 'Siswa PKL',
+                'password' => Hash::make('password'),
+                'role' => 'siswa',
+            ]
+        );
 
-        Siswa::create([
-            'user_id' => $siswaUser->id,
-            'nis' => 'NIS001',
-            'nama_siswa' => 'Siswa PKL',
-            'kelas' => 'XII',
-            'jurusan' => 'RPL',
-            'no_telepon' => '08123456788',
-            'alamat' => 'Jl. Siswa No. 1',
-        ]);
+        Siswa::updateOrCreate(
+            ['nis' => 'NIS001'],
+            [
+                'user_id' => $siswaUser->id,
+                'nama_siswa' => 'Siswa PKL',
+                'jurusan' => 'XII RPL',
+                'no_telepon' => '08123456788',
+                'alamat' => 'Jl. Siswa No. 1',
+            ]
+        );
+
+        // Daftar jurusan -> tersimpan di tabel kompetensi (menu Data Kompetensi)
+        foreach ($this->jurusanList as $i => $jurusan) {
+            Kompetensi::updateOrCreate(
+                ['kode_kompetensi' => 'JUR-' . str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT)],
+                [
+                    'nama_kompetensi' => $jurusan,
+                    'deskripsi' => 'Jurusan ' . $jurusan . ' (kelas XII)',
+                ]
+            );
+        }
+
+        // ==================== DATA DUMMY (Hanya saat tabel kosong) ====================
+        if (Guru::count() === 0) {
+            Guru::factory(3)->create();
+        }
+        if (Siswa::count() === 0) {
+            Siswa::factory(10)->create();
+        }
+        if (Industri::count() === 0) {
+            Industri::factory(8)->create();
+        }
     }
 }

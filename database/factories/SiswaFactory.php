@@ -11,10 +11,9 @@ class SiswaFactory extends Factory
     {
         return [
             'user_id' => User::factory()->create(['role' => 'siswa'])->id,
-            'nis' => $this->faker->unique()->numerify('NIS#####'),
+            'nis' => $this->faker->unique()->numerify('#######'),
             'nama_siswa' => $this->faker->name(),
-            'kelas' => $this->faker->randomElement(['X', 'XI', 'XII']),
-            'jurusan' => $this->faker->randomElement(['RPL', 'TKJ', 'MM', 'AKL', 'OTKP']),
+            'jurusan' => $this->faker->randomElement(['XII TKJ 1', 'XII TKJ 2', 'XII RPL', 'XII DKV 1', 'XII DKV 2', 'XII PSPT']),
             'no_telepon' => $this->faker->phoneNumber(),
             'alamat' => $this->faker->address(),
         ];

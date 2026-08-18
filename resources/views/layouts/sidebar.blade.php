@@ -1,7 +1,7 @@
 <nav class="sidebar">
     <div class="sidebar-brand">
         <div>
-            <i class="fas fa-school"></i>
+            <img src="{{ logo_url() }}" alt="Logo SMK 2" class="sidebar-logo">
         </div>
         <div>
             <h3>Sistem PKL</h3>
@@ -66,11 +66,13 @@
                     </a>
                 </div>
 
+                <div class="menu-label">Pengaturan</div>
+
                 <div class="nav-item">
-                    <a href="{{ route('admin.penempatan.index') }}"
-                        class="nav-link {{ request()->routeIs('admin.penempatan.*') ? 'active' : '' }}">
-                        <i class="fas fa-people-arrows"></i>
-                        <span>Penempatan PKL</span>
+                    <a href="{{ route('admin.settings.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                        <i class="fas fa-cog"></i>
+                        <span>Pengaturan</span>
                     </a>
                 </div>
             @elseif(auth()->user()->role == 'guru')
@@ -90,55 +92,90 @@
                     </a>
                 </div>
             @elseif(auth()->user()->role == 'siswa')
-                <div class="menu-label">Menu Siswa</div>
+                @if (session('login_mode') === 'pengajuan')
+                    <div class="menu-label">Pengajuan</div>
 
-                <div class="nav-item">
-                    <a href="{{ route('siswa.pengajuan.index') }}"
-                        class="nav-link {{ request()->routeIs('siswa.pengajuan.*') ? 'active' : '' }}">
-                        <i class="fas fa-paper-plane"></i>
-                        <span>Pengajuan PKL</span>
-                    </a>
-                </div>
+                    <div class="nav-item">
+                        <a href="{{ route('siswa.pengajuan.index') }}"
+                            class="nav-link {{ request()->routeIs('siswa.pengajuan.*') ? 'active' : '' }}">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Pengajuan PKL</span>
+                        </a>
+                    </div>
 
-                <div class="nav-item">
-                    <a href="{{ route('siswa.jurnal.index') }}"
-                        class="nav-link {{ request()->routeIs('siswa.jurnal.*') ? 'active' : '' }}">
-                        <i class="fas fa-book"></i>
-                        <span>Jurnal Harian</span>
-                    </a>
-                </div>
+                    <div class="menu-label" style="margin-top:20px;">Akun</div>
+
+                    <div class="nav-item">
+                        <a href="{{ route('profile.edit') }}"
+                            class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Profile</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" class="nav-link"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </div>
+                @else
+                    <div class="menu-label">Jurnal</div>
+
+                    <div class="nav-item">
+                        <a href="{{ route('siswa.jurnal.index') }}"
+                            class="nav-link {{ request()->routeIs('siswa.jurnal.*') ? 'active' : '' }}">
+                            <i class="fas fa-book"></i>
+                            <span>Jurnal Harian</span>
+                        </a>
+                    </div>
+                @endif
             @endif
 
-            <div class="menu-label">Laporan</div>
+            @unless (auth()->user()->role == 'siswa' && session('login_mode') === 'pengajuan')
+                <div class="menu-label">Laporan</div>
 
-            <div class="nav-item">
-                <a href="{{ route('laporan.jurnal') }}"
-                    class="nav-link {{ request()->routeIs('laporan.jurnal') ? 'active' : '' }}">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Laporan Jurnal</span>
-                </a>
-            </div>
+                <div class="nav-item">
+                    <a href="{{ route('laporan.jurnal') }}"
+                        class="nav-link {{ request()->routeIs('laporan.jurnal') ? 'active' : '' }}">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Laporan Jurnal</span>
+                    </a>
+                </div>
 
-            <div class="nav-item">
-                <a href="{{ route('laporan.nilai') }}"
-                    class="nav-link {{ request()->routeIs('laporan.nilai') ? 'active' : '' }}">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>Laporan Nilai</span>
-                </a>
-            </div>
+                <div class="nav-item">
+                    <a href="{{ route('laporan.nilai') }}"
+                        class="nav-link {{ request()->routeIs('laporan.nilai') ? 'active' : '' }}">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Laporan Nilai</span>
+                    </a>
+                </div>
 
-            <div class="menu-label" style="margin-top:20px;">Akun</div>
+                <div class="menu-label" style="margin-top:20px;">Akun</div>
 
-            <div class="nav-item">
-                <a href="#" class="nav-link"
-                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-            </div>
+                <div class="nav-item">
+                    <a href="{{ route('profile.edit') }}"
+                        class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                </div>
+
+                <div class="nav-item">
+                    <a href="#" class="nav-link"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </div>
+            @endunless
         @endauth
     </div>
 </nav>

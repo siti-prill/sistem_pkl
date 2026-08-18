@@ -38,6 +38,7 @@ class LoginSiswaController extends Controller
         if (Auth::attempt(['email' => $user->email, 'password' => $request->password])) {
             // Login sukses
             $request->session()->regenerate();
+            $request->session()->put('login_mode', 'pengajuan');
 
             // Redirect ke halaman yang diminta atau ke pengajuan
             $redirect = $request->input('redirect') ?? route('siswa.pengajuan.index');

@@ -24,6 +24,7 @@ class IndustriRequest extends FormRequest
                 Rule::unique('industris')->ignore($industri ? $industri->id : null),
             ],
             'nama_perusahaan' => 'required|string|max:255',
+            'lokasi' => 'required|string|max:100',
             'alamat' => 'required|string',
             'no_telepon' => 'required|string|max:20',
             'email' => 'nullable|email|max:255',

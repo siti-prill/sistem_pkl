@@ -24,7 +24,8 @@
                                 <th>Nama Siswa</th>
                                 <th>Pilihan 1</th>
                                 <th>Pilihan 2</th>
-                                <th>Status</th>
+                                <th>Status Pengajuan</th>
+                                <th>Status Penempatan</th>
                                 <th>Tanggal</th>
                                 <th>Aksi</th>
                             </tr>
@@ -35,8 +36,8 @@
                                     <td>{{ $pengajuans->firstItem() + $index }}</td>
                                     <td>{{ $p->siswa->nis }}</td>
                                     <td>{{ $p->siswa->nama_siswa }}</td>
-                                    <td>{{ $p->pilihan_1 }}</td>
-                                    <td>{{ $p->pilihan_2 }}</td>
+                                    <td>{{ $p->pilihan_1 }}{{ $p->industri_1 ? ' - ' . $p->industri_1 : '' }}</td>
+                                    <td>{{ $p->pilihan_2 }}{{ $p->industri_2 ? ' - ' . $p->industri_2 : '' }}</td>
                                     <td>
                                         @if ($p->status == 'pending')
                                             <span class="badge bg-warning text-dark">Pending</span>
@@ -44,6 +45,17 @@
                                             <span class="badge bg-success">Diterima</span>
                                         @else
                                             <span class="badge bg-danger">Ditolak</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($p->penempatan_id)
+                                            <span class="badge bg-primary">
+                                                <i class="fas fa-check-circle me-1"></i> Sudah
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-clock me-1"></i> Belum
+                                            </span>
                                         @endif
                                     </td>
                                     <td>{{ $p->created_at->format('d/m/Y') }}</td>
@@ -55,7 +67,8 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center">Belum ada pengajuan.</td>
+                                    <td colspan="9" class="text-center">Belum ada pengajuan.</td>
+                                    <!-- Ubah colspan dari 8 ke 9 -->
                                 </tr>
                             @endforelse
                         </tbody>

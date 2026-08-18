@@ -55,4 +55,8 @@ class PenempatanPkl extends Model
     {
         return $this->hasMany(MonitoringNilai::class, 'penempatan_id');
     }
+    public function pengajuan()
+    {
+        return $this->hasOne(PengajuanPkl::class, 'penempatan_id');
+    }
 }

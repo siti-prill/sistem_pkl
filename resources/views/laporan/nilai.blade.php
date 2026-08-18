@@ -18,7 +18,7 @@
 
     <!-- Filter -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mb-6">
-        <form method="GET" action="{{ route('laporan.nilai') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <form method="GET" action="{{ route('laporan.nilai') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @if(auth()->user()->role == 'admin' || auth()->user()->role == 'guru')
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Siswa</label>
@@ -32,7 +32,7 @@
                     </select>
                 </div>
             @endif
-            <div class="flex gap-2 items-end">
+            <div class="flex gap-3 items-end">
                 <button type="submit" class="btn-primary flex-1">
                     <i class="fas fa-search mr-2"></i> Filter
                 </button>
