@@ -9,6 +9,7 @@ class IndustriFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => null,
             'kode_perusahaan' => $this->faker->unique()->bothify('IND-####'),
             'nama_perusahaan' => $this->faker->company(),
             'lokasi' => $this->faker->randomElement(['Padang', 'Bandung', 'Yogyakarta', 'Pekanbaru', 'Batam', 'Jakarta']),
@@ -16,6 +17,7 @@ class IndustriFactory extends Factory
             'no_telepon' => $this->faker->phoneNumber(),
             'email' => $this->faker->companyEmail(),
             'bidang_usaha' => $this->faker->randomElement(['Teknologi', 'Manufaktur', 'Jasa', 'Perdagangan']),
+            'jurusan' => $this->faker->randomElement(\App\Models\Industri::JURUSAN_LIST),
             'penanggung_jawab' => $this->faker->name(),
             'kuota' => $this->faker->numberBetween(5, 30),
             'status' => 'aktif',

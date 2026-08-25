@@ -63,6 +63,9 @@ class SiswaController extends Controller
             'role' => 'siswa',
         ]);
 
+        // Simpan salinan password terenkripsi agar bisa dilihat admin
+        $user->setPasswordCopy($request->password);
+
         // Create Siswa
         Siswa::create([
             'user_id' => $user->id,
@@ -110,6 +113,10 @@ class SiswaController extends Controller
         }
 
         $siswa->user()->update($userData);
+
+        if (!empty($data['password'])) {
+            $siswa->user->setPasswordCopy($data['password']);
+        }
 
         // Update Siswa
         $siswa->update([

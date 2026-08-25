@@ -114,6 +114,21 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Jurusan yang Dituju
+                    </label>
+                    <select name="jurusan" class="form-input">
+                        <option value="">Pilih Jurusan</option>
+                        @foreach(\App\Models\Industri::JURUSAN_LIST as $j)
+                            <option value="{{ $j }}" {{ old('jurusan', $industri->jurusan) == $j ? 'selected' : '' }}>{{ $j }}</option>
+                        @endforeach
+                    </select>
+                    @error('jurusan')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Penanggung Jawab <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="penanggung_jawab" value="{{ old('penanggung_jawab', $industri->penanggung_jawab) }}" 

@@ -48,6 +48,9 @@ class NewPasswordController extends Controller
                     'remember_token' => Str::random(60),
                 ])->save();
 
+                // Perbarui juga salinan password terenkripsi
+                $user->setPasswordCopy($request->password);
+
                 event(new PasswordReset($user));
             }
         );

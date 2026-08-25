@@ -66,6 +66,12 @@
                         </a>
                     </li>
                     <li class="nav-item ms-lg-2">
+                        <a href="{{ route('login.industri.form') }}" class="btn btn-login-nav"
+                            style="background: linear-gradient(135deg, #0d9488, #0891b2);">
+                            <i class="fas fa-building me-2"></i>Industri
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
                         <a href="{{ route('login') }}" class="btn btn-login-nav">
                             <i class="fas fa-sign-in-alt me-2"></i>Login
                         </a>
@@ -188,6 +194,17 @@
                         </div>
                         <h5>Aman & Terpercaya</h5>
                         <p>Sistem dengan autentikasi user dan role management yang aman.</p>
+                        <span class="detail-link"><i class="fas fa-arrow-right me-1"></i>Selengkapnya</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card" role="button" data-bs-toggle="modal" data-bs-target="#featureModal"
+                        data-feature="penilaian_industri">
+                        <div class="feature-icon bg-success bg-opacity-10 text-success" style="color:#0d9488;">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h5>Penilaian Industri</h5>
+                        <p>Industri dapat langsung menilai siswa sesuai template dari sekolah secara online.</p>
                         <span class="detail-link"><i class="fas fa-arrow-right me-1"></i>Selengkapnya</span>
                     </div>
                 </div>
@@ -343,6 +360,7 @@
                                     <li><strong>Admin</strong> - Mengelola seluruh data</li>
                                     <li><strong>Guru</strong> - Membimbing dan menilai siswa</li>
                                     <li><strong>Siswa</strong> - Mengajukan PKL dan membuat jurnal</li>
+                                    <li><strong>Industri</strong> - Menilai siswa PKL langsung dari web</li>
                                 </ul>
                             </div>
                         </div>

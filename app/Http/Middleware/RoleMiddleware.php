@@ -28,6 +28,8 @@ class RoleMiddleware
             return redirect()->route('guru.monitoring.index');
         } elseif ($user->role === 'siswa') {
             return redirect()->route('siswa.jurnal.index');
+        } elseif ($user->role === 'industri') {
+            return redirect()->route('industri.dashboard');
         }
 
         abort(403, 'Unauthorized access.');

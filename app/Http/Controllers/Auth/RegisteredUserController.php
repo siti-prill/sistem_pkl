@@ -42,6 +42,9 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Simpan salinan password terenkripsi agar bisa dilihat admin
+        $user->setPasswordCopy($request->password);
+
         event(new Registered($user));
 
         Auth::login($user);

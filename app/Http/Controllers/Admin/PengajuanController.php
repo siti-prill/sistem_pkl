@@ -19,11 +19,29 @@ class PengajuanController extends Controller
         $pengajuan = PengajuanPkl::with(['siswa', 'penempatan.industri', 'penempatan.guru', 'penempatan.kompetensi'])->findOrFail($id);
 
         // Ambil semua data untuk dropdown
-        $industris = \App\Models\Industri::all();
+        $industris = \App\Models\Industri::with('penempatan')->get();
         $gurus = \App\Models\Guru::all();
         $kompetensis = \App\Models\Kompetensi::all();
 
-        return view('admin.pengajuan.show', compact('pengajuan', 'industris', 'gurus', 'kompetensis'));
+        // Cari industri_id dari tempat_diterima (case-insensitive, trim, partial match)
+        $industriTerpilih = null;
+        if ($pengajuan->tempat_diterima) {
+            $tempatTrimmed = trim($pengajuan->tempat_diterima);
+            $tempatLower = strtolower($tempatTrimmed);
+
+            // 1. Exact match (case-insensitive + trim)
+            $industriTerpilih = \App\Models\Industri::whereRaw('LOWER(TRIM(nama_perusahaan)) = ?', [$tempatLower])->first();
+
+            // 2. Partial match: nama_perusahaan contains tempat_diterima or vice versa
+            if (!$industriTerpilih) {
+                $industriTerpilih = \App\Models\Industri::whereRaw('LOWER(nama_perusahaan) LIKE ?', ['%' . $tempatLower . '%'])
+                    ->orWhereRaw('LOWER(nama_perusahaan) LIKE ?', [$tempatLower . '%'])
+                    ->orWhereRaw('? LIKE CONCAT("%", LOWER(nama_perusahaan), "%")', [$tempatLower])
+                    ->first();
+            }
+        }
+
+        return view('admin.pengajuan.show', compact('pengajuan', 'industris', 'gurus', 'kompetensis', 'industriTerpilih'));
     }
 
     public function update(Request $request, int $id)

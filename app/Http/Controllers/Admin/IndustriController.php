@@ -29,8 +29,20 @@ class IndustriController extends Controller
             $query->where('status', $request->status);
         }
 
-        $industris = $query->paginate(10);
-        return view('admin.industri.index', compact('industris'));
+        // Filter Jurusan
+        if ($request->has('jurusan') && $request->jurusan != '') {
+            $query->where('jurusan', $request->jurusan);
+        }
+
+        // Pengelompokan industri berdasarkan jurusan
+        $industris = $query->orderBy('nama_perusahaan')->get();
+
+        $urutan = array_flip(Industri::JURUSAN_LIST);
+        $grupIndustri = $industris
+            ->groupBy(fn ($i) => $i->jurusan ?: 'Lainnya')
+            ->sortBy(fn ($group, $key) => $urutan[$key] ?? 999);
+
+        return view('admin.industri.index', compact('industris', 'grupIndustri'));
     }
 
     public function create()

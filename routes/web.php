@@ -17,6 +17,7 @@ use App\Http\Controllers\Siswa\JurnalController;
 use App\Http\Controllers\Siswa\PengajuanController as SiswaPengajuanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginSiswaController;
+use App\Http\Controllers\LoginIndustriController;
 
 // Landing Page (Publik)
 Route::get('/', [LandingPageController::class, 'index'])->name('landing');
@@ -24,6 +25,15 @@ Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 // Login Siswa (Publik - bisa diakses tanpa login)
 Route::get('/login-siswa', [LoginSiswaController::class, 'showLoginForm'])->name('login.siswa.form');
 Route::post('/login-siswa', [LoginSiswaController::class, 'login'])->name('login.siswa');
+
+// Login Industri (Publik - bisa diakses tanpa login)
+Route::get('/login-industri', [LoginIndustriController::class, 'showLoginForm'])->name('login.industri.form');
+Route::post('/login-industri', [LoginIndustriController::class, 'login'])->name('login.industri');
+
+// Verifikasi Password 2 Langkah (Publik, butuh sesi pending dari login tahap 1)
+Route::get('/konfirmasi-password', [\App\Http\Controllers\Auth\TwoStepLoginController::class, 'show'])->name('password.twostep.form');
+Route::post('/konfirmasi-password', [\App\Http\Controllers\Auth\TwoStepLoginController::class, 'confirm'])->name('password.twostep.confirm');
+Route::post('/konfirmasi-password/batal', [\App\Http\Controllers\Auth\TwoStepLoginController::class, 'cancel'])->name('password.twostep.cancel');
 
 // Route Dashboard (Fallback) - tetap untuk redirect setelah login
 Route::get('/dashboard', function () {
@@ -38,6 +48,8 @@ Route::get('/dashboard', function () {
         return redirect()->route('guru.monitoring.index');
     } elseif ($user->role === 'siswa') {
         return redirect()->route('siswa.jurnal.index');
+    } elseif ($user->role === 'industri') {
+        return redirect()->route('industri.dashboard');
     }
     return redirect('/');
 })->name('dashboard');
@@ -52,6 +64,17 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('kompetensi', KompetensiController::class);
         Route::resource('industri', IndustriController::class);
         Route::resource('penempatan', PenempatanController::class);
+
+        // Route Data Akun (lihat password semua role)
+        Route::get('/akun', [\App\Http\Controllers\Admin\AkunController::class, 'index'])->name('akun.index');
+        Route::get('/akun/{user}/password', [\App\Http\Controllers\Admin\AkunController::class, 'showPassword'])->name('akun.password');
+
+        // Route Template Penilaian
+        Route::resource('template-penilaian', \App\Http\Controllers\Admin\TemplatePenilaianController::class);
+        Route::post('/template-penilaian/{templatePenilaian}/toggle-active', [\App\Http\Controllers\Admin\TemplatePenilaianController::class, 'toggleActive'])->name('template-penilaian.toggle-active');
+        Route::put('/template-penilaian/{templatePenilaian}/inline', [\App\Http\Controllers\Admin\TemplatePenilaianController::class, 'updateInline'])->name('template-penilaian.inline');
+        Route::post('/template-penilaian/add-sub-item', [\App\Http\Controllers\Admin\TemplatePenilaianController::class, 'addSubItem'])->name('template-penilaian.add-sub-item');
+        Route::post('/template-penilaian/add-item', [\App\Http\Controllers\Admin\TemplatePenilaianController::class, 'addItem'])->name('template-penilaian.add-item');
 
         // Route Pengajuan untuk Admin
         Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('pengajuan.index');
@@ -99,6 +122,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/monitoring/{id}', [MonitoringController::class, 'show'])->name('monitoring.show');
         Route::post('/komentar/{jurnal_id}', [MonitoringController::class, 'storeKomentar'])->name('komentar.store');
         Route::resource('nilai', NilaiController::class);
+
+        // Route Nilai Kesimpulan
+        Route::get('/kesimpulan', [\App\Http\Controllers\Guru\KesimpulanController::class, 'index'])->name('kesimpulan.index');
+        Route::get('/kesimpulan/{penempatan_id}', [\App\Http\Controllers\Guru\KesimpulanController::class, 'show'])->name('kesimpulan.show');
+        Route::post('/kesimpulan/{penempatan_id}', [\App\Http\Controllers\Guru\KesimpulanController::class, 'store'])->name('kesimpulan.store');
+    });
+
+    // ==================== INDUSTRI ROUTES ====================
+    Route::middleware(['role:industri'])->prefix('industri')->name('industri.')->group(function () {
+        Route::get('/dashboard', function () {
+            return redirect()->route('industri.penilaian.index');
+        })->name('dashboard');
+        Route::get('/penilaian', [\App\Http\Controllers\Industri\PenilaianController::class, 'index'])->name('penilaian.index');
+        Route::get('/penilaian/{penempatan_id}', [\App\Http\Controllers\Industri\PenilaianController::class, 'show'])->name('penilaian.show');
+        Route::post('/penilaian/{penempatan_id}', [\App\Http\Controllers\Industri\PenilaianController::class, 'store'])->name('penilaian.store');
     });
 
     // ==================== LAPORAN ROUTES ====================
@@ -107,6 +145,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/nilai', [LaporanController::class, 'nilai'])->name('nilai');
         Route::get('/jurnal/pdf', [LaporanController::class, 'jurnalPdf'])->name('jurnal.pdf');
         Route::get('/nilai/pdf', [LaporanController::class, 'nilaiPdf'])->name('nilai.pdf');
+        Route::get('/raport/pdf', [LaporanController::class, 'raportPdf'])->name('raport.pdf');
+        Route::get('/nilai/cetak/{penempatan_id}', [LaporanController::class, 'nilaiCetak'])->name('nilai.cetak');
     });
 
     // Profile (Breeze - bisa diakses semua role: admin, guru, siswa)

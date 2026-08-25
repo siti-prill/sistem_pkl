@@ -13,12 +13,16 @@ class MonitoringNilai extends Model
     protected $fillable = [
         'penempatan_id',
         'guru_id',
+        'role_penilai',
         'aspek_penilaian',
         'nilai',
         'catatan',
+        'is_hidden_from_siswa',
         'tanggal_penilaian',
     ];
+
     protected $casts = [
+        'is_hidden_from_siswa' => 'boolean',
         'tanggal_penilaian' => 'date',
     ];
     // Relasi ke Penempatan PKL

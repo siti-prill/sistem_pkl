@@ -11,9 +11,14 @@
             </h2>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Rekapitulasi nilai PKL siswa</p>
         </div>
-        <a href="{{ route('laporan.nilai.pdf', request()->all()) }}" class="btn-danger mt-3 sm:mt-0">
-            <i class="fas fa-file-pdf mr-2"></i> Cetak PDF
-        </a>
+        <div class="flex gap-2 mt-3 sm:mt-0">
+            <a href="{{ route('laporan.raport.pdf', request()->all()) }}" class="btn-success">
+                <i class="fas fa-file-pdf mr-2"></i> Cetak Raport
+            </a>
+            <a href="{{ route('laporan.nilai.pdf', request()->all()) }}" class="btn-danger">
+                <i class="fas fa-file-pdf mr-2"></i> Cetak PDF
+            </a>
+        </div>
     </div>
 
     <!-- Filter -->
@@ -55,6 +60,7 @@
                         <th class="table-header">Siswa</th>
                         <th class="table-header">NIS</th>
                         <th class="table-header">Industri</th>
+                        <th class="table-header">Penilai</th>
                         <th class="table-header">Aspek Penilaian</th>
                         <th class="table-header">Nilai</th>
                         <th class="table-header">Tanggal</th>
@@ -67,6 +73,13 @@
                             <td class="table-cell font-medium">{{ $nilai->penempatan->siswa->nama_siswa }}</td>
                             <td class="table-cell">{{ $nilai->penempatan->siswa->nis }}</td>
                             <td class="table-cell">{{ $nilai->penempatan->industri->nama_perusahaan }}</td>
+                            <td class="table-cell">
+                                @if($nilai->role_penilai == 'industri')
+                                    <span class="badge-success">Industri</span>
+                                @else
+                                    <span class="badge-primary">Guru</span>
+                                @endif
+                            </td>
                             <td class="table-cell">{{ $nilai->aspek_penilaian }}</td>
                             <td class="table-cell">
                                 <span class="font-bold text-indigo-600 dark:text-indigo-400">
@@ -77,7 +90,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <td colspan="8" class="text-center py-8 text-gray-500 dark:text-gray-400">
                                 <i class="fas fa-inbox text-4xl mb-2 block"></i>
                                 Tidak ada data nilai
                             </td>

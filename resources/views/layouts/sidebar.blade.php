@@ -56,6 +56,14 @@
                     </a>
                 </div>
 
+                <div class="nav-item">
+                    <a href="{{ route('admin.akun.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.akun.*') ? 'active' : '' }}">
+                        <i class="fas fa-users-gear"></i>
+                        <span>Data Akun</span>
+                    </a>
+                </div>
+
                 <div class="menu-label">Transaksi</div>
 
                 <div class="nav-item">
@@ -67,6 +75,14 @@
                 </div>
 
                 <div class="menu-label">Pengaturan</div>
+
+                <div class="nav-item">
+                    <a href="{{ route('admin.template-penilaian.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.template-penilaian.*') ? 'active' : '' }}">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Template Penilaian</span>
+                    </a>
+                </div>
 
                 <div class="nav-item">
                     <a href="{{ route('admin.settings.index') }}"
@@ -89,6 +105,14 @@
                         class="nav-link {{ request()->routeIs('guru.nilai.*') ? 'active' : '' }}">
                         <i class="fas fa-star"></i>
                         <span>Penilaian</span>
+                    </a>
+                </div>
+
+                <div class="nav-item">
+                    <a href="{{ route('guru.kesimpulan.index') }}"
+                        class="nav-link {{ request()->routeIs('guru.kesimpulan.*') ? 'active' : '' }}">
+                        <i class="fas fa-award"></i>
+                        <span>Kesimpulan Akhir</span>
                     </a>
                 </div>
             @elseif(auth()->user()->role == 'siswa')
@@ -134,6 +158,16 @@
                         </a>
                     </div>
                 @endif
+            @elseif(auth()->user()->role == 'industri')
+                <div class="menu-label">Penilaian</div>
+
+                <div class="nav-item">
+                    <a href="{{ route('industri.penilaian.index') }}"
+                        class="nav-link {{ request()->routeIs('industri.penilaian.*') ? 'active' : '' }}">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Penilaian Siswa</span>
+                    </a>
+                </div>
             @endif
 
             @unless (auth()->user()->role == 'siswa' && session('login_mode') === 'pengajuan')

@@ -7,6 +7,7 @@ use App\Models\Siswa;
 use App\Models\Kompetensi;
 use App\Models\Industri;
 use App\Models\User;
+use App\Models\TemplatePenilaian;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -36,7 +37,7 @@ class DatabaseSeeder extends Seeder
         // data yang kamu isi lewat aplikasi.
 
         // Buat Admin
-        User::updateOrCreate(
+        $adminUser = User::updateOrCreate(
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin',
@@ -44,6 +45,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'admin',
             ]
         );
+        $adminUser->setPasswordCopy('password');
 
         // Buat guru tambahan untuk login
         $guruUser = User::updateOrCreate(
@@ -54,6 +56,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'guru',
             ]
         );
+        $guruUser->setPasswordCopy('password');
 
         Guru::updateOrCreate(
             ['nip' => 'NIP001'],
@@ -74,6 +77,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'siswa',
             ]
         );
+        $siswaUser->setPasswordCopy('password');
 
         Siswa::updateOrCreate(
             ['nis' => 'NIS001'],
@@ -94,6 +98,52 @@ class DatabaseSeeder extends Seeder
                     'nama_kompetensi' => $jurusan,
                     'deskripsi' => 'Jurusan ' . $jurusan . ' (kelas XII)',
                 ]
+            );
+        }
+
+        // ==================== DATA INDUSTRI USER ====================
+        $industriUser = User::updateOrCreate(
+            ['email' => 'industri@gmail.com'],
+            [
+                'name' => 'Admin Industri',
+                'password' => Hash::make('password'),
+                'role' => 'industri',
+            ]
+        );
+        $industriUser->setPasswordCopy('password');
+
+        $industri = Industri::updateOrCreate(
+            ['kode_perusahaan' => 'IND-001'],
+            [
+                'user_id' => $industriUser->id,
+                'nama_perusahaan' => 'PT Teknologi Nusantara',
+                'lokasi' => 'Padang',
+                'alamat' => 'Jl. Industri No. 10, Padang',
+                'no_telepon' => '08123456780',
+                'email' => 'info@teknologinusantara.co.id',
+                'bidang_usaha' => 'Teknologi',
+                'jurusan' => 'XII RPL',
+                'penanggung_jawab' => 'Budi Santoso',
+                'kuota' => 10,
+                'status' => 'aktif',
+            ]
+        );
+
+        // ==================== TEMPLATE PENILAIAN ====================
+        $templates = [
+            ['nama_aspek' => 'Kedisiplinan', 'deskripsi' => 'Tingkat ketepatan waktu dalam kehadiran dan penyelesaian tugas', 'instruksi' => 'Nilai 0-100 berdasarkan catatan kehadiran dan ketepatan waktu', 'urutan' => 1],
+            ['nama_aspek' => 'Kerja Sama', 'deskripsi' => 'Kemampuan bekerja sama dalam tim dan berkomunikasi dengan rekan kerja', 'instruksi' => 'Amati kemampuan siswa dalam berinteraksi dengan karyawan lain', 'urutan' => 2],
+            ['nama_aspek' => 'Kemandirian', 'deskripsi' => 'Kemampuan bekerja secara mandiri tanpa pengawasan terus-menerus', 'instruksi' => 'Apakah siswa bisa menyelesaikan tugas sendiri?', 'urutan' => 3],
+            ['nama_aspek' => 'Tanggung Jawab', 'deskripsi' => 'Tingkat keseriusan dalam menjalankan tugas dan mempertanggungjawabkan hasil kerja', 'instruksi' => 'Apakah siswa menyelesaikan tugas yang diberikan dengan baik?', 'urutan' => 4],
+            ['nama_aspek' => 'Kreativitas', 'deskripsi' => 'Kemampuan memberikan ide dan solusi baru dalam pekerjaan', 'instruksi' => 'Apakah siswa memberikan masukan atau ide baru?', 'urutan' => 5],
+            ['nama_aspek' => 'Penguasaan Materi', 'deskripsi' => 'Penerapan ilmu yang dipelajari di sekolah dalam pekerjaan di industri', 'instruksi' => 'Seberapa baik siswa menerapkan pengetahuan teknis?', 'urutan' => 6],
+            ['nama_aspek' => 'Sikap dan Perilaku', 'deskripsi' => 'Sikap sopan santun, etika kerja, dan profesionalisme', 'instruksi' => 'Apakah siswa memiliki sikap yang baik di lingkungan kerja?', 'urutan' => 7],
+        ];
+
+        foreach ($templates as $template) {
+            TemplatePenilaian::updateOrCreate(
+                ['nama_aspek' => $template['nama_aspek']],
+                array_merge($template, ['rentang_nilai_min' => 0, 'rentang_nilai_max' => 100, 'is_active' => true])
             );
         }
 

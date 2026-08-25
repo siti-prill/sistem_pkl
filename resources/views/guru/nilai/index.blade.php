@@ -91,9 +91,12 @@
                                     <a href="{{ route('guru.nilai.show', $penempatan->id) }}" class="btn-info btn-sm">
                                         <i class="fas fa-eye"></i> Lihat
                                     </a>
-                                    <a href="{{ route('guru.nilai.create', ['penempatan_id' => $penempatan->id]) }}" class="btn btn-success btn-sm">
-    <i class="fas fa-plus"></i> Nilai
-</a>
+                                    <a href="{{ route('guru.nilai.create', ['penempatan_id' => $penempatan->id]) }}" class="btn-success btn-sm">
+                                        <i class="fas fa-plus"></i> Nilai
+                                    </a>
+                                    <a href="{{ route('laporan.nilai.cetak', $penempatan->id) }}" target="_blank" class="btn-secondary btn-sm">
+                                        <i class="fas fa-print"></i> Cetak
+                                    </a>
                                 </div>
                             </td>
                         </tr>

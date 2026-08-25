@@ -29,6 +29,7 @@ class IndustriRequest extends FormRequest
             'no_telepon' => 'required|string|max:20',
             'email' => 'nullable|email|max:255',
             'bidang_usaha' => 'required|string|max:255',
+            'jurusan' => 'nullable|string|in:' . implode(',', \App\Models\Industri::JURUSAN_LIST),
             'penanggung_jawab' => 'required|string|max:255',
             'kuota' => 'required|integer|min:1',
             'status' => 'required|in:aktif,tidak_aktif',

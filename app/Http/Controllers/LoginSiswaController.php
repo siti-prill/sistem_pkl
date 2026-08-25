@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Auth\TwoStepLoginController;
 use App\Models\Siswa;
 
 class LoginSiswaController extends Controller
@@ -34,15 +35,13 @@ class LoginSiswaController extends Controller
             return back()->withErrors(['nis' => 'Akun tidak ditemukan.']);
         }
 
-        // Cek password
-        if (Auth::attempt(['email' => $user->email, 'password' => $request->password])) {
-            // Login sukses
-            $request->session()->regenerate();
-            $request->session()->put('login_mode', 'pengajuan');
+        // Cek password (tahap 1) -> simpan sesi pending, lanjut konfirmasi
+        if (Hash::check($request->password, $user->password)) {
+            TwoStepLoginController::pend($user, [
+                'mode' => 'pengajuan',
+            ]);
 
-            // Redirect ke halaman yang diminta atau ke pengajuan
-            $redirect = $request->input('redirect') ?? route('siswa.pengajuan.index');
-            return redirect()->intended($redirect);
+            return redirect()->route('password.twostep.form');
         }
 
         return back()->withErrors(['password' => 'Password salah.']);

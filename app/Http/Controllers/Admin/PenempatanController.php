@@ -64,6 +64,9 @@ class PenempatanController extends Controller
             'tanggal_mulai' => 'required|date|after_or_equal:today',
             'tanggal_selesai' => 'required|date|after:tanggal_mulai',
             'status' => 'required|in:aktif,selesai,batal',
+        ], [
+            'industri_id.required' => 'Industri wajib dipilih.',
+            'industri_id.exists' => 'Industri tidak valid.',
         ]);
 
         // CEK 1: Ambil data pengajuan
@@ -84,26 +87,10 @@ class PenempatanController extends Controller
             return back()->with('error', 'Data siswa tidak sesuai dengan pengajuan.');
         }
 
-        // CEK 5: Jika status = 'ditolak', pastikan industri BUKAN pilihan 1 atau 2
-        if ($pengajuan->status == 'ditolak') {
-            $industri = Industri::findOrFail($request->industri_id);
-            if (
-                $industri->nama_perusahaan == $pengajuan->pilihan_1 ||
-                $industri->nama_perusahaan == $pengajuan->pilihan_2
-            ) {
-                return back()->with('error', 'Untuk pengajuan ditolak, tidak boleh memilih industri pilihan 1 atau 2.');
-            }
-        }
+        // Ambil data industri untuk pengecekan kuota
+        $industri = Industri::findOrFail($request->industri_id);
 
-        // CEK 6: Jika status = 'diterima', pastikan industri sesuai dengan tempat_diterima
-        if ($pengajuan->status == 'diterima') {
-            $industri = Industri::findOrFail($request->industri_id);
-            if ($industri->nama_perusahaan != $pengajuan->tempat_diterima) {
-                return back()->with('error', 'Industri yang dipilih harus sesuai dengan tempat diterima: ' . $pengajuan->tempat_diterima);
-            }
-        }
-
-        // CEK 7: Cek kuota industri
+        // CEK 5: Cek kuota industri
         $penempatanAktif = PenempatanPkl::where('industri_id', $request->industri_id)
             ->where('status', 'aktif')
             ->count();

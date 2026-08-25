@@ -24,6 +24,9 @@ class PasswordController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
+        // Perbarui juga salinan password terenkripsi
+        $request->user()->setPasswordCopy($validated['password']);
+
         return back()->with('status', 'password-updated');
     }
 }

@@ -14,11 +14,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'password_copy',
         'role',
     ];
 
     protected $hidden = [
         'password',
+        'password_copy',
         'remember_token',
     ];
 
@@ -42,6 +44,41 @@ class User extends Authenticatable
         return $this->hasOne(Siswa::class);
     }
 
+    // Relasi ke Industri
+    public function industri()
+    {
+        return $this->hasOne(Industri::class);
+    }
+
+    /**
+     * Simpan salinan password dalam bentuk terenkripsi (bisa didekripsi admin).
+     * Panggil setiap kali password diubah.
+     */
+    public function setPasswordCopy(?string $plainPassword): void
+    {
+        $this->forceFill([
+            'password_copy' => $plainPassword
+                ? \Illuminate\Support\Facades\Crypt::encryptString($plainPassword)
+                : null,
+        ])->saveQuietly();
+    }
+
+    /**
+     * Ambil password asli dari salinan terenkripsi (null jika tidak tersedia).
+     */
+    public function getReadablePassword(): ?string
+    {
+        if (!$this->password_copy) {
+            return null;
+        }
+
+        try {
+            return \Illuminate\Support\Facades\Crypt::decryptString($this->password_copy);
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
     // Cek Role
     public function isAdmin()
     {
@@ -56,5 +93,10 @@ class User extends Authenticatable
     public function isSiswa()
     {
         return $this->role === 'siswa';
+    }
+
+    public function isIndustri()
+    {
+        return $this->role === 'industri';
     }
 }

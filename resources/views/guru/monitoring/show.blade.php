@@ -37,6 +37,56 @@
         </div>
     </div>
 
+    <!-- Nilai dari Industri -->
+    @php
+        $nilaiIndustri = \App\Models\MonitoringNilai::where('penempatan_id', $penempatan->id)
+            ->where('role_penilai', 'industri')
+            ->get();
+    @endphp
+
+    @if($nilaiIndustri->count() > 0)
+        @php
+            $rataIndustri = $nilaiIndustri->avg('nilai');
+            $gradeIndustri = $rataIndustri >= 85 ? 'A' : ($rataIndustri >= 70 ? 'B' : ($rataIndustri >= 60 ? 'C' : 'D'));
+        @endphp
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                <i class="fas fa-clipboard-check mr-2 text-teal-500"></i> Nilai dari Industri
+            </h3>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="text-center p-3 bg-teal-50 dark:bg-teal-900/20 rounded-lg">
+                    <p class="text-sm text-gray-500">Jumlah Aspek</p>
+                    <p class="text-2xl font-bold text-teal-600">{{ $nilaiIndustri->count() }}</p>
+                </div>
+                <div class="text-center p-3 bg-teal-50 dark:bg-teal-900/20 rounded-lg">
+                    <p class="text-sm text-gray-500">Rata-rata</p>
+                    <p class="text-2xl font-bold text-teal-600">{{ number_format($rataIndustri, 1) }}</p>
+                </div>
+                <div class="text-center p-3 bg-teal-50 dark:bg-teal-900/20 rounded-lg">
+                    <p class="text-sm text-gray-500">Grade</p>
+                    <p class="text-2xl font-bold text-teal-600">{{ $gradeIndustri }}</p>
+                </div>
+            </div>
+            <div class="space-y-2">
+                @foreach($nilaiIndustri as $nilai)
+                    <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ $nilai->aspek_penilaian }}</span>
+                        <span class="font-bold text-teal-600">{{ $nilai->nilai }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @else
+        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4 mb-6">
+            <div class="flex items-center">
+                <i class="fas fa-clock text-yellow-600 dark:text-yellow-400 mr-3"></i>
+                <p class="text-sm text-yellow-800 dark:text-yellow-200">
+                    Industri belum mengisi penilaian untuk siswa ini.
+                </p>
+            </div>
+        </div>
+    @endif
+
     <!-- Jurnal List -->
     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
         <i class="fas fa-book mr-2"></i> Jurnal Harian

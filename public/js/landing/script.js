@@ -86,9 +86,23 @@ const features = {
         desc: 'Sistem dibangun dengan autentikasi user dan role management yang aman untuk semua pengguna.',
         points: [
             'Autentikasi login yang aman untuk setiap pengguna',
-            'Role management: Admin, Guru, dan Siswa',
+            'Role management: Admin, Guru, Siswa, dan Industri',
             'Hak akses sesuai dengan peran masing-masing pengguna',
             'Data tersimpan dengan aman dan terlindungi'
+        ]
+    },
+    penilaian_industri: {
+        icon: 'fa-clipboard-check',
+        color: '#0d9488',
+        bg: 'rgba(13,148,136,0.1)',
+        title: 'Penilaian Industri',
+        desc: 'Industri dapat langsung menilai siswa PKL sesuai template penilaian dari sekolah.',
+        points: [
+            'Industri login dengan email dan password khusus',
+            'Input nilai siswa sesuai aspek penilaian dari template sekolah',
+            'Guru pembimbing dapat melihat hasil penilaian industri',
+            'Nilai kesimpulan akhir guru untuk raport (tidak terlihat siswa)',
+            'Cetak raport PDF gabungan nilai industri dan guru'
         ]
     }
 };

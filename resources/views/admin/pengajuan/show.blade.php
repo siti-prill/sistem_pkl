@@ -40,7 +40,7 @@
                             <p><strong>Pekerjaan Orang Tua:</strong> {{ $pengajuan->pekerjaan_orang_tua }}</p>
                         @endif
                         <p><strong>Penghasilan Orang Tua:</strong> Rp
-                            {{ number_format($pengajuan->penghasilan_ortu, 0, ',', '.') }}
+                            {{ number_format((int) str_replace('.', '', $pengajuan->penghasilan_ortu), 0, ',', '.') }}
                         </p>
                         @if ($pengajuan->alamat)
                             <p><strong>Alamat Rumah:</strong> {{ $pengajuan->alamat }}</p>
@@ -225,15 +225,10 @@
                     <div class="card-body">
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>
-                            @if ($pengajuan->status == 'diterima')
-                                <strong>Status: Diterima</strong> - Industri otomatis dari tempat diterima yang dipilih.
-                            @else
-                                <strong>Status: Ditolak</strong> - Pilih industri lain yang sesuai (bukan dari pilihan
-                                siswa).
-                            @endif
+                            <strong>Pilih industri</strong> yang sesuai untuk penempatan PKL siswa ini.
                         </div>
 
-                        <form action="{{ route('admin.penempatan.store') }}" method="POST">
+                        <form id="formPenempatan" action="{{ route('admin.penempatan.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="pengajuan_id" value="{{ $pengajuan->id }}">
                             <input type="hidden" name="siswa_id" value="{{ $pengajuan->siswa_id }}">
@@ -244,51 +239,26 @@
                                     <label class="form-label fw-bold">
                                         <i class="fas fa-building me-1"></i> Industri <span class="text-danger">*</span>
                                     </label>
-
-                                    @if ($pengajuan->status == 'diterima')
-                                        <!-- Jika DITERIMA: otomatis dari tempat_diterima -->
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-success text-white">
-                                                <i class="fas fa-check-circle"></i>
-                                            </span>
-                                            <input type="hidden" name="industri_id" id="industriIdHidden"
-                                                value="">
-                                            <input type="text" class="form-control bg-light" id="industriNamaDisplay"
-                                                value="{{ $pengajuan->tempat_diterima }}" readonly disabled>
-                                        </div>
-                                        <small class="text-muted">
-                                            <i class="fas fa-lock me-1"></i> Industri otomatis dari tempat diterima
-                                        </small>
-                                    @else
-                                        <!-- Jika DITOLAK: admin pilih industri lain -->
-                                        <select name="industri_id" class="form-select" id="industriSelect" required>
-                                            <option value="">-- Pilih Industri Lain --</option>
-                                            @foreach ($industris as $industri)
-                                                @php
-                                                    $isPilihan =
-                                                        $industri->nama_perusahaan == $pengajuan->pilihan_1 ||
-                                                        $industri->nama_perusahaan == $pengajuan->pilihan_2;
-                                                    $penempatanAktif = $industri->penempatan
-                                                        ->where('status', 'aktif')
-                                                        ->count();
-                                                    $sisaKuota = $industri->kuota - $penempatanAktif;
-                                                @endphp
-                                                @if (!$isPilihan)
-                                                    <option value="{{ $industri->id }}"
-                                                        {{ old('industri_id') == $industri->id ? 'selected' : '' }}
-                                                        data-sisa="{{ $sisaKuota }}">
-                                                        {{ $industri->nama_perusahaan }}
-                                                        (Kuota: {{ $industri->kuota }} | Sisa: {{ $sisaKuota }})
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                        <small class="text-muted">
-                                            <i class="fas fa-exclamation-circle me-1"></i> Pilih industri lain (bukan dari
-                                            pilihan siswa)
-                                        </small>
-                                    @endif
-
+                                    <select name="industri_id" class="form-select" id="industriSelect" required>
+                                        <option value="">-- Pilih Industri --</option>
+                                        @foreach ($industris as $industri)
+                                            @php
+                                                $penempatanAktif = $industri->penempatan
+                                                    ->where('status', 'aktif')
+                                                    ->count();
+                                                $sisaKuota = $industri->kuota - $penempatanAktif;
+                                            @endphp
+                                            <option value="{{ $industri->id }}"
+                                                {{ old('industri_id') == $industri->id ? 'selected' : '' }}
+                                                data-sisa="{{ $sisaKuota }}">
+                                                {{ $industri->nama_perusahaan }}
+                                                (Kuota: {{ $industri->kuota }} | Sisa: {{ $sisaKuota }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i> Pilih industri yang akan menampung siswa
+                                    </small>
                                     @error('industri_id')
                                         <p class="text-danger text-xs mt-1">{{ $message }}</p>
                                     @enderror
@@ -394,7 +364,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // ============================================
-            // 1. TOGGLE TEMPAT DITERIMA (Dropdown/Input)
+            // 1. TOGGLE TEMPAT DITERIMA (Dropdown/Input) - untuk form pengajuan
             // ============================================
             const statusSelect = document.getElementById('statusSelect');
             const tempatSelect = document.getElementById('tempatDiterimaSelect');
@@ -428,69 +398,13 @@
             statusSelect.addEventListener('change', toggleTempatDiterima);
 
             // ============================================
-            // 2. DATA INDUSTRI
+            // 2. DATA INDUSTRI & VALIDASI
             // ============================================
             const industriData = JSON.parse('{!! json_encode($industriDataJs) !!}');
-            const industriDisplay = document.getElementById('industriNamaDisplay');
-            const industriHidden = document.getElementById('industriIdHidden');
-
-            function findIndustriIdByName(nama) {
-                const found = industriData.find(function(item) {
-                    return item.nama === nama;
-                });
-                return found ? found.id : null;
-            }
-
-            function updateIndustriDisplay(namaIndustri) {
-                if (namaIndustri) {
-                    industriDisplay.value = namaIndustri;
-                    const id = findIndustriIdByName(namaIndustri);
-                    if (id) {
-                        industriHidden.value = id;
-                        const industri = industriData.find(function(item) {
-                            return item.id === id;
-                        });
-                        if (industri) {
-                            const sisa = industri.kuota - industri.terpakai;
-                            if (sisa <= 0) {
-                                industriDisplay.style.borderColor = 'red';
-                                industriDisplay.style.backgroundColor = '#fff3f3';
-                                showAlert('Kuota industri ini sudah penuh!', 'warning');
-                            } else {
-                                industriDisplay.style.borderColor = '';
-                                industriDisplay.style.backgroundColor = '';
-                            }
-                        }
-                    } else {
-                        industriHidden.value = '';
-                        industriDisplay.style.borderColor = 'orange';
-                    }
-                } else {
-                    industriDisplay.value = '';
-                    industriHidden.value = '';
-                    industriDisplay.style.borderColor = '';
-                    industriDisplay.style.backgroundColor = '';
-                }
-            }
 
             // ============================================
-            // 3. SET INDUSTRI SAAT HALAMAN DIMUAT
+            // 3. TOGGLE TEMPAT DITERIMA (Dropdown/Input)
             // ============================================
-            const tempatDiterima = "{{ $pengajuan->tempat_diterima }}";
-            const statusAwal = "{{ $pengajuan->status }}";
-
-            if (statusAwal === 'diterima' && tempatDiterima) {
-                const options = tempatSelect.options;
-                for (let i = 0; i < options.length; i++) {
-                    if (options[i].value === tempatDiterima) {
-                        options[i].selected = true;
-                        break;
-                    }
-                }
-                updateIndustriDisplay(tempatDiterima);
-            } else if (statusAwal === 'ditolak' && tempatDiterima) {
-                tempatInput.value = tempatDiterima;
-            }
 
             // ============================================
             // 4. FUNGSI ALERT
@@ -509,9 +423,9 @@
                 alertDiv.innerHTML = message +
                     ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
 
-                const formPenempatan = document.querySelector('form[action*="penempatan.store"]');
-                if (formPenempatan) {
-                    formPenempatan.insertBefore(alertDiv, formPenempatan.firstChild);
+                const fp = document.getElementById('formPenempatan');
+                if (fp) {
+                    fp.insertBefore(alertDiv, fp.firstChild);
                 }
 
                 setTimeout(function() {
@@ -522,40 +436,26 @@
             }
 
             // ============================================
-            // 5. VALIDASI SEBELUM SUBMIT
+            // 5. VALIDASI SEBELUM SUBMIT PENEMPATAN
             // ============================================
-            const formPenempatan = document.querySelector('form[action*="penempatan.store"]');
+            const formPenempatan = document.getElementById('formPenempatan');
             if (formPenempatan) {
                 formPenempatan.addEventListener('submit', function(e) {
-                    const status = statusSelect.value;
+                    const industriSelect = document.getElementById('industriSelect');
+                    if (!industriSelect || !industriSelect.value) {
+                        e.preventDefault();
+                        showAlert('Silakan pilih industri untuk penempatan.', 'danger');
+                        return false;
+                    }
 
-                    if (status === 'diterima') {
-                        const industriId = industriHidden.value;
-                        if (!industriId) {
+                    const found = industriData.find(function(item) {
+                        return item.id == industriSelect.value;
+                    });
+                    if (found) {
+                        const sisa = found.kuota - found.terpakai;
+                        if (sisa <= 0) {
                             e.preventDefault();
-                            showAlert(
-                                'Industri tidak valid! Pastikan tempat diterima sudah dipilih dengan benar.',
-                                'danger');
-                            return false;
-                        }
-
-                        const found = industriData.find(function(item) {
-                            return item.id == industriId;
-                        });
-
-                        if (found) {
-                            const sisa = found.kuota - found.terpakai;
-                            if (sisa <= 0) {
-                                e.preventDefault();
-                                showAlert('Kuota industri ini sudah penuh! Sisa kuota: 0', 'danger');
-                                return false;
-                            }
-                        }
-                    } else if (status === 'ditolak') {
-                        const industriSelect = document.getElementById('industriSelect');
-                        if (!industriSelect || !industriSelect.value) {
-                            e.preventDefault();
-                            showAlert('Silakan pilih industri untuk penempatan.', 'danger');
+                            showAlert('Kuota industri ini sudah penuh! Sisa kuota: 0', 'danger');
                             return false;
                         }
                     }

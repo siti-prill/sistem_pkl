@@ -59,4 +59,10 @@ class PenempatanPkl extends Model
     {
         return $this->hasOne(PengajuanPkl::class, 'penempatan_id');
     }
+
+    // Relasi ke Nilai Kesimpulan
+    public function nilaiKesimpulan()
+    {
+        return $this->hasOne(NilaiKesimpulan::class, 'penempatan_id');
+    }
 }

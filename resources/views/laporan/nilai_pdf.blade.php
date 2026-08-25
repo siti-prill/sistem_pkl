@@ -34,6 +34,10 @@
         @php
             $first = $items->first();
             $penempatan = $first->penempatan;
+            $nilaisGuru = $items->where('role_penilai', 'guru');
+            $nilaisIndustri = $items->where('role_penilai', 'industri');
+            $rataGuru = $nilaisGuru->avg('nilai');
+            $rataIndustri = $nilaisIndustri->avg('nilai');
             $rataRata = $items->avg('nilai');
             $grade = $rataRata >= 85 ? 'A' : ($rataRata >= 70 ? 'B' : ($rataRata >= 60 ? 'C' : 'D'));
         @endphp
@@ -46,8 +50,20 @@
                         <th style="padding:5px 15px;background:#6b7280;color:white;">Industri</th>
                         <td style="padding:5px 15px;">{{ $penempatan->industri->nama_perusahaan }}</td>
                     </tr>
+                    @if($rataGuru)
                     <tr>
-                        <th style="padding:5px 15px;background:#6b7280;color:white;">Rata-rata</th>
+                        <th style="padding:5px 15px;background:#6b7280;color:white;">Rata-rata Guru</th>
+                        <td style="padding:5px 15px;font-weight:bold;color:#4f46e5;">{{ number_format($rataGuru, 1) }}</td>
+                    </tr>
+                    @endif
+                    @if($rataIndustri)
+                    <tr>
+                        <th style="padding:5px 15px;background:#6b7280;color:white;">Rata-rata Industri</th>
+                        <td style="padding:5px 15px;font-weight:bold;color:#0d9488;">{{ number_format($rataIndustri, 1) }}</td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <th style="padding:5px 15px;background:#6b7280;color:white;">Rata-rata Total</th>
                         <td style="padding:5px 15px;font-weight:bold;color:#4f46e5;">{{ number_format($rataRata, 1) }}</td>
                     </tr>
                     <tr>
@@ -64,6 +80,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
+                        <th>Penilai</th>
                         <th>Aspek Penilaian</th>
                         <th>Nilai</th>
                         <th>Catatan</th>
@@ -74,6 +91,13 @@
                     @foreach($items as $index => $nilai)
                         <tr>
                             <td>{{ $index + 1 }}</td>
+                            <td>
+                                @if($nilai->role_penilai == 'industri')
+                                    <span style="background:#0d9488;color:white;padding:2px 6px;border-radius:3px;font-size:11px;">Industri</span>
+                                @else
+                                    <span style="background:#4f46e5;color:white;padding:2px 6px;border-radius:3px;font-size:11px;">Guru</span>
+                                @endif
+                            </td>
                             <td>{{ $nilai->aspek_penilaian }}</td>
                             <td><strong>{{ $nilai->nilai }}</strong></td>
                             <td>{{ $nilai->catatan ?? '-' }}</td>

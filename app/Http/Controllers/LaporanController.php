@@ -27,6 +27,13 @@ class LaporanController extends Controller
             $query->whereHas('penempatan', function ($q) use ($user) {
                 $q->where('guru_id', $user->guru->id);
             });
+        } elseif ($user->role == 'industri') {
+            $industri = $user->industri;
+            if ($industri) {
+                $query->whereHas('penempatan', function ($q) use ($industri) {
+                    $q->where('industri_id', $industri->id);
+                });
+            }
         }
         // Admin bisa melihat semua
 
@@ -39,7 +46,7 @@ class LaporanController extends Controller
             $query->whereDate('tanggal', '<=', $request->tanggal_selesai);
         }
 
-        // Filter siswa (untuk guru dan admin)
+        // Filter siswa (untuk guru, admin, dan industri)
         if ($request->has('siswa_id') && $request->siswa_id != '') {
             $query->whereHas('penempatan', function ($q) use ($request) {
                 $q->where('siswa_id', $request->siswa_id);
@@ -52,6 +59,9 @@ class LaporanController extends Controller
         $siswas = PenempatanPkl::with('siswa')
             ->when($user->role == 'guru', function ($q) use ($user) {
                 $q->where('guru_id', $user->guru->id);
+            })
+            ->when($user->role == 'industri', function ($q) use ($user) {
+                $q->where('industri_id', $user->industri->id);
             })
             ->get()
             ->pluck('siswa');
@@ -76,6 +86,13 @@ class LaporanController extends Controller
             $query->whereHas('penempatan', function ($q) use ($user) {
                 $q->where('guru_id', $user->guru->id);
             });
+        } elseif ($user->role == 'industri') {
+            $industri = $user->industri;
+            if ($industri) {
+                $query->whereHas('penempatan', function ($q) use ($industri) {
+                    $q->where('industri_id', $industri->id);
+                });
+            }
         }
         // Admin bisa melihat semua
 
@@ -92,6 +109,9 @@ class LaporanController extends Controller
         $siswas = PenempatanPkl::with('siswa')
             ->when($user->role == 'guru', function ($q) use ($user) {
                 $q->where('guru_id', $user->guru->id);
+            })
+            ->when($user->role == 'industri', function ($q) use ($user) {
+                $q->where('industri_id', $user->industri->id);
             })
             ->get()
             ->pluck('siswa');
@@ -114,6 +134,13 @@ class LaporanController extends Controller
             $query->whereHas('penempatan', function ($q) use ($user) {
                 $q->where('guru_id', $user->guru->id);
             });
+        } elseif ($user->role == 'industri') {
+            $industri = $user->industri;
+            if ($industri) {
+                $query->whereHas('penempatan', function ($q) use ($industri) {
+                    $q->where('industri_id', $industri->id);
+                });
+            }
         }
 
         if ($request->has('tanggal_mulai') && $request->tanggal_mulai != '') {
@@ -150,6 +177,13 @@ class LaporanController extends Controller
             $query->whereHas('penempatan', function ($q) use ($user) {
                 $q->where('guru_id', $user->guru->id);
             });
+        } elseif ($user->role == 'industri') {
+            $industri = $user->industri;
+            if ($industri) {
+                $query->whereHas('penempatan', function ($q) use ($industri) {
+                    $q->where('industri_id', $industri->id);
+                });
+            }
         }
 
         if ($request->has('siswa_id') && $request->siswa_id != '') {
@@ -162,5 +196,70 @@ class LaporanController extends Controller
 
         $pdf = Pdf::loadView('laporan.nilai_pdf', compact('nilais'));
         return $pdf->download('laporan_nilai_pkl.pdf');
+    }
+
+    public function raportPdf(Request $request)
+    {
+        $user = auth()->user();
+        $showKesimpulan = in_array($user->role, ['admin', 'guru']);
+
+        $query = PenempatanPkl::with(['siswa', 'guru', 'industri', 'kompetensi'])
+            ->where('status', 'aktif');
+
+        if ($user->role == 'siswa') {
+            $query->where('siswa_id', $user->siswa->id);
+        } elseif ($user->role == 'guru') {
+            $query->where('guru_id', $user->guru->id);
+        } elseif ($user->role == 'industri') {
+            $industri = $user->industri;
+            if ($industri) {
+                $query->where('industri_id', $industri->id);
+            }
+        }
+
+        if ($request->has('siswa_id') && $request->siswa_id != '') {
+            $query->where('siswa_id', $request->siswa_id);
+        }
+
+        $penempatans = $query->get();
+
+        $raportData = $penempatans->map(function ($penempatan) use ($showKesimpulan) {
+            $nilaisGuru = MonitoringNilai::where('penempatan_id', $penempatan->id)
+                ->where('role_penilai', 'guru')->get();
+            $nilaisIndustri = MonitoringNilai::where('penempatan_id', $penempatan->id)
+                ->where('role_penilai', 'industri')->get();
+            $kesimpulan = null;
+            if ($showKesimpulan) {
+                $kesimpulan = \App\Models\NilaiKesimpulan::where('penempatan_id', $penempatan->id)->first();
+            }
+
+            return [
+                'penempatan' => $penempatan,
+                'nilaisGuru' => $nilaisGuru,
+                'nilaisIndustri' => $nilaisIndustri,
+                'rataGuru' => $nilaisGuru->avg('nilai'),
+                'rataIndustri' => $nilaisIndustri->avg('nilai'),
+                'kesimpulan' => $kesimpulan,
+            ];
+        });
+
+        $pdf = Pdf::loadView('laporan.raport_pdf', compact('raportData', 'showKesimpulan', 'user'));
+        return $pdf->download('raport_pkl.pdf');
+    }
+
+    public function nilaiCetak($penempatan_id)
+    {
+        $penempatan = PenempatanPkl::with(['siswa', 'guru', 'kompetensi', 'industri'])
+            ->findOrFail($penempatan_id);
+
+        $templates = \App\Models\TemplatePenilaian::active()->orderBy('kategori')->orderBy('urutan')->get();
+        $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
+        $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
+
+        $nilais = MonitoringNilai::where('penempatan_id', $penempatan->id)
+            ->get()
+            ->keyBy('aspek_penilaian');
+
+        return view('laporan.nilai_cetak', compact('penempatan', 'nilais', 'kejuruanRoot', 'sikapItems'));
     }
 }

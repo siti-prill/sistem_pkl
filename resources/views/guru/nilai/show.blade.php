@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Nilai')
+@section('title', 'Detail Nilai - ' . $penempatan->siswa->nama_siswa)
 
 @section('content')
 <div class="animate-fadeIn">
@@ -8,112 +8,262 @@
         <a href="{{ route('guru.nilai.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 mr-4">
             <i class="fas fa-arrow-left text-xl"></i>
         </a>
-        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
-            <i class="fas fa-star mr-2 text-indigo-500"></i> Detail Nilai: {{ $penempatan->siswa->nama_siswa }}
-        </h2>
+        <div class="flex-1">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+                <i class="fas fa-star mr-2 text-yellow-500"></i> DAFTAR NILAI PRAKTIK KERJA LAPANGAN
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Penilaian oleh Guru Pembimbing</p>
+        </div>
+        <div class="flex gap-2">
+            <a href="{{ route('laporan.nilai.cetak', $penempatan->id) }}" target="_blank" class="btn-success">
+                <i class="fas fa-file-pdf mr-2"></i> Cetak PDF
+            </a>
+            <a href="{{ route('guru.nilai.create', ['penempatan_id' => $penempatan->id]) }}" class="btn-warning">
+                <i class="fas fa-edit mr-2"></i> Edit Nilai
+            </a>
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Info Siswa -->
-        <div class="lg:col-span-1">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <div class="text-center mb-4">
-                    <div class="w-20 h-20 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mx-auto">
-                        <i class="fas fa-user-graduate text-3xl text-indigo-600 dark:text-indigo-300"></i>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mt-2">{{ $penempatan->siswa->nama_siswa }}</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">NIS: {{ $penempatan->siswa->nis }}</p>
-                </div>
-                <div class="space-y-2 text-sm">
-                    <p><span class="text-gray-500 dark:text-gray-400">Jurusan:</span> {{ $penempatan->siswa->jurusan }}</p>
-                    <p><span class="text-gray-500 dark:text-gray-400">Industri:</span> {{ $penempatan->industri->nama_perusahaan }}</p>
-                    <p><span class="text-gray-500 dark:text-gray-400">Guru:</span> {{ $penempatan->guru->nama_guru }}</p>
-                </div>
-            </div>
-        </div>
+    <!-- Header Info Siswa -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+        <table class="w-full text-sm">
+            <tr>
+                <td class="py-1 font-semibold text-gray-700 dark:text-gray-300 w-40">Nama</td>
+                <td class="py-1 text-gray-800 dark:text-white">: {{ $penempatan->siswa->nama_siswa }}</td>
+            </tr>
+            <tr>
+                <td class="py-1 font-semibold text-gray-700 dark:text-gray-300">NIS</td>
+                <td class="py-1 text-gray-800 dark:text-white">: {{ $penempatan->siswa->nis }}</td>
+            </tr>
+            <tr>
+                <td class="py-1 font-semibold text-gray-700 dark:text-gray-300">Kompetensi Keahlian</td>
+                <td class="py-1 text-gray-800 dark:text-white">: {{ $penempatan->kompetensi->nama_kompetensi ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="py-1 font-semibold text-gray-700 dark:text-gray-300">Program Keahlian</td>
+                <td class="py-1 text-gray-800 dark:text-white">: {{ $penempatan->siswa->jurusan ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="py-1 font-semibold text-gray-700 dark:text-gray-300">Tempat PKL</td>
+                <td class="py-1 text-gray-800 dark:text-white">: {{ $penempatan->industri->nama_perusahaan ?? '-' }}</td>
+            </tr>
+        </table>
+    </div>
 
-        <!-- Daftar Nilai -->
-        <div class="lg:col-span-2">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
-                            <i class="fas fa-list mr-2"></i> Daftar Nilai
-                        </h3>
-                        <a href="{{ route('guru.nilai.create', $penempatan->id) }}" class="btn-success btn-sm">
-                            <i class="fas fa-plus mr-1"></i> Tambah Nilai
-                        </a>
-                    </div>
-                </div>
-                <div class="p-4">
-                    @if($nilais->count() > 0)
+    <!-- A. Aspek Kejuruan -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">
+            A. Aspek Kejuruan
+        </h3>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-300 dark:border-gray-600 text-sm">
+                <thead>
+                    <tr class="bg-gray-100 dark:bg-gray-700">
+                        <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-12 text-center">No</th>
+                        <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-left">Komponen Kompetensi Kejuruan</th>
+                        <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-16 text-center">Angka</th>
+                        <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-16 text-center">Huruf</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $no = 1; $allKejuruanNilai = []; @endphp
+                    @foreach($kejuruanRoot as $komponen)
+                        <tr class="bg-gray-50 dark:bg-gray-700">
+                            <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold">{{ $no++ }}</td>
+                            <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 font-semibold" colspan="3">
+                                {{ $komponen->nama_aspek }}
+                            </td>
+                        </tr>
+                        @foreach($komponen->children->where('is_active', true) as $child)
+                            @php
+                                $existing = $nilais->get($child->nama_aspek);
+                                if ($existing) $allKejuruanNilai[] = $existing->nilai;
+                            @endphp
+                            <tr>
+                                <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center"></td>
+                                <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 pl-8">
+                                    {{ $child->nama_aspek }}
+                                </td>
+                                <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold">
+                                    {{ $existing ? $existing->nilai : '-' }}
+                                </td>
+                                <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                                    {{ $existing ? \App\Models\TemplatePenilaian::nilaiToHuruf($existing->nilai) : '-' }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                    <tr class="bg-gray-100 dark:bg-gray-700 font-semibold">
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2" colspan="2">Jumlah</td>
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                            {{ count($allKejuruanNilai) > 0 ? array_sum($allKejuruanNilai) : '-' }}
+                        </td>
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2"></td>
+                    </tr>
+                    <tr class="bg-gray-100 dark:bg-gray-700 font-semibold">
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2" colspan="2">Rata-rata</td>
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                            {{ count($allKejuruanNilai) > 0 ? number_format(array_sum($allKejuruanNilai) / count($allKejuruanNilai), 1) : '-' }}
+                        </td>
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                            @if(count($allKejuruanNilai) > 0)
+                                {{ \App\Models\TemplatePenilaian::nilaiToHuruf((int)(array_sum($allKejuruanNilai) / count($allKejuruanNilai))) }}
+                            @else - @endif
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- B. Aspek Sikap -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">
+            B. Aspek Sikap
+        </h3>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-300 dark:border-gray-600 text-sm">
+                <thead>
+                    <tr class="bg-gray-100 dark:bg-gray-700">
+                        <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-12 text-center">No</th>
+                        <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-left">Komponen Sikap</th>
+                        <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-16 text-center">Angka</th>
+                        <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-16 text-center">Huruf</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $no = 1; $allSikapNilai = []; @endphp
+                    @foreach($sikapItems as $item)
                         @php
-                            $totalNilai = $nilais->avg('nilai');
-                            $grade = $totalNilai >= 85 ? 'A' : ($totalNilai >= 70 ? 'B' : ($totalNilai >= 60 ? 'C' : 'D'));
+                            $existing = $nilais->get($item->nama_aspek);
+                            if ($existing) $allSikapNilai[] = $existing->nilai;
                         @endphp
-                        
-                        <div class="grid grid-cols-3 gap-4 mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <div class="text-center">
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Total Nilai</p>
-                                <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ $nilais->count() }}</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Rata-rata</p>
-                                <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ number_format($totalNilai, 1) }}</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Grade</p>
-                                <p class="text-2xl font-bold 
-                                    @if($grade == 'A') text-green-600 dark:text-green-400
-                                    @elseif($grade == 'B') text-blue-600 dark:text-blue-400
-                                    @elseif($grade == 'C') text-yellow-600 dark:text-yellow-400
-                                    @else text-red-600 dark:text-red-400 @endif">
-                                    {{ $grade }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="space-y-3">
-                            @foreach($nilais as $nilai)
-                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                    <div>
-                                        <p class="font-medium text-gray-800 dark:text-white">{{ $nilai->aspek_penilaian }}</p>
-                                        @if($nilai->catatan)
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $nilai->catatan }}</p>
-                                        @endif
-                                        {{ isset($nilai->tanggal_penilaian) ? \Carbon\Carbon::parse($nilai->tanggal_penilaian)->format('d/m/Y') : '-' }}
-                                    </div>
-                                    <div class="flex items-center gap-3 mt-2 sm:mt-0">
-                                        <span class="text-xl font-bold text-indigo-600 dark:text-indigo-400">
-                                            {{ $nilai->nilai }}
-                                        </span>
-                                        <a href="{{ route('guru.nilai.edit', $nilai->id) }}" class="btn-warning btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('guru.nilai.destroy', $nilai->id) }}" 
-                                              method="POST" class="inline" onsubmit="return confirmDelete(event)">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="text-center py-8">
-                            <i class="fas fa-star text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
-                            <p class="text-gray-500 dark:text-gray-400">Belum ada nilai untuk siswa ini</p>
-                            <a href="{{ route('guru.nilai.create', $penempatan->id) }}" class="btn-primary mt-3 inline-block">
-                                <i class="fas fa-plus mr-2"></i> Tambah Nilai Pertama
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            </div>
+                        <tr>
+                            <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">{{ $no++ }}</td>
+                            <td class="border border-gray-300 dark:border-gray-600 px-3 py-2">{{ $item->nama_aspek }}</td>
+                            <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold">
+                                {{ $existing ? $existing->nilai : '-' }}
+                            </td>
+                            <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                                {{ $existing ? \App\Models\TemplatePenilaian::nilaiToHuruf($existing->nilai) : '-' }}
+                            </td>
+                        </tr>
+                    @endforeach
+                    <tr class="bg-gray-100 dark:bg-gray-700 font-semibold">
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2" colspan="2">Jumlah</td>
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                            {{ count($allSikapNilai) > 0 ? array_sum($allSikapNilai) : '-' }}
+                        </td>
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2"></td>
+                    </tr>
+                    <tr class="bg-gray-100 dark:bg-gray-700 font-semibold">
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2" colspan="2">Rata-rata</td>
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                            {{ count($allSikapNilai) > 0 ? number_format(array_sum($allSikapNilai) / count($allSikapNilai), 1) : '-' }}
+                        </td>
+                        <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                            @if(count($allSikapNilai) > 0)
+                                {{ \App\Models\TemplatePenilaian::nilaiToHuruf((int)(array_sum($allSikapNilai) / count($allSikapNilai))) }}
+                            @else - @endif
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
+
+    <!-- Keterangan -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+        <h3 class="text-sm font-bold text-gray-800 dark:text-white mb-2">Keterangan Nilai Angka dan Huruf</h3>
+        <table class="text-sm border border-gray-300 dark:border-gray-600">
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1">90 – 100</td>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1 font-semibold">A</td>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1">( Sangat Kompeten )</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1">80 – 89</td>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1 font-semibold">B</td>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1">( Kompeten )</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1">70 – 79</td>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1 font-semibold">C</td>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1">( Cukup Kompeten )</td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1">&lt; 70</td>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1 font-semibold">D</td>
+                <td class="border border-gray-300 dark:border-gray-600 px-3 py-1">( Kurang Kompeten )</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Nilai dari Industri -->
+    @php
+        $nilaisIndustri = \App\Models\MonitoringNilai::where('penempatan_id', $penempatan->id)
+            ->where('role_penilai', 'industri')
+            ->get();
+    @endphp
+
+    @if($nilaisIndustri->count() > 0)
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                <i class="fas fa-clipboard-check mr-2 text-teal-500"></i> Nilai dari Industri
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-300 dark:border-gray-600 text-sm">
+                    <thead>
+                        <tr class="bg-teal-50 dark:bg-teal-900/20">
+                            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-left">Aspek</th>
+                            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-16 text-center">Nilai</th>
+                            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-16 text-center">Huruf</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($nilaisIndustri as $nilai)
+                            <tr>
+                                <td class="border border-gray-300 dark:border-gray-600 px-3 py-2">{{ $nilai->aspek_penilaian }}</td>
+                                <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold">{{ $nilai->nilai }}</td>
+                                <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">{{ \App\Models\TemplatePenilaian::nilaiToHuruf($nilai->nilai) }}</td>
+                            </tr>
+                        @endforeach
+                        <tr class="bg-gray-100 dark:bg-gray-700 font-semibold">
+                            <td class="border border-gray-300 dark:border-gray-600 px-3 py-2">Rata-rata</td>
+                            <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">{{ number_format($nilaisIndustri->avg('nilai'), 1) }}</td>
+                            <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">{{ \App\Models\TemplatePenilaian::nilaiToHuruf((int)$nilaisIndustri->avg('nilai')) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+
+    <!-- Nilai Kesimpulan -->
+    @php
+        $kesimpulan = \App\Models\NilaiKesimpulan::where('penempatan_id', $penempatan->id)
+            ->where('guru_id', auth()->user()->guru->id)
+            ->first();
+    @endphp
+
+    @if($kesimpulan)
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                <i class="fas fa-award mr-2 text-purple-500"></i> Nilai Kesimpulan Akhir (Raport)
+            </h3>
+            <div class="text-center p-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <p class="text-sm text-gray-500">Nilai Kesimpulan</p>
+                <p class="text-4xl font-bold text-purple-600 mt-1">{{ number_format($kesimpulan->nilai_kesimpulan, 1) }}</p>
+                @if($kesimpulan->catatan_kesimpulan)
+                    <p class="text-sm text-gray-500 mt-3">{{ $kesimpulan->catatan_kesimpulan }}</p>
+                @endif
+                <a href="{{ route('guru.kesimpulan.show', $penempatan->id) }}" class="btn-warning btn-sm mt-3 inline-block">
+                    <i class="fas fa-edit mr-1"></i> Update Kesimpulan
+                </a>
+            </div>
+        </div>
+    @endif
 </div>
 @endsection

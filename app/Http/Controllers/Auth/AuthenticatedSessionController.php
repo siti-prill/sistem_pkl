@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Auth\TwoStepLoginController;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -21,16 +23,25 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Handle an incoming authentication request.
+     * Tahap 1 dari verifikasi 2 langkah: validasi kredensial,
+     * lalu arahkan ke halaman konfirmasi password.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        $user = $request->findUserForTwoStep();
 
-        $request->session()->regenerate();
+        if (! $user) {
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
 
-        $request->session()->put('login_mode', 'regular');
+        TwoStepLoginController::pend($user, [
+            'remember' => $request->boolean('remember'),
+            'mode' => 'regular',
+        ]);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('password.twostep.form');
     }
 
     /**

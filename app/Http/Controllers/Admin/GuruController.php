@@ -46,6 +46,9 @@ class GuruController extends Controller
             'role' => 'guru',
         ]);
 
+        // Simpan salinan password terenkripsi agar bisa dilihat admin
+        $user->setPasswordCopy($request->password);
+
         // Create Guru
         Guru::create([
             'user_id' => $user->id,
@@ -85,6 +88,10 @@ class GuruController extends Controller
         }
 
         $guru->user()->update($userData);
+
+        if (!empty($data['password'])) {
+            $guru->user->setPasswordCopy($data['password']);
+        }
 
         // Update Guru
         $guru->update([

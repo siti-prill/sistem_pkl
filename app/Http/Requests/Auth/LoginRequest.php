@@ -5,7 +5,9 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -31,6 +33,29 @@ class LoginRequest extends FormRequest
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
+    }
+
+    /**
+     * Cari user berdasarkan kredensial tanpa langsung login.
+     * Dipakai untuk alur verifikasi password 2 langkah.
+     *
+     * @return \App\Models\User|null
+     */
+    public function findUserForTwoStep(): ?User
+    {
+        $this->ensureIsNotRateLimited();
+
+        $user = User::where('email', $this->email)->first();
+
+        if (! $user || ! Hash::check($this->password, $user->password)) {
+            RateLimiter::hit($this->throttleKey());
+
+            return null;
+        }
+
+        RateLimiter::clear($this->throttleKey());
+
+        return $user;
     }
 
     /**

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MonitoringNilaiRequest;
 use App\Models\MonitoringNilai;
 use App\Models\PenempatanPkl;
+use App\Models\TemplatePenilaian;
 use Illuminate\Http\Request;
 
 class NilaiController extends Controller
@@ -33,7 +33,6 @@ class NilaiController extends Controller
         return view('guru.nilai.index', compact('penempatans'));
     }
 
-    // PERBAIKAN: create menerima Request, ambil penempatan_id dari query string
     public function create(Request $request)
     {
         $penempatan_id = $request->query('penempatan_id');
@@ -43,74 +42,115 @@ class NilaiController extends Controller
                 ->with('error', 'Penempatan tidak ditemukan.');
         }
 
-        $penempatan = PenempatanPkl::with(['siswa', 'kompetensi'])
+        $penempatan = PenempatanPkl::with(['siswa', 'kompetensi', 'industri'])
             ->findOrFail($penempatan_id);
 
-        // Cek apakah guru ini bertanggung jawab
         if ($penempatan->guru_id != auth()->user()->guru->id) {
             abort(403, 'Anda tidak memiliki akses ke data ini.');
         }
 
-        return view('guru.nilai.create', compact('penempatan'));
+        $templates = TemplatePenilaian::active()->orderBy('kategori')->orderBy('urutan')->get();
+        $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
+        $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
+
+        $existingNilais = MonitoringNilai::where('penempatan_id', $penempatan->id)
+            ->where('role_penilai', 'guru')
+            ->get()
+            ->keyBy('aspek_penilaian');
+
+        return view('guru.nilai.create', compact('penempatan', 'templates', 'existingNilais', 'kejuruanRoot', 'sikapItems'));
     }
 
-    public function store(MonitoringNilaiRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->validated();
-        $data['guru_id'] = auth()->user()->guru->id;
+        $request->validate([
+            'penempatan_id' => 'required|exists:penempatan_pkl,id',
+        ]);
 
-        // Cek duplikat
-        $exists = MonitoringNilai::where('penempatan_id', $data['penempatan_id'])
-            ->where('aspek_penilaian', $data['aspek_penilaian'])
-            ->exists();
+        $penempatan = PenempatanPkl::findOrFail($request->penempatan_id);
 
-        if ($exists) {
-            return back()->with('error', 'Nilai untuk aspek ini sudah ada.');
+        if ($penempatan->guru_id != auth()->user()->guru->id) {
+            abort(403, 'Anda tidak memiliki akses ke data ini.');
         }
 
-        MonitoringNilai::create($data);
+        $templates = TemplatePenilaian::active()->where('tipe', 'item')->get();
+        $saved = 0;
+        $hasAny = false;
 
-        return redirect()->route('guru.nilai.index')
-            ->with('success', 'Nilai berhasil ditambahkan.');
+        foreach ($templates as $template) {
+            $nilaiKey = 'nilai_' . $template->id;
+            if ($request->has($nilaiKey) && $request->input($nilaiKey) !== null && $request->input($nilaiKey) !== '') {
+                $nilaiVal = (int) $request->input($nilaiKey);
+
+                $request->validate([
+                    $nilaiKey => 'required|integer|min:0|max:100',
+                ]);
+
+                $hasAny = true;
+                $catatanKey = 'catatan_' . $template->id;
+                $catatan = $request->input($catatanKey, null);
+
+                MonitoringNilai::updateOrCreate(
+                    [
+                        'penempatan_id' => $penempatan->id,
+                        'aspek_penilaian' => $template->nama_aspek,
+                        'role_penilai' => 'guru',
+                    ],
+                    [
+                        'guru_id' => auth()->user()->guru->id,
+                        'nilai' => $nilaiVal,
+                        'catatan' => $catatan,
+                        'is_hidden_from_siswa' => false,
+                        'tanggal_penilaian' => now()->toDateString(),
+                    ]
+                );
+                $saved++;
+            }
+        }
+
+        if (!$hasAny) {
+            return back()->with('error', 'Minimal satu nilai harus diisi.');
+        }
+
+        if ($saved > 0) {
+            return redirect()->route('guru.nilai.show', $penempatan->id)
+                ->with('success', "Berhasil menyimpan {$saved} penilaian.");
+        }
+
+        return back()->with('error', 'Tidak ada nilai yang disimpan.');
     }
 
     public function show($penempatan_id)
     {
-        $penempatan = PenempatanPkl::with(['siswa', 'kompetensi'])
+        $penempatan = PenempatanPkl::with(['siswa', 'kompetensi', 'industri'])
             ->findOrFail($penempatan_id);
 
         if ($penempatan->guru_id != auth()->user()->guru->id) {
             abort(403, 'Anda tidak memiliki akses ke data ini.');
         }
 
-        $nilais = MonitoringNilai::where('penempatan_id', $penempatan_id)->get();
+        $templates = TemplatePenilaian::active()->orderBy('kategori')->orderBy('urutan')->get();
+        $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
+        $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
 
-        return view('guru.nilai.show', compact('penempatan', 'nilais'));
+        $nilais = MonitoringNilai::where('penempatan_id', $penempatan_id)
+            ->where('role_penilai', 'guru')
+            ->get()
+            ->keyBy('aspek_penilaian');
+
+        return view('guru.nilai.show', compact('penempatan', 'nilais', 'templates', 'kejuruanRoot', 'sikapItems'));
     }
 
-    public function edit($id)
+    public function edit($penempatan_id)
     {
-        $nilai = MonitoringNilai::with('penempatan.siswa')->findOrFail($id);
+        $penempatan = PenempatanPkl::with(['siswa', 'kompetensi', 'industri'])
+            ->findOrFail($penempatan_id);
 
-        if ($nilai->guru_id != auth()->user()->guru->id) {
+        if ($penempatan->guru_id != auth()->user()->guru->id) {
             abort(403, 'Anda tidak memiliki akses ke data ini.');
         }
 
-        return view('guru.nilai.edit', compact('nilai'));
-    }
-
-    public function update(MonitoringNilaiRequest $request, $id)
-    {
-        $nilai = MonitoringNilai::findOrFail($id);
-
-        if ($nilai->guru_id != auth()->user()->guru->id) {
-            abort(403, 'Anda tidak memiliki akses ke data ini.');
-        }
-
-        $nilai->update($request->validated());
-
-        return redirect()->route('guru.nilai.index')
-            ->with('success', 'Nilai berhasil diupdate.');
+        return redirect()->route('guru.nilai.create', ['penempatan_id' => $penempatan->id]);
     }
 
     public function destroy($id)
@@ -123,7 +163,6 @@ class NilaiController extends Controller
 
         $nilai->delete();
 
-        return redirect()->route('guru.nilai.index')
-            ->with('success', 'Nilai berhasil dihapus.');
+        return redirect()->back()->with('success', 'Nilai berhasil dihapus.');
     }
 }

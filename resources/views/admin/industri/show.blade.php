@@ -41,6 +41,10 @@
                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->bidang_usaha }}</p>
                 </div>
                 <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Jurusan yang Dituju</h3>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->jurusan ?? '-' }}</p>
+                </div>
+                <div>
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Penanggung Jawab</h3>
                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->penanggung_jawab }}</p>
                 </div>
