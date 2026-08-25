@@ -60,6 +60,16 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
+                            <label class="form-label">Konfirmasi Password <span class="text-danger">*</span></label>
+                            <input type="password" name="password_confirmation"
+                                class="form-control"
+                                placeholder="Ulangi password" required>
+                            @error('password_confirmation')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
                             <label class="form-label">Jurusan <span class="text-danger">*</span></label>
                             <select name="jurusan" class="form-control @error('jurusan') is-invalid @enderror" required>
                                 <option value="">Pilih Jurusan</option>

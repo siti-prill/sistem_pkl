@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IndustriRequest;
 use App\Models\Industri;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class IndustriController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Industri::query();
+        $query = Industri::with('user');
 
         // Search
         if ($request->has('search')) {
@@ -20,7 +22,10 @@ class IndustriController extends Controller
                 $q->where('kode_perusahaan', 'like', "%{$search}%")
                     ->orWhere('nama_perusahaan', 'like', "%{$search}%")
                     ->orWhere('bidang_usaha', 'like', "%{$search}%")
-                    ->orWhere('penanggung_jawab', 'like', "%{$search}%");
+                    ->orWhere('penanggung_jawab', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -34,7 +39,6 @@ class IndustriController extends Controller
             $query->where('jurusan', $request->jurusan);
         }
 
-        // Pengelompokan industri berdasarkan jurusan
         $industris = $query->orderBy('nama_perusahaan')->get();
 
         $urutan = array_flip(Industri::JURUSAN_LIST);
@@ -52,13 +56,39 @@ class IndustriController extends Controller
 
     public function store(IndustriRequest $request)
     {
-        Industri::create($request->validated());
+        // Create User
+        $user = User::create([
+            'name' => $request->nama_perusahaan,
+            'email' => $request->email_login,
+            'password' => Hash::make($request->password),
+            'role' => 'industri',
+        ]);
+
+        $user->setPasswordCopy($request->password);
+
+        // Create Industri
+        Industri::create([
+            'user_id' => $user->id,
+            'kode_perusahaan' => $request->kode_perusahaan,
+            'nama_perusahaan' => $request->nama_perusahaan,
+            'lokasi' => $request->lokasi,
+            'alamat' => $request->alamat,
+            'no_telepon' => $request->no_telepon,
+            'email' => $request->email,
+            'bidang_usaha' => $request->bidang_usaha,
+            'jurusan' => $request->jurusan,
+            'penanggung_jawab' => $request->penanggung_jawab,
+            'kuota' => $request->kuota,
+            'status' => $request->status,
+        ]);
+
         return redirect()->route('admin.industri.index')
             ->with('success', 'Data industri berhasil ditambahkan.');
     }
 
     public function show(Industri $industri)
     {
+        $industri->load('user');
         return view('admin.industri.show', compact('industri'));
     }
 
@@ -71,8 +101,36 @@ class IndustriController extends Controller
     {
         $data = $request->validated();
 
-        // Pastikan data yang diupdate hanya field yang diizinkan
-        $industri->update($data);
+        // Update User (email login & password)
+        $userData = [
+            'name' => $data['nama_perusahaan'],
+            'email' => $data['email_login'],
+        ];
+
+        if (!empty($data['password'])) {
+            $userData['password'] = Hash::make($data['password']);
+        }
+
+        $industri->user()->update($userData);
+
+        if (!empty($data['password'])) {
+            $industri->user->setPasswordCopy($data['password']);
+        }
+
+        // Update Industri
+        $industri->update([
+            'kode_perusahaan' => $data['kode_perusahaan'],
+            'nama_perusahaan' => $data['nama_perusahaan'],
+            'lokasi' => $data['lokasi'],
+            'alamat' => $data['alamat'],
+            'no_telepon' => $data['no_telepon'],
+            'email' => $data['email'] ?? null,
+            'bidang_usaha' => $data['bidang_usaha'],
+            'jurusan' => $data['jurusan'] ?? null,
+            'penanggung_jawab' => $data['penanggung_jawab'],
+            'kuota' => $data['kuota'],
+            'status' => $data['status'],
+        ]);
 
         return redirect()->route('admin.industri.index')
             ->with('success', 'Data industri berhasil diupdate.');
@@ -80,7 +138,7 @@ class IndustriController extends Controller
 
     public function destroy(Industri $industri)
     {
-        $industri->delete();
+        $industri->user->delete();
         return redirect()->route('admin.industri.index')
             ->with('success', 'Data industri berhasil dihapus.');
     }

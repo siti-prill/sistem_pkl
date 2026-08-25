@@ -252,7 +252,12 @@ class LaporanController extends Controller
         $penempatan = PenempatanPkl::with(['siswa', 'guru', 'kompetensi', 'industri'])
             ->findOrFail($penempatan_id);
 
-        $templates = \App\Models\TemplatePenilaian::active()->orderBy('kategori')->orderBy('urutan')->get();
+        $siswaJurusan = $penempatan->siswa->jurusan ?? null;
+        $templates = \App\Models\TemplatePenilaian::active()
+            ->forJurusan($siswaJurusan)
+            ->orderBy('kategori')
+            ->orderBy('urutan')
+            ->get();
         $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
         $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
 

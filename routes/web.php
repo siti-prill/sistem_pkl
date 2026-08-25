@@ -65,10 +65,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('industri', IndustriController::class);
         Route::resource('penempatan', PenempatanController::class);
 
-        // Route Data Akun (lihat password semua role)
-        Route::get('/akun', [\App\Http\Controllers\Admin\AkunController::class, 'index'])->name('akun.index');
-        Route::get('/akun/{user}/password', [\App\Http\Controllers\Admin\AkunController::class, 'showPassword'])->name('akun.password');
-
         // Route Template Penilaian
         Route::resource('template-penilaian', \App\Http\Controllers\Admin\TemplatePenilaianController::class);
         Route::post('/template-penilaian/{templatePenilaian}/toggle-active', [\App\Http\Controllers\Admin\TemplatePenilaianController::class, 'toggleActive'])->name('template-penilaian.toggle-active');

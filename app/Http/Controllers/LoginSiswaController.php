@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\Auth\TwoStepLoginController;
-use App\Models\Siswa;
 
 class LoginSiswaController extends Controller
 {
@@ -21,29 +20,26 @@ class LoginSiswaController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Cari siswa berdasarkan NIS
-        $siswa = Siswa::where('nis', $request->nis)->first();
+        $siswa = \App\Models\Siswa::where('nis', $request->nis)->first();
 
         if (!$siswa) {
             return back()->withErrors(['nis' => 'NIS tidak ditemukan.']);
         }
 
-        // Coba login menggunakan user terkait
         $user = $siswa->user;
 
         if (!$user) {
             return back()->withErrors(['nis' => 'Akun tidak ditemukan.']);
         }
 
-        // Cek password (tahap 1) -> simpan sesi pending, lanjut konfirmasi
-        if (Hash::check($request->password, $user->password)) {
-            TwoStepLoginController::pend($user, [
-                'mode' => 'pengajuan',
-            ]);
-
-            return redirect()->route('password.twostep.form');
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors(['password' => 'Password salah.']);
         }
 
-        return back()->withErrors(['password' => 'Password salah.']);
+        Auth::login($user);
+        $request->session()->regenerate();
+        $request->session()->put('login_mode', 'pengajuan');
+
+        return redirect()->intended(route('siswa.pengajuan.index'));
     }
 }

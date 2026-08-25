@@ -45,7 +45,13 @@ class PenilaianController extends Controller
             ->where('industri_id', $industri->id)
             ->findOrFail($penempatan_id);
 
-        $templates = TemplatePenilaian::active()->orderBy('kategori')->orderBy('urutan')->get();
+        $siswaJurusan = $penempatan->siswa->jurusan ?? null;
+
+        $templates = TemplatePenilaian::active()
+            ->forJurusan($siswaJurusan)
+            ->orderBy('kategori')
+            ->orderBy('urutan')
+            ->get();
 
         $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
         $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
@@ -65,11 +71,18 @@ class PenilaianController extends Controller
         $user = auth()->user();
         $industri = $user->industri;
 
-        $penempatan = PenempatanPkl::where('industri_id', $industri->id)
+        $penempatan = PenempatanPkl::with('siswa')
+            ->where('industri_id', $industri->id)
             ->where('status', 'aktif')
             ->findOrFail($penempatan_id);
 
-        $templates = TemplatePenilaian::active()->where('tipe', 'item')->get();
+        $siswaJurusan = $penempatan->siswa->jurusan ?? null;
+
+        $templates = TemplatePenilaian::active()
+            ->where('tipe', 'item')
+            ->forJurusan($siswaJurusan)
+            ->get();
+
         $saved = 0;
         $hasAny = false;
 

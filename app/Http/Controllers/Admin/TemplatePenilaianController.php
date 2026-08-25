@@ -10,7 +10,14 @@ class TemplatePenilaianController extends Controller
 {
     public function index(Request $request)
     {
-        $templates = TemplatePenilaian::with('children')->orderBy('kategori')->orderBy('urutan')->get();
+        $query = TemplatePenilaian::with('children');
+
+        $jurusan = $request->get('jurusan');
+        if ($jurusan) {
+            $query->where('jurusan', $jurusan);
+        }
+
+        $templates = $query->orderBy('kategori')->orderBy('urutan')->get();
 
         $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
         $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
@@ -18,14 +25,17 @@ class TemplatePenilaianController extends Controller
         $totalAspek = $templates->count();
         $aspekAktif = $templates->where('is_active', true)->count();
 
-        return view('admin.template-penilaian.index', compact('templates', 'kejuruanRoot', 'sikapItems', 'totalAspek', 'aspekAktif'));
+        $jurusanList = TemplatePenilaian::JURUSAN_TEMPLATE_LIST;
+
+        return view('admin.template-penilaian.index', compact('templates', 'kejuruanRoot', 'sikapItems', 'totalAspek', 'aspekAktif', 'jurusanList', 'jurusan'));
     }
 
     public function create()
     {
         $lastUrutan = TemplatePenilaian::max('urutan') ?? 0;
         $komponens = TemplatePenilaian::where('tipe', 'komponen')->orderBy('kategori')->orderBy('urutan')->get();
-        return view('admin.template-penilaian.create', compact('lastUrutan', 'komponens'));
+        $jurusanList = TemplatePenilaian::JURUSAN_TEMPLATE_LIST;
+        return view('admin.template-penilaian.create', compact('lastUrutan', 'komponens', 'jurusanList'));
     }
 
     public function store(Request $request)
@@ -33,6 +43,7 @@ class TemplatePenilaianController extends Controller
         $request->validate([
             'nama_aspek' => 'required|string|max:100',
             'kategori' => 'required|in:kejuruan,sikap',
+            'jurusan' => 'nullable|string|max:100',
             'tipe' => 'required|in:komponen,item',
             'parent_id' => 'nullable|exists:template_penilaian,id',
             'deskripsi' => 'nullable|string',
@@ -49,7 +60,7 @@ class TemplatePenilaianController extends Controller
         ]);
 
         $data = $request->only([
-            'nama_aspek', 'kategori', 'parent_id', 'tipe',
+            'nama_aspek', 'kategori', 'jurusan', 'parent_id', 'tipe',
             'deskripsi', 'instruksi',
             'rentang_nilai_min', 'rentang_nilai_max', 'urutan'
         ]);
@@ -76,7 +87,8 @@ class TemplatePenilaianController extends Controller
         $komponens = TemplatePenilaian::where('tipe', 'komponen')
             ->where('id', '!=', $templatePenilaian->id)
             ->orderBy('kategori')->orderBy('urutan')->get();
-        return view('admin.template-penilaian.edit', ['template' => $templatePenilaian, 'komponens' => $komponens]);
+        $jurusanList = TemplatePenilaian::JURUSAN_TEMPLATE_LIST;
+        return view('admin.template-penilaian.edit', ['template' => $templatePenilaian, 'komponens' => $komponens, 'jurusanList' => $jurusanList]);
     }
 
     public function update(Request $request, TemplatePenilaian $templatePenilaian)
@@ -84,6 +96,7 @@ class TemplatePenilaianController extends Controller
         $request->validate([
             'nama_aspek' => 'required|string|max:100',
             'kategori' => 'required|in:kejuruan,sikap',
+            'jurusan' => 'nullable|string|max:100',
             'tipe' => 'required|in:komponen,item',
             'parent_id' => 'nullable|exists:template_penilaian,id',
             'deskripsi' => 'nullable|string',
@@ -95,7 +108,7 @@ class TemplatePenilaianController extends Controller
         ]);
 
         $data = $request->only([
-            'nama_aspek', 'kategori', 'parent_id', 'tipe',
+            'nama_aspek', 'kategori', 'jurusan', 'parent_id', 'tipe',
             'deskripsi', 'instruksi',
             'rentang_nilai_min', 'rentang_nilai_max', 'urutan'
         ]);
@@ -150,6 +163,7 @@ class TemplatePenilaianController extends Controller
         $item = TemplatePenilaian::create([
             'nama_aspek' => $request->nama_aspek,
             'kategori' => $parent->kategori,
+            'jurusan' => $parent->jurusan,
             'parent_id' => $parent->id,
             'tipe' => 'item',
             'rentang_nilai_min' => 0,
@@ -165,14 +179,18 @@ class TemplatePenilaianController extends Controller
     {
         $request->validate([
             'kategori' => 'required|in:kejuruan,sikap',
+            'jurusan' => 'nullable|string|max:100',
             'nama_aspek' => 'required|string|max:100',
         ]);
 
-        $lastUrutan = TemplatePenilaian::where('kategori', $request->kategori)->whereNull('parent_id')->max('urutan') ?? 0;
+        $lastUrutan = TemplatePenilaian::where('kategori', $request->kategori)
+            ->where('jurusan', $request->jurusan)
+            ->whereNull('parent_id')->max('urutan') ?? 0;
 
         $item = TemplatePenilaian::create([
             'nama_aspek' => $request->nama_aspek,
             'kategori' => $request->kategori,
+            'jurusan' => $request->jurusan,
             'parent_id' => null,
             'tipe' => 'item',
             'rentang_nilai_min' => 0,

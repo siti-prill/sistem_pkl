@@ -18,6 +18,25 @@
         </div>
     </div>
 
+    <!-- Filter Jurusan -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mb-6">
+        <div class="flex items-center gap-3 flex-wrap">
+            <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                <i class="fas fa-filter mr-1"></i> Filter Jurusan:
+            </span>
+            <a href="{{ route('admin.template-penilaian.index') }}"
+               class="text-xs px-3 py-1.5 rounded-full font-medium transition {{ !$jurusan ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30' }}">
+                Semua
+            </a>
+            @foreach($jurusanList as $j)
+                <a href="{{ route('admin.template-penilaian.index', ['jurusan' => $j]) }}"
+                   class="text-xs px-3 py-1.5 rounded-full font-medium transition {{ $jurusan === $j ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30' }}">
+                    {{ $j }}
+                </a>
+            @endforeach
+        </div>
+    </div>
+
     <!-- Info -->
     @php
         $totalKomponen = $templates->where('tipe', 'komponen')->count();
@@ -77,6 +96,9 @@
                     <tr class="bg-gray-100 dark:bg-gray-700">
                         <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-12 text-center">No</th>
                         <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-left">Komponen Kompetensi Kejuruan</th>
+                        @if(!$jurusan)
+                            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-32 text-center">Jurusan</th>
+                        @endif
                         <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-16 text-center">Status</th>
                         <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-20 text-center">Aksi</th>
                     </tr>
@@ -91,6 +113,13 @@
                                       data-id="{{ $komponen->id }}" data-field="nama_aspek"
                                       onclick="startEdit(this)">{{ $komponen->nama_aspek }}</span>
                             </td>
+                            @if(!$jurusan)
+                                <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                                    <span class="text-xs px-2 py-1 rounded {{ $komponen->jurusan ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-gray-100 text-gray-500 dark:bg-gray-600 dark:text-gray-400' }}">
+                                        {{ $komponen->jurusan ?? 'Umum' }}
+                                    </span>
+                                </td>
+                            @endif
                             <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
                                 <form action="{{ route('admin.template-penilaian.toggle-active', $komponen) }}" method="POST" class="inline">
                                     @csrf
@@ -118,6 +147,13 @@
                                           data-id="{{ $child->id }}" data-field="nama_aspek"
                                           onclick="startEdit(this)">{{ $child->nama_aspek }}</span>
                                 </td>
+                                @if(!$jurusan)
+                                    <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                                        <span class="text-xs px-2 py-1 rounded {{ $child->jurusan ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-gray-100 text-gray-500 dark:bg-gray-600 dark:text-gray-400' }}">
+                                            {{ $child->jurusan ?? 'Umum' }}
+                                        </span>
+                                    </td>
+                                @endif
                                 <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
                                     <form action="{{ route('admin.template-penilaian.toggle-active', $child) }}" method="POST" class="inline">
                                         @csrf
@@ -144,7 +180,7 @@
                         @endforeach
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center py-6 text-gray-500 dark:text-gray-400">
+                            <td colspan="{{ !$jurusan ? 5 : 4 }}" class="text-center py-6 text-gray-500 dark:text-gray-400">
                                 Belum ada komponen kejuruan
                             </td>
                         </tr>
@@ -169,6 +205,9 @@
                     <tr class="bg-gray-100 dark:bg-gray-700">
                         <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-12 text-center">No</th>
                         <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-left">Komponen Sikap</th>
+                        @if(!$jurusan)
+                            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-32 text-center">Jurusan</th>
+                        @endif
                         <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-16 text-center">Status</th>
                         <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 w-20 text-center">Aksi</th>
                     </tr>
@@ -183,6 +222,13 @@
                                       data-id="{{ $item->id }}" data-field="nama_aspek"
                                       onclick="startEdit(this)">{{ $item->nama_aspek }}</span>
                             </td>
+                            @if(!$jurusan)
+                                <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
+                                    <span class="text-xs px-2 py-1 rounded {{ $item->jurusan ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-gray-100 text-gray-500 dark:bg-gray-600 dark:text-gray-400' }}">
+                                        {{ $item->jurusan ?? 'Umum' }}
+                                    </span>
+                                </td>
+                            @endif
                             <td class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center">
                                 <form action="{{ route('admin.template-penilaian.toggle-active', $item) }}" method="POST" class="inline">
                                     @csrf
@@ -208,7 +254,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center py-6 text-gray-500 dark:text-gray-400">
+                            <td colspan="{{ !$jurusan ? 5 : 4 }}" class="text-center py-6 text-gray-500 dark:text-gray-400">
                                 Belum ada aspek sikap
                             </td>
                         </tr>
@@ -220,7 +266,7 @@
 
     <!-- Keterangan -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <h3 class="text-sm font-bold text-gray-800 dark:text-white mb-2">Keterangan Nilai Angka dan Huruf (Otomaits)</h3>
+        <h3 class="text-sm font-bold text-gray-800 dark:text-white mb-2">Keterangan Nilai Angka dan Huruf (Otomatis)</h3>
         <table class="text-sm border border-gray-300 dark:border-gray-600">
             <tr>
                 <td class="border border-gray-300 dark:border-gray-600 px-3 py-1">90 – 100</td>
@@ -255,6 +301,15 @@
         <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Aspek</label>
             <input type="text" id="addModalInput" class="form-input w-full" placeholder="Contoh: Kompetensi Dasar 1">
+        </div>
+        <div class="mb-4" id="addModalJurusanWrapper">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Jurusan</label>
+            <select id="addModalJurusan" class="form-input w-full">
+                <option value="">Umum (Semua Jurusan)</option>
+                @foreach($jurusanList as $j)
+                    <option value="{{ $j }}">{{ $j }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="flex gap-3">
             <button onclick="submitAdd()" class="btn-primary flex-1">Simpan</button>
@@ -312,6 +367,8 @@ function showAddModal(kategori) {
     document.getElementById('addModalParentId').value = '';
     document.getElementById('addModalTitle').textContent = kategori === 'kejuruan' ? 'Tambah Komponen Kejuruan Baru' : 'Tambah Aspek Sikap Baru';
     document.getElementById('addModalInput').value = '';
+    document.getElementById('addModalJurusan').value = '';
+    document.getElementById('addModalJurusanWrapper').classList.remove('hidden');
     document.getElementById('addModalInput').focus();
 }
 
@@ -321,6 +378,7 @@ function showAddSubModal(parentId, parentName) {
     document.getElementById('addModalParentId').value = parentId;
     document.getElementById('addModalTitle').textContent = 'Tambah Sub-Item: ' + parentName;
     document.getElementById('addModalInput').value = '';
+    document.getElementById('addModalJurusanWrapper').classList.add('hidden');
     document.getElementById('addModalInput').focus();
 }
 
@@ -334,6 +392,7 @@ function submitAdd() {
     if (!name) return;
     const parentId = document.getElementById('addModalParentId').value;
     const kategori = document.getElementById('addModalKategori').value;
+    const jurusan = document.getElementById('addModalJurusan').value;
 
     let url, body;
     if (parentId) {
@@ -341,7 +400,7 @@ function submitAdd() {
         body = { parent_id: parentId, nama_aspek: name };
     } else {
         url = '/admin/template-penilaian/add-item';
-        body = { kategori: kategori, nama_aspek: name };
+        body = { kategori: kategori, nama_aspek: name, jurusan: jurusan };
     }
 
     fetch(url, {

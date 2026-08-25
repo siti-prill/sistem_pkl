@@ -17,149 +17,180 @@
         <form action="{{ route('admin.industri.update', $industri) }}" method="POST">
             @csrf
             @method('PUT')
-            
+
             <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Kode Perusahaan <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="kode_perusahaan" value="{{ old('kode_perusahaan', $industri->kode_perusahaan) }}" 
-                           class="form-input" placeholder="Contoh: IND-001" required>
-                    @error('kode_perusahaan')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                {{-- Akun Login --}}
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                    <h4 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3">
+                        <i class="fas fa-key mr-1"></i> Akun Login
+                    </h4>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Email Login <span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" name="email_login" value="{{ old('email_login', $industri->user->email) }}"
+                                   class="form-input" placeholder="Untuk login ke sistem" required>
+                            @error('email_login')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Password
+                            </label>
+                            <input type="password" name="password" value="{{ old('password') }}"
+                                   class="form-input" placeholder="Kosongkan jika tidak diubah">
+                            @error('password')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                            <p class="text-xs text-gray-400 mt-1">Kosongkan jika tidak diubah. Minimal 8 karakter.</p>
+                        </div>
+                    </div>
                 </div>
 
+                {{-- Data Perusahaan --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Nama Perusahaan <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="nama_perusahaan" value="{{ old('nama_perusahaan', $industri->nama_perusahaan) }}" 
-                           class="form-input" placeholder="Masukkan nama perusahaan" required>
-                    @error('nama_perusahaan')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                    <h4 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3">
+                        <i class="fas fa-industry mr-1"></i> Data Perusahaan
+                    </h4>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Kode Perusahaan <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="kode_perusahaan" value="{{ old('kode_perusahaan', $industri->kode_perusahaan) }}"
+                                   class="form-input" placeholder="Contoh: IND-001" required>
+                            @error('kode_perusahaan')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Nama Perusahaan <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="nama_perusahaan" value="{{ old('nama_perusahaan', $industri->nama_perusahaan) }}"
+                                   class="form-input" placeholder="Masukkan nama perusahaan" required>
+                            @error('nama_perusahaan')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Email Perusahaan
+                            </label>
+                            <input type="email" name="email" value="{{ old('email', $industri->email) }}"
+                                   class="form-input" placeholder="Email kontak perusahaan">
+                            @error('email')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                No Telepon <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="no_telepon" value="{{ old('no_telepon', $industri->no_telepon) }}"
+                                   class="form-input" placeholder="Masukkan no telepon" required>
+                            @error('no_telepon')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Alamat <span class="text-red-500">*</span>
+                            </label>
+                            <textarea name="alamat" rows="3" class="form-input"
+                                      placeholder="Masukkan alamat lengkap" required>{{ old('alamat', $industri->alamat) }}</textarea>
+                            @error('alamat')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Lokasi / Kota <span class="text-red-500">*</span>
+                            </label>
+                            <select name="lokasi" class="form-input" required>
+                                <option value="">Pilih Lokasi</option>
+                                @foreach(['Padang','Bandung','Yogyakarta','Pekanbaru','Batam','Jakarta','Lainnya'] as $lok)
+                                    <option value="{{ $lok }}" {{ old('lokasi', $industri->lokasi) == $lok ? 'selected' : '' }}>{{ $lok }}</option>
+                                @endforeach
+                            </select>
+                            @error('lokasi')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
+                {{-- Detail Usaha --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Lokasi / Kota <span class="text-red-500">*</span>
-                    </label>
-                    <select name="lokasi" class="form-input" required>
-                        <option value="">Pilih Lokasi</option>
-                        <option value="Padang" {{ old('lokasi', $industri->lokasi) == 'Padang' ? 'selected' : '' }}>Padang</option>
-                        <option value="Bandung" {{ old('lokasi', $industri->lokasi) == 'Bandung' ? 'selected' : '' }}>Bandung</option>
-                        <option value="Yogyakarta" {{ old('lokasi', $industri->lokasi) == 'Yogyakarta' ? 'selected' : '' }}>Yogyakarta</option>
-                        <option value="Pekanbaru" {{ old('lokasi', $industri->lokasi) == 'Pekanbaru' ? 'selected' : '' }}>Pekanbaru</option>
-                        <option value="Batam" {{ old('lokasi', $industri->lokasi) == 'Batam' ? 'selected' : '' }}>Batam</option>
-                        <option value="Jakarta" {{ old('lokasi', $industri->lokasi) == 'Jakarta' ? 'selected' : '' }}>Jakarta</option>
-                        <option value="Lainnya" {{ old('lokasi', $industri->lokasi) == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-                    </select>
-                    @error('lokasi')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Alamat <span class="text-red-500">*</span>
-                    </label>
-                    <textarea name="alamat" rows="3" class="form-input" 
-                              placeholder="Masukkan alamat lengkap" required>{{ old('alamat', $industri->alamat) }}</textarea>
-                    @error('alamat')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        No Telepon <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="no_telepon" value="{{ old('no_telepon', $industri->no_telepon) }}" 
-                           class="form-input" placeholder="Masukkan no telepon" required>
-                    @error('no_telepon')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Email
-                    </label>
-                    <input type="email" name="email" value="{{ old('email', $industri->email) }}" 
-                           class="form-input" placeholder="Masukkan email perusahaan">
-                    @error('email')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Bidang Usaha <span class="text-red-500">*</span>
-                    </label>
-                    <select name="bidang_usaha" class="form-input" required>
-                        <option value="">Pilih Bidang Usaha</option>
-                        <option value="Teknologi" {{ old('bidang_usaha', $industri->bidang_usaha) == 'Teknologi' ? 'selected' : '' }}>Teknologi</option>
-                        <option value="Manufaktur" {{ old('bidang_usaha', $industri->bidang_usaha) == 'Manufaktur' ? 'selected' : '' }}>Manufaktur</option>
-                        <option value="Jasa" {{ old('bidang_usaha', $industri->bidang_usaha) == 'Jasa' ? 'selected' : '' }}>Jasa</option>
-                        <option value="Perdagangan" {{ old('bidang_usaha', $industri->bidang_usaha) == 'Perdagangan' ? 'selected' : '' }}>Perdagangan</option>
-                        <option value="Pendidikan" {{ old('bidang_usaha', $industri->bidang_usaha) == 'Pendidikan' ? 'selected' : '' }}>Pendidikan</option>
-                        <option value="Kesehatan" {{ old('bidang_usaha', $industri->bidang_usaha) == 'Kesehatan' ? 'selected' : '' }}>Kesehatan</option>
-                        <option value="Lainnya" {{ old('bidang_usaha', $industri->bidang_usaha) == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-                    </select>
-                    @error('bidang_usaha')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Jurusan yang Dituju
-                    </label>
-                    <select name="jurusan" class="form-input">
-                        <option value="">Pilih Jurusan</option>
-                        @foreach(\App\Models\Industri::JURUSAN_LIST as $j)
-                            <option value="{{ $j }}" {{ old('jurusan', $industri->jurusan) == $j ? 'selected' : '' }}>{{ $j }}</option>
-                        @endforeach
-                    </select>
-                    @error('jurusan')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Penanggung Jawab <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="penanggung_jawab" value="{{ old('penanggung_jawab', $industri->penanggung_jawab) }}" 
-                           class="form-input" placeholder="Masukkan nama penanggung jawab" required>
-                    @error('penanggung_jawab')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Kuota <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number" name="kuota" value="{{ old('kuota', $industri->kuota) }}" 
-                           class="form-input" placeholder="Jumlah kuota PKL" min="1" required>
-                    @error('kuota')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Status
-                    </label>
-                    <select name="status" class="form-input">
-                        <option value="aktif" {{ old('status', $industri->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                        <option value="tidak_aktif" {{ old('status', $industri->status) == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif</option>
-                    </select>
-                    @error('status')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                    <h4 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3">
+                        <i class="fas fa-briefcase mr-1"></i> Detail Usaha & PKL
+                    </h4>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Bidang Usaha <span class="text-red-500">*</span>
+                            </label>
+                            <select name="bidang_usaha" class="form-input" required>
+                                <option value="">Pilih Bidang Usaha</option>
+                                @foreach(['Teknologi','Manufaktur','Jasa','Perdagangan','Pendidikan','Kesehatan','Lainnya'] as $bid)
+                                    <option value="{{ $bid }}" {{ old('bidang_usaha', $industri->bidang_usaha) == $bid ? 'selected' : '' }}>{{ $bid }}</option>
+                                @endforeach
+                            </select>
+                            @error('bidang_usaha')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Jurusan yang Dituju
+                            </label>
+                            <select name="jurusan" class="form-input">
+                                <option value="">Pilih Jurusan</option>
+                                @foreach(\App\Models\Industri::JURUSAN_LIST as $j)
+                                    @if($j != 'Semua Jurusan')
+                                        <option value="{{ $j }}" {{ old('jurusan', $industri->jurusan) == $j ? 'selected' : '' }}>{{ $j }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                            @error('jurusan')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Penanggung Jawab <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="penanggung_jawab" value="{{ old('penanggung_jawab', $industri->penanggung_jawab) }}"
+                                   class="form-input" placeholder="Masukkan nama PJ" required>
+                            @error('penanggung_jawab')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Kuota PKL <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" name="kuota" value="{{ old('kuota', $industri->kuota) }}"
+                                   class="form-input" placeholder="Jumlah kuota" min="1" required>
+                            @error('kuota')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Status
+                            </label>
+                            <select name="status" class="form-input">
+                                <option value="aktif" {{ old('status', $industri->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="tidak_aktif" {{ old('status', $industri->status) == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                            </select>
+                            @error('status')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">

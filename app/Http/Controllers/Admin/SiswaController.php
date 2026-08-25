@@ -82,6 +82,7 @@ class SiswaController extends Controller
 
     public function show(Siswa $siswa)
     {
+        $siswa->load('user');
         return view('admin.siswa.show', compact('siswa'));
     }
 

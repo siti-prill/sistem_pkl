@@ -1202,6 +1202,9 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
 .mt-6 {
     margin-top: 24px;
 }
+.space-y-4 > * + * {
+    margin-top: 16px;
+}
 .space-y-6 > * + * {
     margin-top: 24px;
 }

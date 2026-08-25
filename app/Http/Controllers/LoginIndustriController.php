@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\Auth\TwoStepLoginController;
 
 class LoginIndustriController extends Controller
 {
@@ -28,15 +28,14 @@ class LoginIndustriController extends Controller
             return back()->withErrors(['email' => 'Akun industri tidak ditemukan.']);
         }
 
-        // Cek password (tahap 1) -> simpan sesi pending, lanjut konfirmasi
-        if (Hash::check($request->password, $user->password)) {
-            TwoStepLoginController::pend($user, [
-                'mode' => 'industri',
-            ]);
-
-            return redirect()->route('password.twostep.form');
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors(['password' => 'Password salah.']);
         }
 
-        return back()->withErrors(['password' => 'Password salah.']);
+        Auth::login($user);
+        $request->session()->regenerate();
+        $request->session()->put('login_mode', 'regular');
+
+        return redirect()->intended(route('industri.dashboard'));
     }
 }

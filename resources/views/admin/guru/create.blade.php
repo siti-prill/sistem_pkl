@@ -64,6 +64,16 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Konfirmasi Password <span class="text-red-500">*</span>
+                        </label>
+                        <input type="password" name="password_confirmation" class="form-input" placeholder="Ulangi password" required>
+                        @error('password_confirmation')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             No Telepon
                         </label>
                         <input type="text" name="no_telepon" value="{{ old('no_telepon') }}" class="form-input"
@@ -96,3 +106,5 @@
         </div>
     </div>
 @endsection
+
+

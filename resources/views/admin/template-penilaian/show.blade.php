@@ -69,6 +69,14 @@
 
             <div class="grid grid-cols-3 gap-4">
                 <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Jurusan</label>
+                    <p class="text-gray-800 dark:text-white">
+                        <span class="text-xs px-2 py-1 rounded {{ $template->jurusan ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-gray-100 text-gray-500 dark:bg-gray-600 dark:text-gray-400' }}">
+                            {{ $template->jurusan ?? 'Umum (Semua Jurusan)' }}
+                        </span>
+                    </p>
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Rentang Nilai</label>
                     <p class="text-gray-800 dark:text-white font-semibold">{{ $template->rentang_nilai_min }} - {{ $template->rentang_nilai_max }}</p>
                 </div>

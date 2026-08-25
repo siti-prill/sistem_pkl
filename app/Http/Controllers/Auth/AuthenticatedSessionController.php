@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Auth\TwoStepLoginController;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,40 +12,26 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): View
     {
         return view('auth.login');
     }
 
-    /**
-     * Handle an incoming authentication request.
-     * Tahap 1 dari verifikasi 2 langkah: validasi kredensial,
-     * lalu arahkan ke halaman konfirmasi password.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $user = $request->findUserForTwoStep();
-
-        if (! $user) {
+        if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
 
-        TwoStepLoginController::pend($user, [
-            'remember' => $request->boolean('remember'),
-            'mode' => 'regular',
-        ]);
+        $request->session()->regenerate();
 
-        return redirect()->route('password.twostep.form');
+        $request->session()->put('login_mode', 'regular');
+
+        return redirect()->intended(route('dashboard'));
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();

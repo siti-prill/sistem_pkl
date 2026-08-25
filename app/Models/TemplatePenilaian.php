@@ -11,9 +11,12 @@ class TemplatePenilaian extends Model
 
     protected $table = 'template_penilaian';
 
+    public const JURUSAN_TEMPLATE_LIST = ['RPL', 'TKJ', 'DKV', 'PSPT'];
+
     protected $fillable = [
         'nama_aspek',
         'kategori',
+        'jurusan',
         'parent_id',
         'tipe',
         'deskripsi',
@@ -66,5 +69,23 @@ class TemplatePenilaian extends Model
             $nilai >= 70 => 'C',
             default => 'D',
         };
+    }
+
+    public static function extractBaseJurusan(?string $siswaJurusan): ?string
+    {
+        if (!$siswaJurusan) return null;
+        $clean = preg_replace('/^XII\s+/i', '', trim($siswaJurusan));
+        $clean = preg_replace('/\s+\d+$/', '', $clean);
+        return strtoupper($clean);
+    }
+
+    public static function scopeForJurusan($query, ?string $siswaJurusan)
+    {
+        $base = self::extractBaseJurusan($siswaJurusan);
+        return $query->where(function ($q) use ($base) {
+            $q->whereNull('jurusan')
+                ->orWhere('jurusan', '')
+                ->orWhere('jurusan', $base);
+        });
     }
 }

@@ -33,6 +33,20 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Jurusan
+                        </label>
+                        <select name="jurusan" class="form-input">
+                            <option value="">Umum (Semua Jurusan)</option>
+                            @foreach($jurusanList as $j)
+                                <option value="{{ $j }}" {{ old('jurusan') == $j ? 'selected' : '' }}>{{ $j }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Tipe <span class="text-red-500">*</span>
                         </label>
                         <select name="tipe" id="tipeSelect" class="form-input" required>
@@ -43,23 +57,22 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                </div>
-
-                <div id="parentField">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Komponen Induk
-                    </label>
-                    <select name="parent_id" class="form-input">
-                        <option value="">-- Tidak ada induk (root) --</option>
-                        @foreach($komponens as $k)
-                            <option value="{{ $k->id }}" {{ old('parent_id') == $k->id ? 'selected' : '' }}>
-                                [{{ strtoupper($k->kategori) }}] {{ $k->nama_aspek }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('parent_id')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                    <div id="parentField">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Komponen Induk
+                        </label>
+                        <select name="parent_id" class="form-input">
+                            <option value="">-- Tidak ada induk (root) --</option>
+                            @foreach($komponens as $k)
+                                <option value="{{ $k->id }}" {{ old('parent_id') == $k->id ? 'selected' : '' }}>
+                                    [{{ strtoupper($k->kategori) }}] {{ $k->nama_aspek }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('parent_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 <div>

@@ -14,8 +14,9 @@ class GuruRequest extends FormRequest
 
     public function rules(): array
     {
-        $guru = $this->route('guru'); // Ambil model guru dari route binding
+        $guru = $this->route('guru');
         $userId = $guru ? $guru->user_id : null;
+        $isCreate = !$guru;
 
         return [
             'nama_guru' => 'required|string|max:255',
@@ -33,7 +34,12 @@ class GuruRequest extends FormRequest
             ],
             'no_telepon' => 'nullable|string|max:20',
             'alamat' => 'nullable|string',
-            'password' => 'nullable|string|min:8',
+            'password' => $isCreate
+                ? 'required|string|min:8'
+                : 'nullable|string|min:8',
+            'password_confirmation' => $isCreate
+                ? 'required|same:password'
+                : 'nullable|same:password',
         ];
     }
 
@@ -46,7 +52,10 @@ class GuruRequest extends FormRequest
             'email.required' => 'Email wajib diisi.',
             'email.unique' => 'Email sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 8 karakter.',
+            'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
+            'password_confirmation.same' => 'Konfirmasi password tidak cocok.',
         ];
     }
 }

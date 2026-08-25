@@ -15,6 +15,7 @@ class IndustriRequest extends FormRequest
     public function rules(): array
     {
         $industri = $this->route('industri');
+        $isCreate = !$industri;
 
         return [
             'kode_perusahaan' => [
@@ -28,6 +29,18 @@ class IndustriRequest extends FormRequest
             'alamat' => 'required|string',
             'no_telepon' => 'required|string|max:20',
             'email' => 'nullable|email|max:255',
+            'email_login' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($industri && $industri->user ? $industri->user->id : null),
+            ],
+            'password' => $isCreate
+                ? 'required|string|min:8'
+                : 'nullable|string|min:8',
+            'password_confirmation' => $isCreate
+                ? 'required|same:password'
+                : 'nullable|same:password',
             'bidang_usaha' => 'required|string|max:255',
             'jurusan' => 'nullable|string|in:' . implode(',', \App\Models\Industri::JURUSAN_LIST),
             'penanggung_jawab' => 'required|string|max:255',
@@ -44,6 +57,12 @@ class IndustriRequest extends FormRequest
             'nama_perusahaan.required' => 'Nama perusahaan wajib diisi.',
             'alamat.required' => 'Alamat wajib diisi.',
             'no_telepon.required' => 'No telepon wajib diisi.',
+            'email_login.required' => 'Email login wajib diisi.',
+            'email_login.unique' => 'Email login sudah digunakan.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
+            'password_confirmation.same' => 'Konfirmasi password tidak cocok.',
             'bidang_usaha.required' => 'Bidang usaha wajib diisi.',
             'penanggung_jawab.required' => 'Penanggung jawab wajib diisi.',
             'kuota.required' => 'Kuota wajib diisi.',

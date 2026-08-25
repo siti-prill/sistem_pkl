@@ -14,8 +14,9 @@ class SiswaRequest extends FormRequest
 
     public function rules(): array
     {
-        $siswa = $this->route('siswa'); // Ambil model siswa dari route binding
+        $siswa = $this->route('siswa');
         $userId = $siswa ? $siswa->user_id : null;
+        $isCreate = !$siswa;
 
         return [
             'nama_siswa' => 'required|string|max:255',
@@ -34,7 +35,12 @@ class SiswaRequest extends FormRequest
             'jurusan' => 'required|string|max:100',
             'no_telepon' => 'nullable|string|max:20',
             'alamat' => 'nullable|string',
-            'password' => 'nullable|string|min:8',
+            'password' => $isCreate
+                ? 'required|string|min:8'
+                : 'nullable|string|min:8',
+            'password_confirmation' => $isCreate
+                ? 'required|same:password'
+                : 'nullable|same:password',
         ];
     }
 
@@ -48,7 +54,10 @@ class SiswaRequest extends FormRequest
             'email.unique' => 'Email sudah terdaftar.',
             'email.email' => 'Format email tidak valid.',
             'jurusan.required' => 'Jurusan wajib diisi.',
+            'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 8 karakter.',
+            'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
+            'password_confirmation.same' => 'Konfirmasi password tidak cocok.',
         ];
     }
 }

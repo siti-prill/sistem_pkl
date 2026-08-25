@@ -56,14 +56,6 @@
                     </a>
                 </div>
 
-                <div class="nav-item">
-                    <a href="{{ route('admin.akun.index') }}"
-                        class="nav-link {{ request()->routeIs('admin.akun.*') ? 'active' : '' }}">
-                        <i class="fas fa-users-gear"></i>
-                        <span>Data Akun</span>
-                    </a>
-                </div>
-
                 <div class="menu-label">Transaksi</div>
 
                 <div class="nav-item">

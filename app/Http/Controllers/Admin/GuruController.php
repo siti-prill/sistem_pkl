@@ -64,6 +64,7 @@ class GuruController extends Controller
 
     public function show(Guru $guru)
     {
+        $guru->load('user');
         return view('admin.guru.show', compact('guru'));
     }
 

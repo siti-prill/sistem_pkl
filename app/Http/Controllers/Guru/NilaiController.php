@@ -49,7 +49,8 @@ class NilaiController extends Controller
             abort(403, 'Anda tidak memiliki akses ke data ini.');
         }
 
-        $templates = TemplatePenilaian::active()->orderBy('kategori')->orderBy('urutan')->get();
+        $siswaJurusan = $penempatan->siswa->jurusan ?? null;
+        $templates = TemplatePenilaian::active()->forJurusan($siswaJurusan)->orderBy('kategori')->orderBy('urutan')->get();
         $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
         $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
 
@@ -67,13 +68,14 @@ class NilaiController extends Controller
             'penempatan_id' => 'required|exists:penempatan_pkl,id',
         ]);
 
-        $penempatan = PenempatanPkl::findOrFail($request->penempatan_id);
+        $penempatan = PenempatanPkl::with('siswa')->findOrFail($request->penempatan_id);
 
         if ($penempatan->guru_id != auth()->user()->guru->id) {
             abort(403, 'Anda tidak memiliki akses ke data ini.');
         }
 
-        $templates = TemplatePenilaian::active()->where('tipe', 'item')->get();
+        $siswaJurusan = $penempatan->siswa->jurusan ?? null;
+        $templates = TemplatePenilaian::active()->where('tipe', 'item')->forJurusan($siswaJurusan)->get();
         $saved = 0;
         $hasAny = false;
 
@@ -129,7 +131,8 @@ class NilaiController extends Controller
             abort(403, 'Anda tidak memiliki akses ke data ini.');
         }
 
-        $templates = TemplatePenilaian::active()->orderBy('kategori')->orderBy('urutan')->get();
+        $siswaJurusan = $penempatan->siswa->jurusan ?? null;
+        $templates = TemplatePenilaian::active()->forJurusan($siswaJurusan)->orderBy('kategori')->orderBy('urutan')->get();
         $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
         $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
 

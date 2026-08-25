@@ -29,6 +29,10 @@ class PengajuanController extends Controller
         }
         $jurusanList = Kompetensi::orderBy('nama_kompetensi')->pluck('nama_kompetensi');
         $industriByLokasi = Industri::where('status', 'aktif')
+            ->where(function ($q) use ($siswa) {
+                $q->where('jurusan', $siswa->jurusan)
+                    ->orWhere('jurusan', 'Semua Jurusan');
+            })
             ->orderBy('nama_perusahaan')
             ->get()
             ->groupBy('lokasi');

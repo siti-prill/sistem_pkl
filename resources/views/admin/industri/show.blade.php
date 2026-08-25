@@ -24,17 +24,37 @@
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Nama Perusahaan</h3>
                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->nama_perusahaan }}</p>
                 </div>
-                <div class="md:col-span-2">
-                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Alamat</h3>
-                    <p class="text-gray-700 dark:text-gray-300">{{ $industri->alamat }}</p>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Email Login</h3>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->user->email }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Password</h3>
+                    <div class="flex items-center gap-2">
+                        <p class="text-lg font-semibold text-gray-900 dark:text-white" id="password-display">
+                            <span id="password-bullets">&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;</span>
+                            <span id="password-text" style="display:none;">{{ $industri->user->getReadablePassword() ?? 'Tidak tersedia' }}</span>
+                        </p>
+                        <button type="button" onclick="togglePassword()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                            <i class="fas fa-eye" id="eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Email Perusahaan</h3>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->email ?? '-' }}</p>
                 </div>
                 <div>
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">No Telepon</h3>
                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->no_telepon }}</p>
                 </div>
+                <div class="md:col-span-2">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Alamat</h3>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->alamat }}</p>
+                </div>
                 <div>
-                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</h3>
-                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->email ?? '-' }}</p>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Lokasi / Kota</h3>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->lokasi }}</p>
                 </div>
                 <div>
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Bidang Usaha</h3>
@@ -49,8 +69,8 @@
                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->penanggung_jawab }}</p>
                 </div>
                 <div>
-                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Kuota</h3>
-                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->kuota }}</p>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Kuota PKL</h3>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->kuota }} orang</p>
                 </div>
                 <div>
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</h3>
@@ -89,3 +109,24 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function togglePassword() {
+    const bullets = document.getElementById('password-bullets');
+    const text = document.getElementById('password-text');
+    const icon = document.getElementById('eye-icon');
+    if (text.style.display === 'none') {
+        text.style.display = 'inline';
+        bullets.style.display = 'none';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        text.style.display = 'none';
+        bullets.style.display = 'inline';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
+@endpush
