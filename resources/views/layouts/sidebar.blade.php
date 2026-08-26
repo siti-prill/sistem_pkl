@@ -1,10 +1,11 @@
 <nav class="sidebar">
-    <div class="sidebar-brand">
-        <div>
-            <img src="{{ logo_url() }}" alt="Logo SMK 2" class="sidebar-logo">
+    <div class="sidebar-brand" style="flex-direction: column; align-items: center; text-align: center;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <img src="{{ logo_url() }}" alt="Logo SMK 2" class="sidebar-logo" style="width: 50px; height: 50px; object-fit: contain;">
+            <img src="{{ asset('images/barsilya.jpeg') }}" alt="Barsilya" class="sidebar-logo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
         </div>
-        <div>
-            <h3>Sistem PKL</h3>
+        <div style="margin-top: 10px;">
+            <h3 style="margin-bottom: 2px;">Sistem PKL</h3>
             <small>Management PKL</small>
         </div>
     </div>

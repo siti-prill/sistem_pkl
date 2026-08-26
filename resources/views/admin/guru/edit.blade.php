@@ -3,91 +3,98 @@
 @section('title', 'Edit Guru')
 
 @section('content')
-<div class="animate-fadeIn">
-    <div class="d-flex align-items-center mb-4">
-        <a href="{{ route('admin.guru.index') }}" class="btn btn-outline-secondary me-3">
-            <i class="fas fa-arrow-left"></i>
-        </a>
-        <div>
-            <h2 class="fw-bold text-dark mb-0">
-                <i class="fas fa-edit text-warning me-2"></i> Edit Guru
+    <div class="animate-fadeIn">
+        <div class="flex items-center mb-12">
+            <a href="{{ route('admin.guru.index') }}"
+                class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 mr-4">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+                <i class="fas fa-edit mr-2 text-yellow-500"></i> Edit Guru
             </h2>
-            <p class="text-muted">Perbarui data guru pembimbing</p>
         </div>
-    </div>
 
-    <div class="card">
-        <div class="card-body">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <form action="{{ route('admin.guru.update', $guru) }}" method="POST">
                 @csrf
                 @method('PUT')
-                
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">NIP <span class="text-danger">*</span></label>
-                        <input type="text" name="nip" value="{{ old('nip', $guru->nip) }}" 
-                               class="form-control @error('nip') is-invalid @enderror" required>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            NIP <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nip" value="{{ old('nip', $guru->nip) }}" class="form-input"
+                            placeholder="Masukkan NIP" required>
                         @error('nip')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                        <input type="text" name="nama_guru" value="{{ old('nama_guru', $guru->nama_guru) }}" 
-                               class="form-control @error('nama_guru') is-invalid @enderror" required>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Nama Lengkap <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nama_guru" value="{{ old('nama_guru', $guru->nama_guru) }}" class="form-input"
+                            placeholder="Masukkan nama lengkap" required>
                         @error('nama_guru')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" name="email" value="{{ old('email', $guru->user->email) }}" 
-                               class="form-control @error('email') is-invalid @enderror" required>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Email <span class="text-red-500">*</span>
+                        </label>
+                        <input type="email" name="email" value="{{ old('email', $guru->user->email) }}" class="form-input"
+                            placeholder="Masukkan email" required>
                         @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Password <span class="text-muted">(Kosongkan jika tidak diubah)</span></label>
-                        <input type="password" name="password" 
-                               class="form-control @error('password') is-invalid @enderror" 
-                               placeholder="Minimal 8 karakter">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Password <span class="text-gray-400">(Kosongkan jika tidak diubah)</span>
+                        </label>
+                        <input type="password" name="password" class="form-input"
+                            placeholder="Minimal 8 karakter">
                         @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">No Telepon</label>
-                        <input type="text" name="no_telepon" value="{{ old('no_telepon', $guru->no_telepon) }}" 
-                               class="form-control @error('no_telepon') is-invalid @enderror">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            No Telepon
+                        </label>
+                        <input type="text" name="no_telepon" value="{{ old('no_telepon', $guru->no_telepon) }}" class="form-input"
+                            placeholder="Masukkan no telepon">
                         @error('no_telepon')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div class="col-md-12 mb-3">
-                        <label class="form-label">Alamat</label>
-                        <textarea name="alamat" rows="3" class="form-control @error('alamat') is-invalid @enderror">{{ old('alamat', $guru->alamat) }}</textarea>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Alamat
+                        </label>
+                        <textarea name="alamat" rows="3" class="form-input" placeholder="Masukkan alamat">{{ old('alamat', $guru->alamat) }}</textarea>
                         @error('alamat')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i> Update
+                    <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <button type="submit" class="btn-primary flex-1">
+                            <i class="fas fa-save mr-2"></i> Update
                         </button>
-                        <a href="{{ route('admin.guru.index') }}" class="btn btn-danger">
-                            <i class="fas fa-times me-2"></i> Batal
+                        <a href="{{ route('admin.guru.index') }}" class="btn-danger flex-1 text-center">
+                            <i class="fas fa-times mr-2"></i> Batal
                         </a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-</div>
 @endsection

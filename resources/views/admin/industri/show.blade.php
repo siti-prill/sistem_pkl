@@ -15,7 +15,7 @@
 
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
         <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-5">
                 <div>
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Kode Perusahaan</h3>
                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->kode_perusahaan }}</p>
@@ -48,7 +48,7 @@
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">No Telepon</h3>
                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->no_telepon }}</p>
                 </div>
-                <div class="md:col-span-2">
+                <div>
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Alamat</h3>
                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $industri->alamat }}</p>
                 </div>

@@ -13,7 +13,7 @@
         </h2>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-2xl">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <form action="{{ route('admin.industri.update', $industri) }}" method="POST">
             @csrf
             @method('PUT')

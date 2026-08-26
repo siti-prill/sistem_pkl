@@ -4,114 +4,124 @@
 
 @section('content')
     <div class="animate-fadeIn">
-        <div class="d-flex align-items-center mb-4">
-            <a href="{{ route('admin.siswa.index') }}" class="btn btn-outline-secondary me-3">
-                <i class="fas fa-arrow-left"></i>
+        <div class="flex items-center mb-12">
+            <a href="{{ route('admin.siswa.index') }}"
+                class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 mr-4">
+                <i class="fas fa-arrow-left text-xl"></i>
             </a>
-            <div>
-                <h2 class="fw-bold text-dark mb-0">
-                    <i class="fas fa-plus-circle text-primary me-2"></i> Tambah Siswa
-                </h2>
-                <p class="text-muted">Registrasi siswa baru</p>
-            </div>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+                <i class="fas fa-plus-circle mr-2 text-indigo-500"></i> Tambah Siswa
+            </h2>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <form action="{{ route('admin.siswa.store') }}" method="POST">
-                    @csrf
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <form action="{{ route('admin.siswa.store') }}" method="POST">
+                @csrf
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">NIS <span class="text-danger">*</span></label>
-                            <input type="text" name="nis" value="{{ old('nis') }}"
-                                class="form-control @error('nis') is-invalid @enderror" required>
-                            @error('nis')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                            <input type="text" name="nama_siswa" value="{{ old('nama_siswa') }}"
-                                class="form-control @error('nama_siswa') is-invalid @enderror" required>
-                            @error('nama_siswa')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" name="email" value="{{ old('email') }}"
-                                class="form-control @error('email') is-invalid @enderror" required>
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Password <span class="text-danger">*</span></label>
-                            <input type="password" name="password"
-                                class="form-control @error('password') is-invalid @enderror"
-                                placeholder="Minimal 8 karakter" required>
-                            @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Konfirmasi Password <span class="text-danger">*</span></label>
-                            <input type="password" name="password_confirmation"
-                                class="form-control"
-                                placeholder="Ulangi password" required>
-                            @error('password_confirmation')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Jurusan <span class="text-danger">*</span></label>
-                            <select name="jurusan" class="form-control @error('jurusan') is-invalid @enderror" required>
-                                <option value="">Pilih Jurusan</option>
-                                @foreach ($jurusanList as $j)
-                                    <option value="{{ $j }}" {{ old('jurusan') == $j ? 'selected' : '' }}>
-                                        {{ $j }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('jurusan')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">No Telepon</label>
-                            <input type="text" name="no_telepon" value="{{ old('no_telepon') }}"
-                                class="form-control @error('no_telepon') is-invalid @enderror">
-                            @error('no_telepon')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Alamat</label>
-                            <textarea name="alamat" rows="3" class="form-control @error('alamat') is-invalid @enderror">{{ old('alamat') }}</textarea>
-                            @error('alamat')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i> Simpan
-                            </button>
-                            <a href="{{ route('admin.siswa.index') }}" class="btn btn-danger">
-                                <i class="fas fa-times me-2"></i> Batal
-                            </a>
-                        </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            NIS <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nis" value="{{ old('nis') }}" class="form-input"
+                            placeholder="Masukkan NIS" required>
+                        @error('nis')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
-                </form>
-            </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Nama Lengkap <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nama_siswa" value="{{ old('nama_siswa') }}" class="form-input"
+                            placeholder="Masukkan nama lengkap" required>
+                        @error('nama_siswa')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Email <span class="text-red-500">*</span>
+                        </label>
+                        <input type="email" name="email" value="{{ old('email') }}" class="form-input"
+                            placeholder="Masukkan email" required>
+                        @error('email')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Password <span class="text-red-500">*</span>
+                        </label>
+                        <input type="password" name="password" class="form-input"
+                            placeholder="Minimal 8 karakter" required>
+                        @error('password')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Konfirmasi Password <span class="text-red-500">*</span>
+                        </label>
+                        <input type="password" name="password_confirmation" class="form-input"
+                            placeholder="Ulangi password" required>
+                        @error('password_confirmation')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Jurusan <span class="text-red-500">*</span>
+                        </label>
+                        <select name="jurusan" class="form-input" required>
+                            <option value="">Pilih Jurusan</option>
+                            @foreach ($jurusanList as $j)
+                                <option value="{{ $j }}" {{ old('jurusan') == $j ? 'selected' : '' }}>
+                                    {{ $j }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('jurusan')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            No Telepon
+                        </label>
+                        <input type="text" name="no_telepon" value="{{ old('no_telepon') }}" class="form-input"
+                            placeholder="Masukkan no telepon">
+                        @error('no_telepon')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Alamat
+                        </label>
+                        <textarea name="alamat" rows="3" class="form-input" placeholder="Masukkan alamat">{{ old('alamat') }}</textarea>
+                        @error('alamat')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <button type="submit" class="btn-primary flex-1">
+                            <i class="fas fa-save mr-2"></i> Simpan
+                        </button>
+                        <a href="{{ route('admin.siswa.index') }}" class="btn-danger flex-1 text-center">
+                            <i class="fas fa-times mr-2"></i> Batal
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 @endsection

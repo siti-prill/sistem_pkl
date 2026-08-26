@@ -216,7 +216,7 @@
     <footer class="footer" id="contact">
         <div class="container position-relative">
             <div class="row text-start">
-                <div class="col-md-4 mb-4 mb-md-0 pe-lg-4">
+                <div class="col-md-3 mb-4 mb-md-0 pe-lg-4">
                     <h5 class="text-white fw-bold footer-brand d-flex align-items-center gap-2">
                         <img src="{{ logo_url() }}" alt="Logo">
                         <span>{{ setting('footer_nama', 'Sistem PKL') }}</span>
@@ -259,7 +259,7 @@
                             Privasi</a>
                     </div>
                 </div>
-                <div class="col-md-5 footer-contact">
+                <div class="col-md-3 footer-contact">
                     <h5 class="text-white fw-bold">Kontak</h5>
                     @if (setting('footer_alamat'))
                         <p><i class="fas fa-map-marker-alt me-2"></i> {{ setting('footer_alamat') }}</p>
@@ -267,6 +267,14 @@
                     <p><i class="fas fa-envelope me-2"></i> {{ setting('footer_email', 'support@sistem-pkl.com') }}
                     </p>
                     <p><i class="fas fa-phone me-2"></i> {{ setting('footer_telepon', '+62 812 3456 7890') }}</p>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold footer-brand d-flex align-items-center gap-2">
+                        <img src="{{ asset('images/barsilya.jpeg') }}" alt="Barsilya" style="width: 34px; height: 34px; border-radius: 8px; object-fit: cover; background: #fff; padding: 3px;">
+                        <span>Barsilya</span>
+                    </h5>
+                    <p class="mb-1"><a href="https://github.com/gitdusk-dev" target="_blank" style="color: rgba(255,255,255,0.6); text-decoration: none;"><i class="fab fa-github me-2"></i>gitdusk-dev</a></p>
+                    <p class="mb-0"><a href="mailto:rasyaprilyy@gmail.com" style="color: rgba(255,255,255,0.6); text-decoration: none;"><i class="fas fa-envelope me-2"></i>rasyaprilyy@gmail.com</a></p>
                 </div>
             </div>
             <div class="footer-bottom text-center">
