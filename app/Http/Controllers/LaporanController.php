@@ -193,41 +193,67 @@ class LaporanController extends Controller
             ->where('role_penilai', 'industri')
             ->keyBy('aspek_penilaian');
 
-        $headers = ['No', 'Komponen', 'Angka', 'Huruf'];
         $rows = [];
+        $styles = [];
+        $merges = [];
+        $rowNo = 1;
 
-        $rows[] = ['DAFTAR NILAI PRAKTIK KERJA LAPANGAN', '', '', ''];
-        $rows[] = ['', '', '', ''];
-        $rows[] = ['Nama', ': ' . $penempatan->siswa->nama_siswa, '', ''];
-        $rows[] = ['NIS', ': ' . $penempatan->siswa->nis, '', ''];
-        $rows[] = ['Kompetensi Keahlian', ': ' . ($penempatan->kompetensi->nama_kompetensi ?? '-'), '', ''];
-        $rows[] = ['Program Keahlian', ': ' . ($penempatan->siswa->jurusan ?? '-'), '', ''];
-        $rows[] = ['Tempat PKL', ': ' . ($penempatan->industri->nama_perusahaan ?? '-'), '', ''];
-        $rows[] = ['Guru Pembimbing', ': ' . ($penempatan->guru->nama_guru ?? '-'), '', ''];
-        $rows[] = ['', '', '', ''];
+        $add = function (array $values, array $rowStyles = [], ?string $merge = null) use (&$rows, &$styles, &$merges, &$rowNo) {
+            $rows[$rowNo] = $values;
+            $styles[$rowNo] = array_pad($rowStyles, count($values), 0);
+            if ($merge) {
+                $merges[] = $merge;
+            }
+            $rowNo++;
+        };
 
-        $rows[] = ['A. ASPEK KEJURUAN', '', '', ''];
+        // Judul
+        $add(['DAFTAR NILAI PRAKTIK KERJA LAPANGAN', '', '', ''], [2, 0, 0, 0], 'A1:D1');
+        $add(['', '', '', '']);
+
+        // Info siswa
+        $infoRows = [
+            ['Nama', ': ' . $penempatan->siswa->nama_siswa],
+            ['NIS', ': ' . $penempatan->siswa->nis],
+            ['Kompetensi Keahlian', ': ' . ($penempatan->kompetensi->nama_kompetensi ?? '-')],
+            ['Program Keahlian', ': ' . ($penempatan->siswa->jurusan ?? '-')],
+            ['Tempat PKL', ': ' . ($penempatan->industri->nama_perusahaan ?? '-')],
+            ['Guru Pembimbing', ': ' . ($penempatan->guru->nama_guru ?? '-')],
+        ];
+        foreach ($infoRows as $info) {
+            $add([$info[0], $info[1], '', ''], [1, 0, 0, 0], 'B' . $rowNo . ':D' . $rowNo);
+        }
+        $add(['', '', '', '']);
+
+        // A. Aspek Kejuruan
+        $add(['A. ASPEK KEJURUAN', '', '', ''], [3, 3, 3, 3], 'A' . $rowNo . ':D' . $rowNo);
+        $add(['No', 'Komponen Kompetensi', 'Angka', 'Huruf'], [3, 3, 3, 3]);
+
         $no = 1;
         $allKejuruanNilai = [];
         foreach ($kejuruanRoot as $komponen) {
-            $rows[] = [$no++, $komponen->nama_aspek, '', ''];
+            $add([$no++, $komponen->nama_aspek, '', ''], [1, 1, 0, 0]);
             foreach ($komponen->children->where('is_active', true) as $child) {
                 $existing = $nilais->get($child->nama_aspek);
                 if ($existing) {
                     $allKejuruanNilai[] = $existing->nilai;
                 }
-                $rows[] = ['', $child->nama_aspek,
+                $add(['', $child->nama_aspek,
                     $existing ? $existing->nilai : '',
-                    $existing ? \App\Models\TemplatePenilaian::nilaiToHuruf($existing->nilai) : ''];
+                    $existing ? \App\Models\TemplatePenilaian::nilaiToHuruf($existing->nilai) : '']);
             }
         }
-        $rows[] = ['', 'Jumlah', count($allKejuruanNilai) > 0 ? array_sum($allKejuruanNilai) : '', ''];
-        $rows[] = ['', 'Rata-rata',
+        $add(['', 'Jumlah', count($allKejuruanNilai) > 0 ? array_sum($allKejuruanNilai) : '', ''], [0, 1, 1, 0]);
+        $add(['', 'Rata-rata',
             count($allKejuruanNilai) > 0 ? round(array_sum($allKejuruanNilai) / count($allKejuruanNilai), 1) : '',
-            count($allKejuruanNilai) > 0 ? \App\Models\TemplatePenilaian::nilaiToHuruf((int) (array_sum($allKejuruanNilai) / count($allKejuruanNilai))) : ''];
-        $rows[] = ['', '', '', ''];
+            count($allKejuruanNilai) > 0 ? \App\Models\TemplatePenilaian::nilaiToHuruf((int) (array_sum($allKejuruanNilai) / count($allKejuruanNilai))) : ''],
+            [0, 1, 1, 0]);
+        $add(['', '', '', '']);
 
-        $rows[] = ['B. ASPEK SIKAP', '', '', ''];
+        // B. Aspek Sikap
+        $add(['B. ASPEK SIKAP', '', '', ''], [3, 3, 3, 3], 'A' . $rowNo . ':D' . $rowNo);
+        $add(['No', 'Komponen Sikap', 'Angka', 'Huruf'], [3, 3, 3, 3]);
+
         $no = 1;
         $allSikapNilai = [];
         foreach ($sikapItems as $item) {
@@ -235,18 +261,24 @@ class LaporanController extends Controller
             if ($existing) {
                 $allSikapNilai[] = $existing->nilai;
             }
-            $rows[] = [$no++, $item->nama_aspek,
+            $add([$no++, $item->nama_aspek,
                 $existing ? $existing->nilai : '',
-                $existing ? \App\Models\TemplatePenilaian::nilaiToHuruf($existing->nilai) : ''];
+                $existing ? \App\Models\TemplatePenilaian::nilaiToHuruf($existing->nilai) : '']);
         }
-        $rows[] = ['', 'Jumlah', count($allSikapNilai) > 0 ? array_sum($allSikapNilai) : '', ''];
-        $rows[] = ['', 'Rata-rata',
+        $add(['', 'Jumlah', count($allSikapNilai) > 0 ? array_sum($allSikapNilai) : '', ''], [0, 1, 1, 0]);
+        $add(['', 'Rata-rata',
             count($allSikapNilai) > 0 ? round(array_sum($allSikapNilai) / count($allSikapNilai), 1) : '',
-            count($allSikapNilai) > 0 ? \App\Models\TemplatePenilaian::nilaiToHuruf((int) (array_sum($allSikapNilai) / count($allSikapNilai))) : ''];
+            count($allSikapNilai) > 0 ? \App\Models\TemplatePenilaian::nilaiToHuruf((int) (array_sum($allSikapNilai) / count($allSikapNilai))) : ''],
+            [0, 1, 1, 0]);
 
         $filename = 'laporan-pkl-' . ($penempatan->siswa->nis ?? 'siswa') . '-' . now()->format('Y-m-d') . '.xlsx';
 
-        return \App\Support\SimpleXlsx::download($filename, $headers, $rows);
+        return \App\Support\SimpleXlsx::download($filename, [
+            'widths' => [6, 55, 12, 12],
+            'merges' => $merges,
+            'rows' => $rows,
+            'styles' => $styles,
+        ]);
     }
 
     public function pklShow($penempatan_id)

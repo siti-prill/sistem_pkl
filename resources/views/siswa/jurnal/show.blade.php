@@ -43,7 +43,7 @@
             @if($jurnal->dokumentasi)
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Dokumentasi</h3>
-                    <img src="{{ asset('storage/' . $jurnal->dokumentasi) }}" 
+                    <img src="/storage/{{ $jurnal->dokumentasi }}" 
                          alt="Dokumentasi" class="rounded-lg max-h-96 w-auto">
                 </div>
             @endif

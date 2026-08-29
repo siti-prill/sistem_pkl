@@ -3,7 +3,7 @@
         <div style="display: flex; gap: 12px; align-items: center;">
             <img src="{{ logo_url() }}" alt="Logo SMK 2" class="sidebar-logo"
                 style="width: 50px; height: 50px; object-fit: contain;">
-            <img src="{{ asset('images/barsilya.jpeg') }}" alt="Barsilya" class="sidebar-logo"
+            <img src="/images/barsilya.jpeg" alt="Barsilya" class="sidebar-logo"
                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
         </div>
         <div style="margin-top: 10px;">

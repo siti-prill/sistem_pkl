@@ -47,7 +47,7 @@
                     </label>
                     @if($jurnal->dokumentasi)
                         <div class="mb-2">
-                            <img src="{{ asset('storage/' . $jurnal->dokumentasi) }}" 
+                            <img src="/storage/{{ $jurnal->dokumentasi }}" 
                                  alt="Dokumentasi" class="h-32 w-auto rounded-lg">
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Foto saat ini</p>
                         </div>

@@ -4,7 +4,17 @@ namespace App\Support;
 
 class SimpleXlsx
 {
-    public static function download(string $filename, array $headers, array $rows)
+    /**
+     * Membuat file .xlsx (OOXML) dari array sheet dan men-download-nya.
+     *
+     * $sheet = [
+     *     'rows'   => [[..values..], [..], ...],
+     *     'styles' => [rowIndex => [colIndex => styleIndex, ...], ...], // opsional
+     *     'merges' => ['A1:D1', 'B2:D2', ...],                          // opsional
+     *     'widths' => [6, 55, 12, 12],                                  // opsional (karakter)
+     * ]
+     */
+    public static function download(string $filename, array $sheet)
     {
         $tmp = tempnam(sys_get_temp_dir(), 'xlsx');
         $zip = new \ZipArchive();
@@ -14,7 +24,7 @@ class SimpleXlsx
         $zip->addFromString('xl/workbook.xml', self::workbookXml());
         $zip->addFromString('xl/_rels/workbook.xml.rels', self::workbookRelsXml());
         $zip->addFromString('xl/styles.xml', self::stylesXml());
-        $zip->addFromString('xl/worksheets/sheet1.xml', self::sheetXml($headers, $rows));
+        $zip->addFromString('xl/worksheets/sheet1.xml', self::sheetXml($sheet));
         $zip->close();
 
         return response()->download($tmp, $filename, [
@@ -22,34 +32,56 @@ class SimpleXlsx
         ])->deleteFileAfterSend(true);
     }
 
-    private static function sheetXml(array $headers, array $rows): string
+    private static function sheetXml(array $sheet): string
     {
+        $rows = $sheet['rows'] ?? [];
+        $styles = $sheet['styles'] ?? [];
+        $merges = $sheet['merges'] ?? [];
+        $widths = $sheet['widths'] ?? [];
+
         $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-            . '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>';
+            . '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">';
 
-        $xml .= '<row r="1">';
-        foreach ($headers as $i => $h) {
-            $col = self::columnLetter($i + 1);
-            $xml .= '<c r="' . $col . '1" t="inlineStr" s="1"><is><t>' . self::escape($h) . '</t></is></c>';
+        if ($widths) {
+            $xml .= '<cols>';
+            foreach ($widths as $i => $w) {
+                $xml .= '<col min="' . ($i + 1) . '" max="' . ($i + 1) . '" width="' . $w . '" customWidth="1"/>';
+            }
+            $xml .= '</cols>';
         }
-        $xml .= '</row>';
 
-        $r = 2;
-        foreach ($rows as $row) {
-            $xml .= '<row r="' . $r . '">';
-            foreach (array_values($row) as $i => $value) {
-                $ref = self::columnLetter($i + 1) . $r;
-                if (is_numeric($value)) {
-                    $xml .= '<c r="' . $ref . '"><v>' . $value . '</v></c>';
+        $xml .= '<sheetData>';
+
+        foreach ($rows as $i => $row) {
+            $rowNum = $i + 1;
+            $rowStyles = $styles[$rowNum] ?? [];
+
+            $xml .= '<row r="' . $rowNum . '">';
+            foreach (array_values($row) as $c => $value) {
+                $ref = self::columnLetter($c + 1) . $rowNum;
+                $style = $rowStyles[$c] ?? 0;
+                $sAttr = $style > 0 ? ' s="' . $style . '"' : '';
+
+                if (is_numeric($value) && $value !== '') {
+                    $xml .= '<c r="' . $ref . '"' . $sAttr . '><v>' . $value . '</v></c>';
                 } else {
-                    $xml .= '<c r="' . $ref . '" t="inlineStr"><is><t>' . self::escape((string) $value) . '</t></is></c>';
+                    $xml .= '<c r="' . $ref . '" t="inlineStr"' . $sAttr . '><is><t>' . self::escape((string) $value) . '</t></is></c>';
                 }
             }
             $xml .= '</row>';
-            $r++;
         }
 
-        return $xml . '</sheetData></worksheet>';
+        $xml .= '</sheetData>';
+
+        if ($merges) {
+            $xml .= '<mergeCells count="' . count($merges) . '">';
+            foreach ($merges as $ref) {
+                $xml .= '<mergeCell ref="' . $ref . '"/>';
+            }
+            $xml .= '</mergeCells>';
+        }
+
+        return $xml . '</worksheet>';
     }
 
     private static function columnLetter(int $index): string
@@ -106,18 +138,26 @@ class SimpleXlsx
 
     private static function stylesXml(): string
     {
+        // Styles: 0=normal, 1=bold, 2=bold14 tengah, 3=bold abu-abu, 4=bold14 tengah abu-abu
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             . '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-            . '<fonts count="2">'
+            . '<fonts count="3">'
             . '<font><sz val="11"/><name val="Calibri"/></font>'
             . '<font><b/><sz val="11"/><name val="Calibri"/></font>'
+            . '<font><b/><sz val="14"/><name val="Calibri"/></font>'
             . '</fonts>'
-            . '<fills count="1"><fill><patternFill patternType="none"/></fill></fills>'
+            . '<fills count="2">'
+            . '<fill><patternFill patternType="none"/></fill>'
+            . '<fill><patternFill patternType="solid"><fgColor rgb="FFF2F2F2"/><bgColor indexed="64"/></patternFill></fill>'
+            . '</fills>'
             . '<borders count="1"><border/></borders>'
             . '<cellStyleXfs count="1"><xf/></cellStyleXfs>'
-            . '<cellXfs count="2">'
+            . '<cellXfs count="5">'
             . '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
             . '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
+            . '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center"/></xf>'
+            . '<xf numFmtId="0" fontId="1" fillId="1" borderId="0" xfId="0" applyFont="1" applyFill="1"/>'
+            . '<xf numFmtId="0" fontId="2" fillId="1" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="center"/></xf>'
             . '</cellXfs>'
             . '</styleSheet>';
     }

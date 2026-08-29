@@ -12,7 +12,7 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('css/landing/style.css') }}">
+    <link rel="stylesheet" href="/css/landing/style.css">
 </head>
 
 <body>
@@ -25,7 +25,7 @@
             </button>
 
             <!-- GAMBAR FULL -->
-            <img src="{{ asset('images/kepala-sekolah.jpeg') }}" alt="Kepala SMKN 2 Padang" id="popupImage">
+            <img src="/images/kepala-sekolah.jpeg" alt="Kepala SMKN 2 Padang" id="popupImage">
 
             <!-- COUNTDOWN DI BAWAH (OVERLAY) -->
             <div class="popup-countdown" id="popupCountdown">
@@ -297,7 +297,7 @@
                 </div>
                 <div class="col-md-3 mb-4 mb-md-0">
                     <h5 class="text-white fw-bold footer-brand d-flex align-items-center gap-2">
-                        <img src="{{ asset('images/barsilya.jpeg') }}" alt="Barsilya"
+                        <img src="/images/barsilya.jpeg" alt="Barsilya"
                             style="width: 34px; height: 34px; border-radius: 8px; object-fit: cover; background: #fff; padding: 3px;">
                         <span>Lentera</span>
                     </h5>
@@ -435,7 +435,7 @@
     <!-- ============ SCRIPTS ============ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
-    <script src="{{ asset('js/landing/script.js') }}"></script>
+    <script src="/js/landing/script.js"></script>
 </body>
 
 </html>

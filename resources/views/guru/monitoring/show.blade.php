@@ -113,7 +113,7 @@
                     <p class="text-gray-600 dark:text-gray-400 mt-2">{{ $jurnal->aktivitas }}</p>
                     @if($jurnal->dokumentasi)
                         <div class="mt-2">
-                            <a href="{{ asset('storage/' . $jurnal->dokumentasi) }}" target="_blank" 
+                            <a href="/storage/{{ $jurnal->dokumentasi }}" target="_blank" 
                                class="text-blue-500 hover:text-blue-700 text-sm">
                                 <i class="fas fa-image mr-1"></i> Lihat Dokumentasi
                             </a>
