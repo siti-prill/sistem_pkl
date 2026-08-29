@@ -143,6 +143,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/jurnal', [LaporanController::class, 'jurnal'])->name('jurnal');
         Route::get('/nilai', [LaporanController::class, 'nilai'])->name('nilai');
         Route::get('/pkl', [LaporanController::class, 'pkl'])->name('pkl');
+        Route::get('/pkl/{penempatan_id}/excel', [LaporanController::class, 'pklExport'])->name('pkl.excel');
         Route::get('/pkl/{penempatan_id}', [LaporanController::class, 'pklShow'])->name('pkl.show');
         Route::get('/jurnal/pdf', [LaporanController::class, 'jurnalPdf'])->name('jurnal.pdf');
         Route::get('/nilai/pdf', [LaporanController::class, 'nilaiPdf'])->name('nilai.pdf');

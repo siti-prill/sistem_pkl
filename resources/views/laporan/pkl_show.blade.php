@@ -14,9 +14,14 @@
             </h2>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Penilaian oleh Industri (Pembimbing Lapangan)</p>
         </div>
-        <a href="{{ route('laporan.nilai.cetak', $penempatan->id) }}" target="_blank" class="btn-danger">
-            <i class="fas fa-file-pdf mr-2"></i> Cetak PDF
-        </a>
+        <div class="flex gap-2 shrink-0">
+            <a href="{{ route('laporan.nilai.cetak', $penempatan->id) }}" target="_blank" class="btn-danger">
+                <i class="fas fa-file-pdf mr-2"></i> Cetak PDF
+            </a>
+            <a href="{{ route('laporan.pkl.excel', $penempatan->id) }}" class="btn-success">
+                <i class="fas fa-file-excel mr-2"></i> Export Excel
+            </a>
+        </div>
     </div>
 
     <!-- Header Info Siswa -->

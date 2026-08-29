@@ -159,6 +159,96 @@ class LaporanController extends Controller
         return view('laporan.pkl', compact('penempatans'));
     }
 
+    public function pklExport($penempatan_id)
+    {
+        $user = auth()->user();
+
+        $penempatan = PenempatanPkl::with(['siswa', 'industri', 'guru', 'kompetensi', 'monitoringNilai'])
+            ->findOrFail($penempatan_id);
+
+        if ($user->role == 'siswa') {
+            if (!$user->siswa || $penempatan->siswa_id != $user->siswa->id) {
+                abort(403);
+            }
+        } elseif ($user->role == 'guru') {
+            if (!$user->guru || $penempatan->guru_id != $user->guru->id) {
+                abort(403);
+            }
+        } else {
+            abort(403);
+        }
+
+        $siswaJurusan = $penempatan->siswa->jurusan ?? null;
+
+        $templates = \App\Models\TemplatePenilaian::active()
+            ->forJurusan($siswaJurusan)
+            ->orderBy('kategori')
+            ->orderBy('urutan')
+            ->get();
+
+        $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
+        $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
+
+        $nilais = $penempatan->monitoringNilai
+            ->where('role_penilai', 'industri')
+            ->keyBy('aspek_penilaian');
+
+        $headers = ['No', 'Komponen', 'Angka', 'Huruf'];
+        $rows = [];
+
+        $rows[] = ['DAFTAR NILAI PRAKTIK KERJA LAPANGAN', '', '', ''];
+        $rows[] = ['', '', '', ''];
+        $rows[] = ['Nama', ': ' . $penempatan->siswa->nama_siswa, '', ''];
+        $rows[] = ['NIS', ': ' . $penempatan->siswa->nis, '', ''];
+        $rows[] = ['Kompetensi Keahlian', ': ' . ($penempatan->kompetensi->nama_kompetensi ?? '-'), '', ''];
+        $rows[] = ['Program Keahlian', ': ' . ($penempatan->siswa->jurusan ?? '-'), '', ''];
+        $rows[] = ['Tempat PKL', ': ' . ($penempatan->industri->nama_perusahaan ?? '-'), '', ''];
+        $rows[] = ['Guru Pembimbing', ': ' . ($penempatan->guru->nama_guru ?? '-'), '', ''];
+        $rows[] = ['', '', '', ''];
+
+        $rows[] = ['A. ASPEK KEJURUAN', '', '', ''];
+        $no = 1;
+        $allKejuruanNilai = [];
+        foreach ($kejuruanRoot as $komponen) {
+            $rows[] = [$no++, $komponen->nama_aspek, '', ''];
+            foreach ($komponen->children->where('is_active', true) as $child) {
+                $existing = $nilais->get($child->nama_aspek);
+                if ($existing) {
+                    $allKejuruanNilai[] = $existing->nilai;
+                }
+                $rows[] = ['', $child->nama_aspek,
+                    $existing ? $existing->nilai : '',
+                    $existing ? \App\Models\TemplatePenilaian::nilaiToHuruf($existing->nilai) : ''];
+            }
+        }
+        $rows[] = ['', 'Jumlah', count($allKejuruanNilai) > 0 ? array_sum($allKejuruanNilai) : '', ''];
+        $rows[] = ['', 'Rata-rata',
+            count($allKejuruanNilai) > 0 ? round(array_sum($allKejuruanNilai) / count($allKejuruanNilai), 1) : '',
+            count($allKejuruanNilai) > 0 ? \App\Models\TemplatePenilaian::nilaiToHuruf((int) (array_sum($allKejuruanNilai) / count($allKejuruanNilai))) : ''];
+        $rows[] = ['', '', '', ''];
+
+        $rows[] = ['B. ASPEK SIKAP', '', '', ''];
+        $no = 1;
+        $allSikapNilai = [];
+        foreach ($sikapItems as $item) {
+            $existing = $nilais->get($item->nama_aspek);
+            if ($existing) {
+                $allSikapNilai[] = $existing->nilai;
+            }
+            $rows[] = [$no++, $item->nama_aspek,
+                $existing ? $existing->nilai : '',
+                $existing ? \App\Models\TemplatePenilaian::nilaiToHuruf($existing->nilai) : ''];
+        }
+        $rows[] = ['', 'Jumlah', count($allSikapNilai) > 0 ? array_sum($allSikapNilai) : '', ''];
+        $rows[] = ['', 'Rata-rata',
+            count($allSikapNilai) > 0 ? round(array_sum($allSikapNilai) / count($allSikapNilai), 1) : '',
+            count($allSikapNilai) > 0 ? \App\Models\TemplatePenilaian::nilaiToHuruf((int) (array_sum($allSikapNilai) / count($allSikapNilai))) : ''];
+
+        $filename = 'laporan-pkl-' . ($penempatan->siswa->nis ?? 'siswa') . '-' . now()->format('Y-m-d') . '.xlsx';
+
+        return \App\Support\SimpleXlsx::download($filename, $headers, $rows);
+    }
+
     public function pklShow($penempatan_id)
     {
         $user = auth()->user();
