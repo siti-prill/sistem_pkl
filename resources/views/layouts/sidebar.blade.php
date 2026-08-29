@@ -185,6 +185,14 @@
                         <span>Laporan Nilai</span>
                     </a>
                 </div>
+
+                <div class="nav-item">
+                    <a href="{{ route('laporan.pkl') }}"
+                        class="nav-link {{ request()->routeIs('laporan.pkl*') ? 'active' : '' }}">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Laporan PKL</span>
+                    </a>
+                </div>
             @endif
 
             {{-- ========== BAGIAN AKUN (untuk semua kecuali siswa mode pengajuan) ========== --}}

@@ -119,6 +119,84 @@ class LaporanController extends Controller
         return view('laporan.nilai', compact('nilais', 'siswas'));
     }
 
+    public function pkl(Request $request)
+    {
+        $user = auth()->user();
+
+        $query = PenempatanPkl::with(['siswa', 'industri', 'guru', 'monitoringNilai'])
+            ->withCount(['monitoringNilai as jumlah_nilai_industri' => function ($q) {
+                $q->where('role_penilai', 'industri');
+            }]);
+
+        if ($user->role == 'siswa') {
+            if (!$user->siswa) {
+                return redirect()->back()->with('error', 'Data siswa tidak ditemukan.');
+            }
+            $query->where('siswa_id', $user->siswa->id);
+        } elseif ($user->role == 'guru') {
+            if (!$user->guru) {
+                return redirect()->back()->with('error', 'Data guru tidak ditemukan.');
+            }
+            $query->where('guru_id', $user->guru->id);
+        } else {
+            abort(403);
+        }
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->whereHas('siswa', function ($q) use ($search) {
+                $q->where('nama_siswa', 'like', "%{$search}%")
+                    ->orWhere('nis', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        $penempatans = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        return view('laporan.pkl', compact('penempatans'));
+    }
+
+    public function pklShow($penempatan_id)
+    {
+        $user = auth()->user();
+
+        $penempatan = PenempatanPkl::with(['siswa', 'industri', 'guru', 'kompetensi'])
+            ->findOrFail($penempatan_id);
+
+        if ($user->role == 'siswa') {
+            if (!$user->siswa || $penempatan->siswa_id != $user->siswa->id) {
+                abort(403);
+            }
+        } elseif ($user->role == 'guru') {
+            if (!$user->guru || $penempatan->guru_id != $user->guru->id) {
+                abort(403);
+            }
+        } else {
+            abort(403);
+        }
+
+        $siswaJurusan = $penempatan->siswa->jurusan ?? null;
+
+        $templates = \App\Models\TemplatePenilaian::active()
+            ->forJurusan($siswaJurusan)
+            ->orderBy('kategori')
+            ->orderBy('urutan')
+            ->get();
+
+        $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
+        $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
+
+        $nilais = MonitoringNilai::where('penempatan_id', $penempatan->id)
+            ->where('role_penilai', 'industri')
+            ->get()
+            ->keyBy('aspek_penilaian');
+
+        return view('laporan.pkl_show', compact('penempatan', 'nilais', 'templates', 'kejuruanRoot', 'sikapItems'));
+    }
+
     public function jurnalPdf(Request $request)
     {
         $user = auth()->user();
