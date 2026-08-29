@@ -104,7 +104,34 @@
                     </div>
                 </div>
                 <div class="col-lg-6 hero-image text-center">
-                    <img src="https://placehold.co/550x400/4f46e5/white?text=Sistem+PKL" alt="Sistem PKL">
+                    <div class="hero-text-box"
+                        style="
+                                background: #4f46e5;
+                                border-radius: 12px;
+                                padding: 60px 30px;
+                                min-height: 400px;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                                color: white;
+                                width: 100%; ">
+                            <h1 style="
+                                font-size: 72px;
+                                font-weight: 700;
+                                letter-spacing: 4px;
+                                margin: 0;
+                                line-height: 1.1; "> LENTERA</h1>
+                        <p style="
+                                font-size: 18px;
+                                font-weight: 300;
+                                margin-top: 16px;
+                                max-width: 80%;
+                                letter-spacing: 0.5px;
+                                line-height: 1.6;
+                                opacity: 0.95; ">
+                            Layanan Ekosistem Navigasi Terpadu dan Evaluasi Relasi Aktivitas PKL</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -270,11 +297,16 @@
                 </div>
                 <div class="col-md-3 mb-4 mb-md-0">
                     <h5 class="text-white fw-bold footer-brand d-flex align-items-center gap-2">
-                        <img src="{{ asset('images/barsilya.jpeg') }}" alt="Barsilya" style="width: 34px; height: 34px; border-radius: 8px; object-fit: cover; background: #fff; padding: 3px;">
-                        <span>Barsilya</span>
+                        <img src="{{ asset('images/barsilya.jpeg') }}" alt="Barsilya"
+                            style="width: 34px; height: 34px; border-radius: 8px; object-fit: cover; background: #fff; padding: 3px;">
+                        <span>Lentera</span>
                     </h5>
-                    <p class="mb-1"><a href="https://github.com/gitdusk-dev" target="_blank" style="color: rgba(255,255,255,0.6); text-decoration: none;"><i class="fab fa-github me-2"></i>gitdusk-dev</a></p>
-                    <p class="mb-0"><a href="mailto:rasyaprilyy@gmail.com" style="color: rgba(255,255,255,0.6); text-decoration: none;"><i class="fas fa-envelope me-2"></i>rasyaprilyy@gmail.com</a></p>
+                    <p class="mb-1"><a href="https://github.com/gitdusk-dev" target="_blank"
+                            style="color: rgba(255,255,255,0.6); text-decoration: none;"><i
+                                class="fab fa-github me-2"></i>gitdusk-dev</a></p>
+                    <p class="mb-0"><a href="mailto:rasyaprilyy@gmail.com"
+                            style="color: rgba(255,255,255,0.6); text-decoration: none;"><i
+                                class="fas fa-envelope me-2"></i>rasyaprilyy@gmail.com</a></p>
                 </div>
             </div>
             <div class="footer-bottom text-center">
@@ -405,4 +437,5 @@
     <!-- Custom JS -->
     <script src="{{ asset('js/landing/script.js') }}"></script>
 </body>
+
 </html>

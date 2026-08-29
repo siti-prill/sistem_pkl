@@ -73,6 +73,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/template-penilaian/add-item', [\App\Http\Controllers\Admin\TemplatePenilaianController::class, 'addItem'])->name('template-penilaian.add-item');
         Route::post('/template-penilaian/store-table', [\App\Http\Controllers\Admin\TemplatePenilaianController::class, 'storeTable'])->name('template-penilaian.store-table');
         Route::delete('/template-penilaian/destroy-table', [\App\Http\Controllers\Admin\TemplatePenilaianController::class, 'destroyTable'])->name('template-penilaian.destroy-table');
+        Route::post('/template-penilaian/{templatePenilaian}/update-inline', [App\Http\Controllers\Admin\TemplatePenilaianController::class, 'updateInline'])->name('admin.template-penilaian.update-inline');
 
         // Route Pengajuan untuk Admin
         Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('pengajuan.index');

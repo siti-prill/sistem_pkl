@@ -1,8 +1,10 @@
 <nav class="sidebar">
     <div class="sidebar-brand" style="flex-direction: column; align-items: center; text-align: center;">
         <div style="display: flex; gap: 12px; align-items: center;">
-            <img src="{{ logo_url() }}" alt="Logo SMK 2" class="sidebar-logo" style="width: 50px; height: 50px; object-fit: contain;">
-            <img src="{{ asset('images/barsilya.jpeg') }}" alt="Barsilya" class="sidebar-logo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+            <img src="{{ logo_url() }}" alt="Logo SMK 2" class="sidebar-logo"
+                style="width: 50px; height: 50px; object-fit: contain;">
+            <img src="{{ asset('images/barsilya.jpeg') }}" alt="Barsilya" class="sidebar-logo"
+                style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
         </div>
         <div style="margin-top: 10px;">
             <h3 style="margin-bottom: 2px;">Sistem PKL</h3>
@@ -163,7 +165,9 @@
                 </div>
             @endif
 
-            @unless (auth()->user()->role == 'siswa' && session('login_mode') === 'pengajuan')
+            {{-- ========== BAGIAN LAPORAN (hanya untuk Guru dan Siswa non-pengajuan) ========== --}}
+            @if (in_array(auth()->user()->role, ['guru', 'siswa']) &&
+                    !(auth()->user()->role == 'siswa' && session('login_mode') === 'pengajuan'))
                 <div class="menu-label">Laporan</div>
 
                 <div class="nav-item">
@@ -181,7 +185,10 @@
                         <span>Laporan Nilai</span>
                     </a>
                 </div>
+            @endif
 
+            {{-- ========== BAGIAN AKUN (untuk semua kecuali siswa mode pengajuan) ========== --}}
+            @if (!(auth()->user()->role == 'siswa' && session('login_mode') === 'pengajuan'))
                 <div class="menu-label" style="margin-top:20px;">Akun</div>
 
                 <div class="nav-item">
@@ -202,7 +209,8 @@
                         @csrf
                     </form>
                 </div>
-            @endunless
+            @endif
+
         @endauth
     </div>
 </nav>

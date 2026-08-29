@@ -10,28 +10,45 @@ class TemplatePenilaianController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TemplatePenilaian::with('children');
-
         $jurusan = $request->get('jurusan');
-        if ($jurusan && $jurusan !== 'umum') {
-            $query->where('jurusan', $jurusan);
-        } elseif ($jurusan === 'umum') {
-            $query->where(function ($q) {
-                $q->whereNull('jurusan')->orWhere('jurusan', '');
-            });
+
+        if (!$jurusan) {
+            // Halaman pilih jurusan: ambil semua data untuk keperluan hitungan
+            $templates = TemplatePenilaian::with('children')->get();
+        } else {
+            // Jika jurusan dipilih, ambil data jurusan tersebut + data umum (null)
+            $query = TemplatePenilaian::with('children');
+
+            if ($jurusan === 'umum') {
+                // (Opsional) Jika tetap ingin akses halaman umum, ambil hanya null
+                $query->whereNull('jurusan');
+            } else {
+                $query->where(function ($q) use ($jurusan) {
+                    $q->where('jurusan', $jurusan)->orWhereNull('jurusan');
+                });
+            }
+
+            $templates = $query->orderBy('kategori')->orderBy('urutan')->get();
         }
 
-        $templates = $query->orderBy('kategori')->orderBy('urutan')->get();
-
+        // Filter untuk tampilan
         $kejuruanRoot = $templates->where('kategori', 'kejuruan')->whereNull('parent_id')->sortBy('urutan');
         $sikapItems = $templates->where('kategori', 'sikap')->sortBy('urutan');
 
         $totalAspek = $templates->count();
         $aspekAktif = $templates->where('is_active', true)->count();
 
-        $jurusanList = TemplatePenilaian::JURUSAN_TEMPLATE_LIST;
+        $jurusanList = TemplatePenilaian::JURUSAN_TEMPLATE_LIST; // ['RPL','TKJ','DKV','PSPT']
 
-        return view('admin.template-penilaian.index', compact('templates', 'kejuruanRoot', 'sikapItems', 'totalAspek', 'aspekAktif', 'jurusanList', 'jurusan'));
+        return view('admin.template-penilaian.index', compact(
+            'templates',
+            'kejuruanRoot',
+            'sikapItems',
+            'totalAspek',
+            'aspekAktif',
+            'jurusanList',
+            'jurusan'
+        ));
     }
 
     public function create()
@@ -64,10 +81,19 @@ class TemplatePenilaianController extends Controller
         ]);
 
         $data = $request->only([
-            'nama_aspek', 'kategori', 'jurusan', 'parent_id', 'tipe',
-            'deskripsi', 'instruksi',
-            'rentang_nilai_min', 'rentang_nilai_max', 'urutan'
+            'nama_aspek',
+            'kategori',
+            'jurusan',
+            'parent_id',
+            'tipe',
+            'deskripsi',
+            'instruksi',
+            'rentang_nilai_min',
+            'rentang_nilai_max',
+            'urutan'
         ]);
+        // Ubah 'umum' menjadi null
+        $data['jurusan'] = $request->jurusan == 'umum' ? null : $request->jurusan;
         $data['is_active'] = $request->boolean('is_active', true);
 
         if ($data['tipe'] === 'komponen') {
@@ -95,37 +121,22 @@ class TemplatePenilaianController extends Controller
         return view('admin.template-penilaian.edit', ['template' => $templatePenilaian, 'komponens' => $komponens, 'jurusanList' => $jurusanList]);
     }
 
-    public function update(Request $request, TemplatePenilaian $templatePenilaian)
+    public function update(Request $request,int $id)
     {
+        // validasi
         $request->validate([
-            'nama_aspek' => 'required|string|max:100',
-            'kategori' => 'required|in:kejuruan,sikap',
-            'jurusan' => 'nullable|string|max:100',
-            'tipe' => 'required|in:komponen,item',
-            'parent_id' => 'nullable|exists:template_penilaian,id',
-            'deskripsi' => 'nullable|string',
-            'instruksi' => 'nullable|string',
-            'rentang_nilai_min' => 'required|integer|min:0|max:100',
-            'rentang_nilai_max' => 'required|integer|min:0|max:100|gte:rentang_nilai_min',
-            'urutan' => 'required|integer|min:0',
-            'is_active' => 'boolean',
+            'nama_aspek' => 'required|string|max:255',
         ]);
 
-        $data = $request->only([
-            'nama_aspek', 'kategori', 'jurusan', 'parent_id', 'tipe',
-            'deskripsi', 'instruksi',
-            'rentang_nilai_min', 'rentang_nilai_max', 'urutan'
+        $item = TemplatePenilaian::findOrFail($id);
+        $item->nama_aspek = $request->nama_aspek;
+        $item->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil diperbarui!',
+            'data' => $item
         ]);
-        $data['is_active'] = $request->boolean('is_active', true);
-
-        if ($data['tipe'] === 'komponen') {
-            $data['parent_id'] = null;
-        }
-
-        $templatePenilaian->update($data);
-
-        return redirect()->route('admin.template-penilaian.index', $data['jurusan'] ? ['jurusan' => $data['jurusan']] : [])
-            ->with('success', 'Template penilaian berhasil diupdate.');
     }
 
     public function destroy(TemplatePenilaian $templatePenilaian)
@@ -133,7 +144,7 @@ class TemplatePenilaianController extends Controller
         $jurusan = $templatePenilaian->jurusan;
         $templatePenilaian->children()->update(['parent_id' => null]);
         $templatePenilaian->delete();
-        return redirect()->route('admin.template-penilaian.index', $jurusan ? ['jurusan' => $jurusan] : [])
+        return redirect()->route('admin.template-penilaian.index', !is_null($jurusan) ? ['jurusan' => $jurusan] : [])
             ->with('success', 'Template penilaian berhasil dihapus.');
     }
 
@@ -141,7 +152,7 @@ class TemplatePenilaianController extends Controller
     {
         $jurusan = $templatePenilaian->jurusan;
         $templatePenilaian->update(['is_active' => !$templatePenilaian->is_active]);
-        return redirect()->route('admin.template-penilaian.index', $jurusan ? ['jurusan' => $jurusan] : []);
+        return redirect()->route('admin.template-penilaian.index', !is_null($jurusan) ? ['jurusan' => $jurusan] : []);
     }
 
     public function updateInline(Request $request, TemplatePenilaian $templatePenilaian)
@@ -169,7 +180,7 @@ class TemplatePenilaianController extends Controller
         $item = TemplatePenilaian::create([
             'nama_aspek' => $request->nama_aspek,
             'kategori' => $parent->kategori,
-            'jurusan' => $parent->jurusan,
+            'jurusan' => $parent->jurusan, // warisi jurusan dari parent (bisa null)
             'parent_id' => $parent->id,
             'tipe' => 'item',
             'rentang_nilai_min' => 0,
@@ -189,14 +200,17 @@ class TemplatePenilaianController extends Controller
             'nama_aspek' => 'required|string|max:100',
         ]);
 
+        // Ubah 'umum' menjadi null
+        $jurusan = $request->jurusan == 'umum' ? null : $request->jurusan;
+
         $lastUrutan = TemplatePenilaian::where('kategori', $request->kategori)
-            ->where('jurusan', $request->jurusan)
+            ->where('jurusan', $jurusan)
             ->whereNull('parent_id')->max('urutan') ?? 0;
 
         $item = TemplatePenilaian::create([
             'nama_aspek' => $request->nama_aspek,
             'kategori' => $request->kategori,
-            'jurusan' => $request->jurusan,
+            'jurusan' => $jurusan,
             'parent_id' => null,
             'tipe' => 'item',
             'rentang_nilai_min' => 0,
@@ -216,12 +230,14 @@ class TemplatePenilaianController extends Controller
             'jurusan' => 'nullable|string|max:100',
         ]);
 
-        $lastUrutan = TemplatePenilaian::where('jurusan', $request->jurusan)->max('urutan') ?? 0;
+        $jurusan = $request->jurusan == 'umum' ? null : $request->jurusan;
+
+        $lastUrutan = TemplatePenilaian::where('jurusan', $jurusan)->max('urutan') ?? 0;
 
         TemplatePenilaian::create([
             'nama_aspek' => $request->nama_tabel,
             'kategori' => $request->kategori,
-            'jurusan' => $request->jurusan,
+            'jurusan' => $jurusan,
             'parent_id' => null,
             'tipe' => 'komponen',
             'deskripsi' => null,
@@ -232,7 +248,7 @@ class TemplatePenilaianController extends Controller
             'is_active' => true,
         ]);
 
-        return redirect()->route('admin.template-penilaian.index', $request->jurusan ? ['jurusan' => $request->jurusan] : [])
+        return redirect()->route('admin.template-penilaian.index', !is_null($jurusan) ? ['jurusan' => $jurusan] : [])
             ->with('success', 'Tabel baru berhasil ditambahkan.');
     }
 
@@ -248,7 +264,7 @@ class TemplatePenilaianController extends Controller
         $tabel->children()->delete();
         $tabel->delete();
 
-        return redirect()->route('admin.template-penilaian.index', $jurusan ? ['jurusan' => $jurusan] : [])
+        return redirect()->route('admin.template-penilaian.index', !is_null($jurusan) ? ['jurusan' => $jurusan] : [])
             ->with('success', 'Tabel berhasil dihapus.');
     }
 }
