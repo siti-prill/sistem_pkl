@@ -171,59 +171,35 @@ featureModal.addEventListener('show.bs.modal', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     const popup = document.getElementById('popupIklan');
     const closeBtn = document.getElementById('popupClose');
-    const countdownEl = document.getElementById('countdownNumber');
 
     // Kalo elemen ga ada, stop
-    if (!popup || !closeBtn || !countdownEl) {
+    if (!popup || !closeBtn) {
         console.error('Elemen popup ga lengkap!');
         return;
     }
 
     if (sessionStorage.getItem('popupIklanShown') === 'true') { return; }
 
-    let countdown = 5;
-    let timer = null;
-
     // Tampilkan popup FULL LAYAR setelah 1 detik
     setTimeout(function() {
         popup.classList.add('show');
-
         sessionStorage.setItem('popupIklanShown', 'true');
 
-        startCountdown();
+        // LANGSUNG aktifkan tombol close (tanpa hitungan)
+        closeBtn.classList.add('enabled');
+        console.log('✅ Tombol close langsung aktif!');
     }, 1000);
 
-    function startCountdown() {
-        timer = setInterval(function() {
-            countdown--;
-            countdownEl.textContent = countdown;
-
-            if (countdown <= 0) {
-                clearInterval(timer);
-                timer = null;
-                countdownEl.textContent = '0';
-
-                // AKTIFIN TOMBOL CLOSE
-                closeBtn.classList.add('enabled');
-                console.log('✅ Tombol close aktif!');
-            }
-        }, 1000);
-    }
-
-    // EVENT CLOSE (kalo udah enabled)
+    // EVENT CLOSE
     closeBtn.addEventListener('click', function() {
         if (this.classList.contains('enabled')) {
             popup.classList.remove('show');
             console.log('❌ Popup ditutup');
-        } else {
-            console.log('⏳ Tunggu 5 detik dulu!');
         }
     });
 
-    // Klik di luar gambar (background) - TAPI karena full layar, ga bisa
-    // Tapi kalo mau bisa tambahin:
+    // Klik di luar gambar (background)
     popup.addEventListener('click', function(e) {
-        // Kalo yang diklik adalah overlay-nya (bukan gambar)
         if (e.target === this && closeBtn.classList.contains('enabled')) {
             popup.classList.remove('show');
             console.log('❌ Popup ditutup (klik background)');

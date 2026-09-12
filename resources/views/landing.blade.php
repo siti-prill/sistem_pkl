@@ -27,11 +27,6 @@
             <!-- GAMBAR FULL -->
             <img src="/images/kepala-sekolah.jpeg" alt="Kepala SMKN 2 Padang" id="popupImage">
 
-            <!-- COUNTDOWN DI BAWAH (OVERLAY) -->
-            <div class="popup-countdown" id="popupCountdown">
-                <i class="fas fa-clock me-2"></i>
-                Tunggu <strong id="countdownNumber">5</strong> detik
-            </div>
         </div>
     </div>
 
