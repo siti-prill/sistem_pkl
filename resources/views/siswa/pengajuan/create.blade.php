@@ -32,15 +32,17 @@
                             <input type="text" class="form-control" value="{{ $siswa->jurusan }}" disabled>
                         </div>
 
-                        <!-- Jurusan -->
-                        {{-- <div class="col-md-12 mb-3">
-                            <label class="form-label">Jurusan <span class="text-danger">*</span></label>
-                            <input type="text" name="jurusan" class="form-control @error('jurusan') is-invalid @enderror"
-                                value="{{ old('jurusan', $siswa->jurusan) }}" readonly disabled>
-                            @error('jurusan')
+                        <!-- No Telepon -->
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">No Telepon / WhatsApp <span class="text-danger">*</span></label>
+                            <input type="text" name="no_telepon"
+                                class="form-control @error('no_telepon') is-invalid @enderror"
+                                value="{{ old('no_telepon', $siswa->no_telepon) }}" placeholder="Contoh: 08123456789">
+                            <small class="text-muted">Nomor HP aktif yang bisa dihubungi</small>
+                            @error('no_telepon')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div> --}}
+                        </div>
 
                         <!-- Pilihan Tempat PKL 1 -->
                         <div class="col-md-12 mb-3">
@@ -49,14 +51,9 @@
                                 class="form-select @error('pilihan_1') is-invalid @enderror" onchange="toggleLainnya(1)">
                                 <option value="">Pilih Tempat</option>
                                 <option value="Padang" {{ old('pilihan_1') == 'Padang' ? 'selected' : '' }}>Padang</option>
-                                <option value="Bandung" {{ old('pilihan_1') == 'Bandung' ? 'selected' : '' }}>Bandung
+                                <option value="Padang Panjang" {{ old('pilihan_1') == 'Padang Panjang' ? 'selected' : '' }}>Padang Panjang
                                 </option>
-                                <option value="Yogyakarta" {{ old('pilihan_1') == 'Yogyakarta' ? 'selected' : '' }}>
-                                    Yogyakarta</option>
-                                <option value="Pekanbaru" {{ old('pilihan_1') == 'Pekanbaru' ? 'selected' : '' }}>Pekanbaru
-                                </option>
-                                <option value="Batam" {{ old('pilihan_1') == 'Batam' ? 'selected' : '' }}>Batam</option>
-                                <option value="Jakarta" {{ old('pilihan_1') == 'Jakarta' ? 'selected' : '' }}>Jakarta
+                                <option value="Bukittinggi" {{ old('pilihan_1') == 'Bukittinggi' ? 'selected' : '' }}>Bukittinggi
                                 </option>
                                 <option value="Lainnya" {{ old('pilihan_1') == 'Lainnya' ? 'selected' : '' }}>Lainnya
                                     (tulis sendiri)</option>
@@ -71,7 +68,7 @@
                         </div>
 
                         <!-- Industri Pilihan 1 -->
-                        <div class="col-md-12 mb-3 d-none industri-box" id="industri_1_wrapper">
+                        {{-- <div class="col-md-12 mb-3 d-none industri-box" id="industri_1_wrapper">
                             <label class="form-label">Industri Pilihan 1</label>
 
                             <select name="industri_1" id="industri_1_select"
@@ -88,7 +85,7 @@
                             @error('industri_1')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <!-- Pilihan Tempat PKL 2 -->
                         <div class="col-md-12 mb-3">
@@ -97,15 +94,10 @@
                                 class="form-select @error('pilihan_2') is-invalid @enderror" onchange="toggleLainnya(2)">
                                 <option value="">Pilih Tempat</option>
                                 <option value="Padang" {{ old('pilihan_2') == 'Padang' ? 'selected' : '' }}>Padang</option>
-                                <option value="Bandung" {{ old('pilihan_2') == 'Bandung' ? 'selected' : '' }}>Bandung
+                                <option value="Padang Panjang" {{ old('pilihan_2') == 'Padang Panjang' ? 'selected' : '' }}>Padang panjang
                                 </option>
-                                <option value="Yogyakarta" {{ old('pilihan_2') == 'Yogyakarta' ? 'selected' : '' }}>
-                                    Yogyakarta</option>
-                                <option value="Pekanbaru" {{ old('pilihan_2') == 'Pekanbaru' ? 'selected' : '' }}>Pekanbaru
-                                </option>
-                                <option value="Batam" {{ old('pilihan_2') == 'Batam' ? 'selected' : '' }}>Batam</option>
-                                <option value="Jakarta" {{ old('pilihan_2') == 'Jakarta' ? 'selected' : '' }}>Jakarta
-                                </option>
+                                <option value="Bukittinggi" {{ old('pilihan_2') == 'Bukittinggi' ? 'selected' : '' }}>
+                                    Bukittinggi</option>
                                 <option value="Lainnya" {{ old('pilihan_2') == 'Lainnya' ? 'selected' : '' }}>Lainnya
                                     (tulis sendiri)</option>
                             </select>
@@ -119,7 +111,7 @@
                         </div>
 
                         <!-- Industri Pilihan 2 -->
-                        <div class="col-md-12 mb-3 d-none industri-box" id="industri_2_wrapper">
+                        {{-- <div class="col-md-12 mb-3 d-none industri-box" id="industri_2_wrapper">
                             <label class="form-label">Industri Pilihan 2</label>
 
                             <select name="industri_2" id="industri_2_select"
@@ -136,7 +128,7 @@
                             @error('industri_2')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <!-- Pekerjaan Orang Tua -->
                         <div class="col-md-12 mb-3">

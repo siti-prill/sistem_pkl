@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PengajuanPkl;
+use App\Models\Industri;
+use App\Models\Guru;
+use App\Models\Kompetensi;
 use Illuminate\Http\Request;
 
 class PengajuanController extends Controller
@@ -14,34 +17,28 @@ class PengajuanController extends Controller
         return view('admin.pengajuan.index', compact('pengajuans'));
     }
 
-    public function show(int $id)
+    public function show($id)
     {
-        $pengajuan = PengajuanPkl::with(['siswa', 'penempatan.industri', 'penempatan.guru', 'penempatan.kompetensi'])->findOrFail($id);
+        $pengajuan = PengajuanPkl::with('siswa', 'penempatan')->findOrFail($id);
 
-        // Ambil semua data untuk dropdown
-        $industris = \App\Models\Industri::with('penempatan')->get();
+        // Ambil kategori jurusan siswa
+        $kategori = $pengajuan->siswa->kategori_jurusan;
+
+        // Filter industri berdasarkan kategori jurusan siswa
+        $industris = \App\Models\Industri::where('status', 'aktif')
+            ->where(function ($q) use ($kategori) {
+                $q->where('kategori', $kategori)
+                    ->orWhere('kategori', 'Semua');
+            })
+            ->with(['penempatan' => function ($q) {
+                $q->where('status', 'aktif');
+            }])
+            ->get();
+
         $gurus = \App\Models\Guru::all();
         $kompetensis = \App\Models\Kompetensi::all();
 
-        // Cari industri_id dari tempat_diterima (case-insensitive, trim, partial match)
-        $industriTerpilih = null;
-        if ($pengajuan->tempat_diterima) {
-            $tempatTrimmed = trim($pengajuan->tempat_diterima);
-            $tempatLower = strtolower($tempatTrimmed);
-
-            // 1. Exact match (case-insensitive + trim)
-            $industriTerpilih = \App\Models\Industri::whereRaw('LOWER(TRIM(nama_perusahaan)) = ?', [$tempatLower])->first();
-
-            // 2. Partial match: nama_perusahaan contains tempat_diterima or vice versa
-            if (!$industriTerpilih) {
-                $industriTerpilih = \App\Models\Industri::whereRaw('LOWER(nama_perusahaan) LIKE ?', ['%' . $tempatLower . '%'])
-                    ->orWhereRaw('LOWER(nama_perusahaan) LIKE ?', [$tempatLower . '%'])
-                    ->orWhereRaw('? LIKE CONCAT("%", LOWER(nama_perusahaan), "%")', [$tempatLower])
-                    ->first();
-            }
-        }
-
-        return view('admin.pengajuan.show', compact('pengajuan', 'industris', 'gurus', 'kompetensis', 'industriTerpilih'));
+        return view('admin.pengajuan.show', compact('pengajuan', 'industris', 'gurus', 'kompetensis'));
     }
 
     public function update(Request $request, int $id)

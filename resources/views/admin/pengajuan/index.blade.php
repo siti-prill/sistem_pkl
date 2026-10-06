@@ -22,6 +22,7 @@
                                 <th>No</th>
                                 <th>NIS</th>
                                 <th>Nama Siswa</th>
+                                <th>No Telepon</th>
                                 <th>Pilihan 1</th>
                                 <th>Pilihan 2</th>
                                 <th>Status Pengajuan</th>
@@ -36,6 +37,7 @@
                                     <td>{{ $pengajuans->firstItem() + $index }}</td>
                                     <td>{{ $p->siswa->nis }}</td>
                                     <td>{{ $p->siswa->nama_siswa }}</td>
+                                    <td>{{ $p->siswa->no_telepon ?? '-' }}</td>
                                     <td>{{ $p->pilihan_1 }}{{ $p->industri_1 ? ' - ' . $p->industri_1 : '' }}</td>
                                     <td>{{ $p->pilihan_2 }}{{ $p->industri_2 ? ' - ' . $p->industri_2 : '' }}</td>
                                     <td>

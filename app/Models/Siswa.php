@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Siswa extends Model
 {
+    public const KATEGORI_JURUSAN = [
+        'XII RPL'     => 'RPL',
+        'XII TKJ 1'   => 'TKJ',
+        'XII TKJ 2'   => 'TKJ',
+        'XII DKV 1'   => 'DKV',
+        'XII DKV 2'   => 'DKV',
+        'XII PSPT'    => 'PSPT',
+    ];
+
+    public function getKategoriJurusanAttribute()
+    {
+        return self::KATEGORI_JURUSAN[$this->jurusan] ?? $this->jurusan;
+    }
     use HasFactory;
 
     protected $table = 'siswas';

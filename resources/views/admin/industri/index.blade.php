@@ -22,8 +22,8 @@
                 <div class="flex-1">
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari kode, nama, atau bidang..."
-                            class="form-input pl-10">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Cari kode, nama, atau bidang..." class="form-input pl-10">
                     </div>
                 </div>
                 <div class="flex-1">
@@ -41,7 +41,8 @@
                     <select name="status" class="form-input w-full">
                         <option value="">Semua Status</option>
                         <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                        <option value="tidak_aktif" {{ request('status') == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                        <option value="tidak_aktif" {{ request('status') == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif
+                        </option>
                     </select>
                 </div>
                 <button type="submit" class="btn-primary whitespace-nowrap">
@@ -57,7 +58,8 @@
 
         @forelse($grupIndustri as $grupJurusan => $grup)
             <div class="mb-6">
-                <div class="flex items-center justify-between bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-xl px-5 py-3">
+                <div
+                    class="flex items-center justify-between bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-xl px-5 py-3">
                     <h3 class="text-white font-bold flex items-center gap-2 text-base">
                         <i class="fas fa-layer-group"></i> {{ $grupJurusan }}
                     </h3>
@@ -75,6 +77,7 @@
                                     <th class="table-header">Kode</th>
                                     <th class="table-header">Nama Perusahaan</th>
                                     <th class="table-header">Bidang</th>
+                                    <th class="table-header">Kategori</th>
                                     <th class="table-header">Kuota</th>
                                     <th class="table-header">Status</th>
                                     <th class="table-header text-center">Aksi</th>
@@ -87,14 +90,22 @@
                                         <td class="table-cell font-medium">{{ $industri->kode_perusahaan }}</td>
                                         <td class="table-cell">{{ $industri->nama_perusahaan }}</td>
                                         <td class="table-cell">{{ $industri->bidang_usaha }}</td>
+                                        <td class="table-cell">
+                                            <span
+                                                class="px-2 py-1 text-xs rounded-full bg-indigo-200 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">
+                                                {{ $industri->kategori ?? '-' }}
+                                            </span>
+                                        </td>
                                         <td class="table-cell text-center">{{ $industri->kuota }}</td>
                                         <td class="table-cell">
                                             @if ($industri->status == 'aktif')
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
+                                                <span
+                                                    class="px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
                                                     <i class="fas fa-circle text-xs mr-1"></i> Aktif
                                                 </span>
                                             @else
-                                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">
+                                                <span
+                                                    class="px-2 py-1 text-xs rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">
                                                     <i class="fas fa-circle text-xs mr-1"></i> Tidak Aktif
                                                 </span>
                                             @endif

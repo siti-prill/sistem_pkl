@@ -42,7 +42,7 @@ class IndustriRequest extends FormRequest
                 ? 'required|same:password'
                 : 'nullable|same:password',
             'bidang_usaha' => 'required|string|max:255',
-            'jurusan' => 'nullable|string|in:' . implode(',', \App\Models\Industri::JURUSAN_LIST),
+            'kategori' => 'required|in:RPL,TKJ,DKV,PSPT,Semua',
             'penanggung_jawab' => 'required|string|max:255',
             'kuota' => 'required|integer|min:1',
             'status' => 'required|in:aktif,tidak_aktif',
@@ -67,6 +67,8 @@ class IndustriRequest extends FormRequest
             'penanggung_jawab.required' => 'Penanggung jawab wajib diisi.',
             'kuota.required' => 'Kuota wajib diisi.',
             'kuota.min' => 'Kuota minimal 1.',
+            'kategori.required' => 'Kategori jurusan wajib dipilih.',
+            'kategori.in' => 'Kategori jurusan tidak valid.',
         ];
     }
 }

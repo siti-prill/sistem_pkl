@@ -22,16 +22,20 @@
                     <h5>Detail Pengajuan PKL</h5>
                 </div>
                 <div class="card-body">
+
                     <div class="row">
                         <div class="col-md-6">
+                            <p><strong>NIS:</strong> {{ $pengajuan->siswa->nis ?? '-' }}</p>
+                            <p><strong>Nama Siswa:</strong> {{ $pengajuan->siswa->nama_siswa ?? '-' }}</p>
+                            <p><strong>No Telepon:</strong> {{ $pengajuan->siswa->no_telepon ?? '-' }}</p>
                             <p><strong>Pilihan 1:</strong> {{ $pengajuan->pilihan_1 }}</p>
-                            @if ($pengajuan->industri_1)
+                            {{-- @if ($pengajuan->industri_1)
                                 <p><strong>Industri Pilihan 1:</strong> {{ $pengajuan->industri_1 }}</p>
-                            @endif
+                            @endif --}}
                             <p><strong>Pilihan 2:</strong> {{ $pengajuan->pilihan_2 }}</p>
-                            @if ($pengajuan->industri_2)
+                            {{-- @if ($pengajuan->industri_2)
                                 <p><strong>Industri Pilihan 2:</strong> {{ $pengajuan->industri_2 }}</p>
-                            @endif
+                            @endif --}}
                             <p><strong>Jurusan:</strong> {{ $pengajuan->jurusan }}</p>
                             <div class="col-md-6">
                                 @if ($pengajuan->pekerjaan_orang_tua)
@@ -129,14 +133,26 @@
                                 </div>
                             </div>
 
-                            <div class="alert alert-info mt-3 mb-0">
-                                <i class="fas fa-info-circle me-2"></i>
-                                <strong>Informasi Tambahan:</strong>
-                                <ul class="mb-0 mt-2">
-                                    <li>Silakan hubungi guru pembimbing Anda untuk informasi lebih lanjut.</li>
-                                    <li>Pastikan Anda datang tepat waktu pada tanggal mulai PKL.</li>
-                                    <li>Bawa surat pengantar dari sekolah pada hari pertama PKL.</li>
-                                </ul>
+                            {{-- ✅ Tambahan: Pemberitahuan Logout & Login Ulang (Diterima) --}}
+                            <div class="card border-warning mt-3 mb-0" id="notif-logout-diterima"
+                                style="display:block !important; visibility:visible !important; opacity:1 !important;">
+                                <div class="card-body">
+                                    <h5 class="text-warning mb-2">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Silakan Logout dan Login Ulang
+                                    </h5>
+                                    <p class="mb-2">
+                                        Pengajuan Anda telah <strong>DITERIMA</strong>. Silakan keluar dari akun Anda,
+                                        lalu masuk kembali agar dapat diakses dan mengisi jurnal pkl anda
+                                    </p>
+                                    <hr>
+                                    <p class="mb-0">Klik tombol di bawah ini untuk keluar dari akun Anda:</p>
+                                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger mt-2">
+                                            <i class="fas fa-sign-out-alt me-1"></i> Logout Sekarang
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         @endif
                     @endif
@@ -214,6 +230,28 @@
                                     <li>Anda WAJIB melaksanakan PKL di tempat yang telah ditentukan oleh admin.</li>
                                     <li>Silakan hubungi guru pembimbing Anda untuk informasi lebih lanjut.</li>
                                 </ul>
+                            </div>
+
+                            {{-- ✅ Tambahan: Pemberitahuan Logout & Login Ulang (Ditolak tapi Ditempatkan) --}}
+                            <div class="card border-warning mt-3 mb-0" id="notif-logout-ditolak"
+                                style="display:block !important; visibility:visible !important; opacity:1 !important;">
+                                <div class="card-body">
+                                    <h5 class="text-warning mb-2">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Silakan Logout dan Login Ulang
+                                    </h5>
+                                    <p class="mb-2">
+                                        Admin telah menetapkan tempat PKL Anda. Silakan keluar dari akun Anda,
+                                        lalu masuk kembali agar data dan menu PKL Anda diperbarui oleh sistem.
+                                    </p>
+                                    <hr>
+                                    <p class="mb-0">Klik tombol di bawah ini untuk keluar dari akun Anda:</p>
+                                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger mt-2">
+                                            <i class="fas fa-sign-out-alt me-1"></i> Logout Sekarang
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         @else
                             <!-- DITOLAK MURNI (TANPA PENEMPATAN) -->

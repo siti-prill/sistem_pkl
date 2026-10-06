@@ -34,6 +34,7 @@ class Industri extends Model
         'email',
         'bidang_usaha',
         'jurusan',
+        'kategori',
         'penanggung_jawab',
         'kuota',
         'status',

@@ -16,7 +16,7 @@ class PengajuanController extends Controller
         $siswa = Auth::user()->siswa;
         $pengajuan = PengajuanPkl::where('siswa_id', $siswa->id)->first();
 
-        return view('siswa.pengajuan.index', compact('pengajuan'));
+        return view('siswa.pengajuan.index', compact('pengajuan', 'siswa'));
     }
 
     public function create()
@@ -43,37 +43,34 @@ class PengajuanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'pilihan_1' => 'required|string|max:100',
-            'pilihan_2' => 'required|string|max:100',
-            'pekerjaan_orang_tua' => 'required|string|max:100',
-            'penghasilan_ortu' => 'required|string|max:100',
-            'alamat' => 'required|string|max:100',
-            'industri_1' => 'nullable|string|max:255',
-            'industri_2' => 'nullable|string|max:255',
+            'pilihan_1'        => 'required|string|max:100',
+            'pilihan_2'        => 'required|string|max:100',
+            'no_telepon'       => 'required|string|max:20',
+            'pekerjaan_orang_tua' => 'nullable|string|max:100',
+            'penghasilan_ortu' => 'nullable',
+            'alamat'           => 'nullable|string',
         ]);
 
         $siswa = Auth::user()->siswa;
 
-        $data = [
-            'pilihan_1' => $request->pilihan_1,
-            'pilihan_2' => $request->pilihan_2,
-            'industri_1' => $request->industri_1,
-            'industri_2' => $request->industri_2,
-            'jurusan' => $siswa->jurusan,
+        // Update no_telepon di data siswa
+        $siswa->update([
+            'no_telepon' => $request->no_telepon,
+        ]);
+
+        // Simpan pengajuan
+        PengajuanPkl::create([
+            'siswa_id'         => $siswa->id,
+            'pilihan_1'        => $request->pilihan_1,
+            'pilihan_2'        => $request->pilihan_2,
+            'jurusan'          => $siswa->jurusan,
             'pekerjaan_orang_tua' => $request->pekerjaan_orang_tua,
             'penghasilan_ortu' => $request->penghasilan_ortu,
-            'alamat' => $request->alamat,
-            'status' => 'pending',
-        ];
+            'alamat'           => $request->alamat,
+            'status'           => 'pending',
+        ]);
 
-        // Kalau pengajuan sebelumnya ditolak, perbarui saja yang lama
-        $existing = PengajuanPkl::where('siswa_id', $siswa->id)->where('status', 'ditolak')->first();
-        if ($existing) {
-            $existing->update($data);
-        } else {
-            PengajuanPkl::create(array_merge($data, ['siswa_id' => $siswa->id]));
-        }
-
-        return redirect()->route('siswa.pengajuan.index')->with('success', 'Pengajuan PKL berhasil dikirim!');
+        return redirect()->route('siswa.pengajuan.index')
+            ->with('success', 'Pengajuan PKL berhasil dikirim!');
     }
 }
