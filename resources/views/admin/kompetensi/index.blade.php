@@ -14,6 +14,14 @@
         <a href="{{ route('admin.kompetensi.create') }}" class="btn-primary mt-3 sm:mt-0">
             <i class="fas fa-plus mr-2"></i> Tambah Kompetensi
         </a>
+        <div class="flex items-center gap-2 mt-3 sm:mt-0">
+            <form action="{{ route('admin.kompetensi.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2">
+                @csrf
+                <input type="file" name="file" accept=".xlsx,.xls,.csv" required class="form-input text-sm">
+                <button type="submit" class="btn-info whitespace-nowrap"><i class="fas fa-file-import mr-1"></i> Import</button>
+            </form>
+            <a href="{{ route('admin.import.template', 'kompetensi') }}" class="btn-danger whitespace-nowrap"><i class="fas fa-download mr-1"></i> Template</a>
+        </div>
     </div>
 
     <!-- Search -->
@@ -47,6 +55,7 @@
                         <th class="table-header">No</th>
                         <th class="table-header">Kode</th>
                         <th class="table-header">Nama Kompetensi</th>
+                        <th class="table-header">Kategori</th>
                         <th class="table-header">Deskripsi</th>
                         <th class="table-header text-center">Aksi</th>
                     </tr>
@@ -61,6 +70,11 @@
                                 </span>
                             </td>
                             <td class="table-cell">{{ $kompetensi->nama_kompetensi }}</td>
+                            <td class="table-cell">
+                                <span class="px-2 py-1 text-xs rounded-full bg-indigo-200 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">
+                                    {{ $kompetensi->kategori ?? 'Semua' }}
+                                </span>
+                            </td>
                             <td class="table-cell max-w-xs truncate">{{ $kompetensi->deskripsi ?? '-' }}</td>
                             <td class="table-cell text-center">
                                 <div class="flex justify-center gap-2">

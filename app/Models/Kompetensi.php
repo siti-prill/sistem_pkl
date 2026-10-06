@@ -13,6 +13,7 @@ class Kompetensi extends Model
     protected $fillable = [
         'kode_kompetensi',
         'nama_kompetensi',
+        'kategori',
         'deskripsi'
     ];
 

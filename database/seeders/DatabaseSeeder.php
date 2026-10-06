@@ -96,6 +96,9 @@ class DatabaseSeeder extends Seeder
                 ['kode_kompetensi' => 'JUR-' . str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT)],
                 [
                     'nama_kompetensi' => $jurusan,
+                    'kategori' => str_contains($jurusan, 'TKJ') ? 'TKJ'
+                        : (str_contains($jurusan, 'DKV') ? 'DKV'
+                        : (str_contains($jurusan, 'PSPT') ? 'PSPT' : 'RPL')),
                     'deskripsi' => 'Jurusan ' . $jurusan . ' (kelas XII)',
                 ]
             );

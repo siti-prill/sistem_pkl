@@ -42,6 +42,21 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Kategori Jurusan <span class="text-red-500">*</span>
+                    </label>
+                    <select name="kategori" class="form-input" required>
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach (['RPL', 'TKJ', 'DKV', 'PSPT', 'Semua'] as $kat)
+                            <option value="{{ $kat }}" {{ old('kategori') == $kat ? 'selected' : '' }}>{{ $kat }}</option>
+                        @endforeach
+                    </select>
+                    @error('kategori')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Deskripsi
                     </label>
                     <textarea name="deskripsi" rows="4" class="form-input" 

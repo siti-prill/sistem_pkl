@@ -34,17 +34,15 @@ class IndustriController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Filter Jurusan
+        // Filter Kategori Jurusan
         if ($request->has('jurusan') && $request->jurusan != '') {
-            $query->where('jurusan', $request->jurusan);
+            $query->where('kategori', $request->jurusan);
         }
 
         $industris = $query->orderBy('nama_perusahaan')->get();
 
-        $urutan = array_flip(Industri::JURUSAN_LIST);
         $grupIndustri = $industris
-            ->groupBy(fn ($i) => $i->jurusan ?: 'Lainnya')
-            ->sortBy(fn ($group, $key) => $urutan[$key] ?? 999);
+            ->groupBy(fn ($i) => $i->kategori ?: 'Semua');
 
         return view('admin.industri.index', compact('industris', 'grupIndustri'));
     }
@@ -76,6 +74,8 @@ class IndustriController extends Controller
             'no_telepon' => $request->no_telepon,
             'email' => $request->email,
             'bidang_usaha' => $request->bidang_usaha,
+            'kategori' => $request->kategori,
+            'jurusan' => $request->kategori,
             'penanggung_jawab' => $request->penanggung_jawab,
             'kuota' => $request->kuota,
             'status' => $request->status,
@@ -125,6 +125,8 @@ class IndustriController extends Controller
             'no_telepon' => $data['no_telepon'],
             'email' => $data['email'] ?? null,
             'bidang_usaha' => $data['bidang_usaha'],
+            'kategori' => $data['kategori'],
+            'jurusan' => $data['kategori'],
             'penanggung_jawab' => $data['penanggung_jawab'],
             'kuota' => $data['kuota'],
             'status' => $data['status'],

@@ -84,6 +84,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
+        // Import & Template
+        Route::get('/import/template/{type}', [\App\Http\Controllers\Admin\ImportController::class, 'template'])->name('import.template');
+        Route::post('/guru/import', [\App\Http\Controllers\Admin\ImportController::class, 'importGuru'])->name('guru.import');
+        Route::post('/siswa/import', [\App\Http\Controllers\Admin\ImportController::class, 'importSiswa'])->name('siswa.import');
+        Route::post('/kompetensi/import', [\App\Http\Controllers\Admin\ImportController::class, 'importKompetensi'])->name('kompetensi.import');
+        Route::post('/industri/import', [\App\Http\Controllers\Admin\ImportController::class, 'importIndustri'])->name('industri.import');
+
     });
 
     // ==================== SISWA ROUTES ====================

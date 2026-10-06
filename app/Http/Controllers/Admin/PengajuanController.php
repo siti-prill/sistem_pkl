@@ -25,18 +25,27 @@ class PengajuanController extends Controller
         $kategori = $pengajuan->siswa->kategori_jurusan;
 
         // Filter industri berdasarkan kategori jurusan siswa
-        $industris = \App\Models\Industri::where('status', 'aktif')
+        $industriQuery = \App\Models\Industri::where('status', 'aktif')
             ->where(function ($q) use ($kategori) {
                 $q->where('kategori', $kategori)
                     ->orWhere('kategori', 'Semua');
-            })
+            });
+
+        // Jika sudah ada tempat diterima, industri mengikuti lokasi tersebut
+        if ($pengajuan->tempat_diterima && $pengajuan->status === 'diterima') {
+            $industriQuery->where('lokasi', 'like', '%' . $pengajuan->tempat_diterima . '%');
+        }
+
+        $industris = $industriQuery
             ->with(['penempatan' => function ($q) {
                 $q->where('status', 'aktif');
             }])
             ->get();
 
         $gurus = \App\Models\Guru::all();
-        $kompetensis = \App\Models\Kompetensi::all();
+        $kompetensis = \App\Models\Kompetensi::where(function ($q) use ($kategori) {
+            $q->where('kategori', $kategori)->orWhere('kategori', 'Semua');
+        })->get();
 
         return view('admin.pengajuan.show', compact('pengajuan', 'industris', 'gurus', 'kompetensis'));
     }

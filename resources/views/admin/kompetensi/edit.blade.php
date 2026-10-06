@@ -42,6 +42,18 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
+                        <label class="form-label">Kategori Jurusan <span class="text-danger">*</span></label>
+                        <select name="kategori" class="form-control @error('kategori') is-invalid @enderror" required>
+                            @foreach (['RPL', 'TKJ', 'DKV', 'PSPT', 'Semua'] as $kat)
+                                <option value="{{ $kat }}" {{ old('kategori', $kompetensi->kategori) == $kat ? 'selected' : '' }}>{{ $kat }}</option>
+                            @endforeach
+                        </select>
+                        @error('kategori')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-12 mb-3">
                         <label class="form-label">Deskripsi</label>
                         <textarea name="deskripsi" rows="4" class="form-control @error('deskripsi') is-invalid @enderror">{{ old('deskripsi', $kompetensi->deskripsi) }}</textarea>
                         @error('deskripsi')

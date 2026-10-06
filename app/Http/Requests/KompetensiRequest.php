@@ -24,6 +24,7 @@ class KompetensiRequest extends FormRequest
                 Rule::unique('kompetensis')->ignore($kompetensi ? $kompetensi->id : null),
             ],
             'nama_kompetensi' => 'required|string|max:255',
+            'kategori' => 'required|in:RPL,TKJ,DKV,PSPT,Semua',
             'deskripsi' => 'nullable|string',
         ];
     }
