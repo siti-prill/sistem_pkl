@@ -44,16 +44,30 @@ class PenempatanController extends Controller
 
     public function create()
     {
-        $siswas = Siswa::all();
+        // Hanya pengajuan berstatus diterima/ditolak dan belum punya penempatan
+        // yang boleh dibuatkan penempatan (sesuai aturan di store())
+        $pengajuans = PengajuanPkl::with('siswa')
+            ->whereIn('status', ['diterima', 'ditolak'])
+            ->whereNull('penempatan_id')
+            ->latest()
+            ->get();
         $gurus = Guru::all();
         $industris = Industri::where('status', 'aktif')->get();
         $kompetensis = Kompetensi::all();
 
-        return view('admin.penempatan.create', compact('siswas', 'gurus', 'industris', 'kompetensis'));
+        return view('admin.penempatan.create', compact('pengajuans', 'gurus', 'industris', 'kompetensis'));
     }
 
     public function store(Request $request)
     {
+        // Form create mandiri hanya mengirim pengajuan_id (tanpa siswa_id),
+        // jadi isi otomatis siswa_id dari data pengajuan sebelum validasi.
+        if (! $request->filled('siswa_id') && $request->filled('pengajuan_id')) {
+            $request->merge([
+                'siswa_id' => PengajuanPkl::find($request->pengajuan_id)?->siswa_id,
+            ]);
+        }
+
         // Validasi input
         // Catatan: industri_id boleh berisi id industri ATAU string "lainnya"
         $request->validate([

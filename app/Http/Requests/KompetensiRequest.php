@@ -35,6 +35,8 @@ class KompetensiRequest extends FormRequest
             'kode_kompetensi.required' => 'Kode kompetensi wajib diisi.',
             'kode_kompetensi.unique' => 'Kode kompetensi sudah terdaftar.',
             'nama_kompetensi.required' => 'Nama kompetensi wajib diisi.',
+            'kategori.required' => 'Kategori jurusan wajib dipilih.',
+            'kategori.in' => 'Kategori jurusan tidak valid.',
         ];
     }
 }

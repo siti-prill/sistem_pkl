@@ -118,7 +118,7 @@
             <div class="logo">
                 <img src="{{ logo_url() }}" alt="Logo SMK 2">
                 <h3>Login Siswa</h3>
-                <p>Masuk dengan NIS dan Password</p>
+                <p>Pengajuan & Jurnal PKL dalam satu akun. Masuk dengan NIS dan Password.</p>
             </div>
 
             @if (session('error'))

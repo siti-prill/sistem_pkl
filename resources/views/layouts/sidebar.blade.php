@@ -87,6 +87,8 @@
                     </a>
                 </div>
             @elseif(auth()->user()->role == 'guru')
+                <div class="menu-label">Menu Guru</div>
+
                 <div class="nav-item">
                     <a href="{{ route('guru.monitoring.index') }}"
                         class="nav-link {{ request()->routeIs('guru.monitoring.*') ? 'active' : '' }}">
@@ -111,48 +113,23 @@
                     </a>
                 </div> --}}
             @elseif(auth()->user()->role == 'siswa')
-                @if (session('login_mode') === 'pengajuan')
-                    <div class="menu-label">Pengajuan</div>
+                <div class="menu-label">PKL</div>
 
-                    <div class="nav-item">
-                        <a href="{{ route('siswa.pengajuan.index') }}"
-                            class="nav-link {{ request()->routeIs('siswa.pengajuan.*') ? 'active' : '' }}">
-                            <i class="fas fa-paper-plane"></i>
-                            <span>Pengajuan PKL</span>
-                        </a>
-                    </div>
+                <div class="nav-item">
+                    <a href="{{ route('siswa.pengajuan.index') }}"
+                        class="nav-link {{ request()->routeIs('siswa.pengajuan.*') ? 'active' : '' }}">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Pengajuan PKL</span>
+                    </a>
+                </div>
 
-                    <div class="menu-label" style="margin-top:20px;">Akun</div>
-
-                    <div class="nav-item">
-                        <a href="{{ route('profile.edit') }}"
-                            class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
-                            <i class="fas fa-user-circle"></i>
-                            <span>Profile</span>
-                        </a>
-                    </div>
-
-                    <div class="nav-item">
-                        <a href="#" class="nav-link"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    </div>
-                @else
-                    <div class="menu-label">Jurnal</div>
-
-                    <div class="nav-item">
-                        <a href="{{ route('siswa.jurnal.index') }}"
-                            class="nav-link {{ request()->routeIs('siswa.jurnal.*') ? 'active' : '' }}">
-                            <i class="fas fa-book"></i>
-                            <span>Jurnal Harian</span>
-                        </a>
-                    </div>
-                @endif
+                <div class="nav-item">
+                    <a href="{{ route('siswa.jurnal.index') }}"
+                        class="nav-link {{ request()->routeIs('siswa.jurnal.*') ? 'active' : '' }}">
+                        <i class="fas fa-book"></i>
+                        <span>Jurnal Harian</span>
+                    </a>
+                </div>
             @elseif(auth()->user()->role == 'industri')
                 <div class="menu-label">Penilaian</div>
 
@@ -178,10 +155,9 @@
                 </div>
             @endif
 
-            {{-- BAGIAN LAPORAN untuk SISWA (non-pengajuan) --}}
-            @if (auth()->user()->role == 'siswa' && session('login_mode') !== 'pengajuan')
+            {{-- BAGIAN LAPORAN untuk SISWA --}}
+            @if (auth()->user()->role == 'siswa')
                 @php
-                    // Cek apakah siswa sudah punya nilai dari Guru ATAU Industri
                     $sudahDinilai = \App\Models\MonitoringNilai::whereHas('penempatan', function ($q) {
                         $q->where('siswa_id', auth()->user()->siswa->id ?? 0);
                     })->exists();
@@ -197,7 +173,6 @@
                     </a>
                 </div>
 
-                {{-- Menu Laporan PKL dengan sistem Gembok --}}
                 @if ($sudahDinilai)
                     <div class="nav-item">
                         <a href="{{ route('laporan.pkl') }}"
@@ -217,9 +192,10 @@
                     </div>
                 @endif
             @endif
-            {{-- ========== BAGIAN AKUN (untuk semua kecuali siswa mode pengajuan) ========== --}}
-            @if (!(auth()->user()->role == 'siswa' && session('login_mode') === 'pengajuan'))
-                <div class="menu-label" style="margin-top:20px;">Akun</div>
+
+            {{-- ========== BAGIAN AKUN ========== --}}
+            @if (auth()->check())
+                <div class="menu-label">Akun</div>
 
                 <div class="nav-item">
                     <a href="{{ route('profile.edit') }}"

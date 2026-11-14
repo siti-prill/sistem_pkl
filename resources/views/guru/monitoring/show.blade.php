@@ -110,10 +110,11 @@
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 mt-2">{{ $jurnal->aktivitas }}</p>
                     @if($jurnal->dokumentasi)
+                        @php $isUrl = \Illuminate\Support\Str::startsWith($jurnal->dokumentasi, ['http://', 'https://']); @endphp
                         <div class="mt-2">
-                            <a href="/storage/{{ $jurnal->dokumentasi }}" target="_blank" 
+                            <a href="{{ $isUrl ? $jurnal->dokumentasi : route('jurnal.dokumentasi', $jurnal) }}" target="_blank" rel="noopener"
                                class="text-blue-500 hover:text-blue-700 text-sm">
-                                <i class="fas fa-image mr-1"></i> Lihat Dokumentasi
+                                <i class="fas {{ $isUrl ? 'fa-external-link-alt' : 'fa-image' }} mr-1"></i> Lihat Dokumentasi
                             </a>
                         </div>
                     @endif

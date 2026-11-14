@@ -15,7 +15,7 @@
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-2xl">
-            <form action="{{ route('siswa.jurnal.update', $jurnal) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('siswa.jurnal.update', $jurnal) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -46,14 +46,29 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Dokumentasi (Foto)
                         </label>
+                        <div class="mb-2">
+                            <a href="https://drive.google.com/drive/folders/1oWZTchR0t5_frbcFs3Yto5aUm8LXOtVM?usp=drive_link"
+                               target="_blank" rel="noopener"
+                               class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm">
+                                <i class="fas fa-cloud-upload-alt mr-2"></i> Upload Foto ke Google Drive
+                            </a>
+                        </div>
                         @if ($jurnal->dokumentasi)
+                            @php $isUrl = \Illuminate\Support\Str::startsWith($jurnal->dokumentasi, ['http://', 'https://']); @endphp
                             <div class="mb-2">
-                                <img src="/storage/{{ $jurnal->dokumentasi }}" alt="Dokumentasi"
-                                    class="rounded-lg max-h-96 w-auto">
+                                @if ($isUrl)
+                                    <a href="{{ $jurnal->dokumentasi }}" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 text-sm">
+                                        <i class="fas fa-external-link-alt mr-1"></i> Lihat dokumentasi saat ini
+                                    </a>
+                                @else
+                                    <img src="{{ route('siswa.jurnal.dokumentasi', $jurnal) }}" alt="Dokumentasi"
+                                        class="rounded-lg max-h-96 w-auto">
+                                @endif
                             </div>
                         @endif
-                        <input type="file" name="dokumentasi" accept="image/*" class="form-input p-2">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: JPEG, PNG, JPG, GIF (Max 2MB)</p>
+                        <input type="url" name="dokumentasi" value="{{ old('dokumentasi', $jurnal->dokumentasi) }}"
+                               placeholder="Tempel link berbagi foto Google Drive di sini (https://...)" class="form-input">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Klik tombol di atas untuk upload foto ke folder Drive, lalu salin link berbagi fotonya dan tempel di sini. Kosongkan untuk menghapus.</p>
                         @error('dokumentasi')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror

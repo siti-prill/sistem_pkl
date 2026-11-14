@@ -20,7 +20,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('siswa.jurnal.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('siswa.jurnal.store') }}" method="POST">
                 @csrf
 
                 <!-- penempatan_id & status ditentukan server (bukan dari input user) -->
@@ -50,9 +50,17 @@
 
                     <div class="col-12 mb-3">
                         <label class="form-label">Dokumentasi (Foto)</label>
-                        <input type="file" name="dokumentasi" accept="image/*" 
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                            <a href="https://drive.google.com/drive/folders/1oWZTchR0t5_frbcFs3Yto5aUm8LXOtVM?usp=drive_link"
+                               target="_blank" rel="noopener" class="btn btn-outline-primary">
+                                <i class="fas fa-cloud-upload-alt me-2"></i> Upload Foto ke Google Drive
+                            </a>
+                            <small class="text-muted">Klik untuk membuka folder Drive, upload foto di sana, lalu salin link berbagi fotonya dan tempel di bawah.</small>
+                        </div>
+                        <input type="url" name="dokumentasi" value="{{ old('dokumentasi') }}"
+                               placeholder="Tempel link berbagi foto Google Drive di sini (https://...)"
                                class="form-control @error('dokumentasi') is-invalid @enderror">
-                        <small class="text-muted">Format: JPEG, PNG, JPG, GIF (Max 2MB)</small>
+                        <small class="text-muted">Pastikan akses link foto dapat dilihat (mis. "Siapa saja yang memiliki link").</small>
                         @error('dokumentasi')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

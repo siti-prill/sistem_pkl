@@ -16,7 +16,7 @@ class ImportController extends Controller
     protected array $templates = [
         'guru' => ['nip', 'nama_guru', 'no_telepon', 'alamat', 'email', 'password'],
         'siswa' => ['nis', 'nama_siswa', 'jurusan', 'no_telepon', 'alamat', 'email', 'password'],
-        'kompetensi' => ['kode_kompetensi', 'nama_kompetensi', 'deskripsi'],
+        'kompetensi' => ['kode_kompetensi', 'nama_kompetensi', 'kategori', 'deskripsi'],
         'industri' => ['kode_perusahaan', 'nama_perusahaan', 'lokasi', 'alamat', 'no_telepon', 'email', 'bidang_usaha', 'kategori', 'penanggung_jawab', 'kuota', 'status', 'email_login', 'password'],
     ];
 

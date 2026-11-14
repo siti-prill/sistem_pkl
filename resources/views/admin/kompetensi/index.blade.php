@@ -57,6 +57,7 @@
                             <th class="table-header">No</th>
                             <th class="table-header">Kode</th>
                             <th class="table-header">Nama Kompetensi</th>
+                            <th class="table-header">Kategori</th>
                             <th class="table-header">Deskripsi</th>
                             <th class="table-header text-center">Aksi</th>
                         </tr>
@@ -72,7 +73,12 @@
                                     </span>
                                 </td>
                                 <td class="table-cell">{{ $kompetensi->nama_kompetensi }}</td>
-                                
+                                <td class="table-cell">
+                                    <span class="px-2 py-1 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">
+                                        {{ $kompetensi->kategori ?? '-' }}
+                                    </span>
+                                </td>
+
                                 <td class="table-cell max-w-xs truncate">{{ $kompetensi->deskripsi ?? '-' }}</td>
                                 <td class="table-cell text-center">
                                     <div class="flex justify-center gap-2">
@@ -97,7 +103,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                <td colspan="6" class="text-center py-8 text-gray-500 dark:text-gray-400">
                                     <i class="fas fa-inbox text-4xl mb-2 block"></i>
                                     Tidak ada data kompetensi
                                 </td>

@@ -1,108 +1,110 @@
 @extends('layouts.app')
 
 @section('title', 'Laporan Jurnal PKL')
+@section('page-title', 'Laporan Jurnal PKL')
+@section('page-subtitle', 'Rekapitulasi jurnal harian PKL')
 
 @section('content')
 <div class="animate-fadeIn">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
-                <i class="fas fa-file-alt mr-2 text-indigo-500"></i> Laporan Jurnal PKL
-            </h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Rekapitulasi jurnal harian PKL</p>
+            <h4 class="fw-bold mb-1"><i class="fas fa-file-alt text-primary me-2"></i>Laporan Jurnal PKL</h4>
+            <p class="text-muted mb-0">Rekapitulasi jurnal harian PKL</p>
         </div>
-        <a href="{{ route('laporan.jurnal.pdf', request()->all()) }}" class="btn-danger mt-3 sm:mt-0">
-            <i class="fas fa-file-pdf mr-2"></i> Cetak PDF
+        <a href="{{ route('laporan.jurnal.pdf', request()->all()) }}" class="btn btn-danger mt-2 mt-sm-0">
+            <i class="fas fa-file-pdf me-2"></i> Cetak PDF
         </a>
     </div>
 
-    <!-- Filter -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mb-6">
-        <form method="GET" action="{{ route('laporan.jurnal') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Mulai</label>
-                <input type="date" name="tanggal_mulai" value="{{ is_array(request('tanggal_mulai')) ? '' : request('tanggal_mulai') }}" class="form-input">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Selesai</label>
-                <input type="date" name="tanggal_selesai" value="{{ is_array(request('tanggal_selesai')) ? '' : request('tanggal_selesai') }}" class="form-input">
-            </div>
-            @if(auth()->user()->role == 'admin' || auth()->user()->role == 'guru')
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Siswa</label>
-                    <select name="siswa_id" class="form-input">
-                        <option value="">Semua Siswa</option>
-                        @foreach($siswas as $siswa)
-                            <option value="{{ $siswa->id }}" {{ request('siswa_id') == $siswa->id ? 'selected' : '' }}>
-                                {{ $siswa->nama_siswa }}
-                            </option>
-                        @endforeach
-                    </select>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ route('laporan.jurnal') }}" class="row g-3 align-items-end">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <label class="form-label">Tanggal Mulai</label>
+                    <input type="date" name="tanggal_mulai" value="{{ is_array(request('tanggal_mulai')) ? '' : request('tanggal_mulai') }}" class="form-control">
                 </div>
-            @endif
-            <div class="flex gap-3 items-end">
-                <button type="submit" class="btn-primary flex-1">
-                    <i class="fas fa-search mr-2"></i> Filter
-                </button>
-                @if(request()->anyFilled(['tanggal_mulai', 'tanggal_selesai', 'siswa_id']))
-                    <a href="{{ route('laporan.jurnal') }}" class="btn-danger">
-                        <i class="fas fa-times"></i>
-                    </a>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <label class="form-label">Tanggal Selesai</label>
+                    <input type="date" name="tanggal_selesai" value="{{ is_array(request('tanggal_selesai')) ? '' : request('tanggal_selesai') }}" class="form-control">
+                </div>
+                @if(auth()->user()->role == 'admin' || auth()->user()->role == 'guru')
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label class="form-label">Siswa</label>
+                        <select name="siswa_id" class="form-select">
+                            <option value="">Semua Siswa</option>
+                            @foreach($siswas as $siswa)
+                                <option value="{{ $siswa->id }}" {{ request('siswa_id') == $siswa->id ? 'selected' : '' }}>
+                                    {{ $siswa->nama_siswa }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 @endif
-            </div>
-        </form>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="fas fa-search me-2"></i> Filter
+                        </button>
+                        @if(request()->anyFilled(['tanggal_mulai', 'tanggal_selesai', 'siswa_id']))
+                            <a href="{{ route('laporan.jurnal') }}" class="btn btn-outline-secondary" title="Reset">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Table -->
-    <div class="table-container">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr>
-                        <th class="table-header">No</th>
-                        <th class="table-header">Tanggal</th>
-                        <th class="table-header">Siswa</th>
-                        <th class="table-header">NIS</th>
-                        <th class="table-header">Industri</th>
-                        <th class="table-header">Aktivitas</th>
-                        <th class="table-header">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                    @forelse($jurnals as $index => $jurnal)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <td class="table-cell">{{ $jurnals->firstItem() + $index }}</td>
-                            <td class="table-cell">{{ \Carbon\Carbon::parse($jurnal->tanggal)->format('d/m/Y') }}</td>
-                            <td class="table-cell font-medium">{{ $jurnal->penempatan->siswa->nama_siswa }}</td>
-                            <td class="table-cell">{{ $jurnal->penempatan->siswa->nis }}</td>
-                            <td class="table-cell">{{ $jurnal->penempatan->industri->nama_perusahaan }}</td>
-                            <td class="table-cell max-w-xs truncate">{{ $jurnal->aktivitas }}</td>
-                            <td class="table-cell">
-                                @if($jurnal->status == 'submitted')
-                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
-                                        <i class="fas fa-check-circle mr-1"></i> Submitted
-                                    </span>
-                                @else
-                                    <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300">
-                                        <i class="fas fa-pencil-alt mr-1"></i> Draft
-                                    </span>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
                         <tr>
-                            <td colspan="7" class="text-center py-8 text-gray-500 dark:text-gray-400">
-                                <i class="fas fa-inbox text-4xl mb-2 block"></i>
-                                Tidak ada data jurnal
-                            </td>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            <th>Siswa</th>
+                            <th>NIS</th>
+                            <th>Industri</th>
+                            <th>Aktivitas</th>
+                            <th>Status</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($jurnals as $index => $jurnal)
+                            <tr>
+                                <td>{{ $jurnals->firstItem() + $index }}</td>
+                                <td>{{ \Carbon\Carbon::parse($jurnal->tanggal)->format('d/m/Y') }}</td>
+                                <td class="fw-semibold">{{ $jurnal->penempatan->siswa->nama_siswa ?? '-' }}</td>
+                                <td>{{ $jurnal->penempatan->siswa->nis ?? '-' }}</td>
+                                <td>{{ $jurnal->penempatan->industri->nama_perusahaan ?? '-' }}</td>
+                                <td style="max-width: 320px;">{{ \Illuminate\Support\Str::limit($jurnal->aktivitas, 80) }}</td>
+                                <td>
+                                    @if($jurnal->status == 'submitted')
+                                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Submitted</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-pencil-alt me-1"></i> Draft</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                    Tidak ada data jurnal
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-            {{ $jurnals->withQueryString()->links() }}
-        </div>
+        @if($jurnals->hasPages())
+            <div class="card-footer">
+                {{ $jurnals->withQueryString()->links() }}
+            </div>
+        @endif
     </div>
 </div>
 @endsection

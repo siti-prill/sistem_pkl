@@ -50,8 +50,14 @@ class LoginSiswaController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
-        $request->session()->put('login_mode', 'pengajuan');
+        // Mode terpadu: siswa dapat mengakses pengajuan dan jurnal dalam satu akun
+        $request->session()->forget('login_mode');
 
-        return redirect()->intended(route('siswa.pengajuan.index'));
+        $redirect = $request->input('redirect');
+        $redirectPath = is_string($redirect) ? parse_url($redirect, PHP_URL_PATH) : null;
+
+        return ($redirectPath && str_starts_with($redirectPath, '/siswa/'))
+            ? redirect()->to($redirect)
+            : redirect()->route('siswa.dashboard');
     }
 }

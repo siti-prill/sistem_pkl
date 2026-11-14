@@ -179,6 +179,7 @@
                                     <option value="TKJ" {{ old('kategori') == 'TKJ' ? 'selected' : '' }}>TKJ</option>
                                     <option value="DKV" {{ old('kategori') == 'DKV' ? 'selected' : '' }}>DKV</option>
                                     <option value="PSPT" {{ old('kategori') == 'PSPT' ? 'selected' : '' }}>PSPT</option>
+                                    <option value="Semua" {{ old('kategori') == 'Semua' ? 'selected' : '' }}>Semua</option>
                                 </select>
                                 @error('kategori')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

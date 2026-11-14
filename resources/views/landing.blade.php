@@ -42,7 +42,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
+                <ul class="navbar-nav mx-auto align-items-center">
                     <li class="nav-item">
                         <a class="nav-link" href="#features">Fitur</a>
                     </li>
@@ -54,21 +54,21 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Kontak</a>
                     </li>
-                    <li class="nav-item ms-lg-2">
-                        <a href="{{ route('login.siswa.form', ['redirect' => route('siswa.pengajuan.index')]) }}"
-                            class="btn btn-pengajuan-nav">
-                            <i class="fas fa-file-alt me-2"></i>Pengajuan PKL
-                        </a>
-                    </li>
-                    <li class="nav-item ms-lg-2">
-                        <a href="{{ route('login.industri.form') }}" class="btn btn-login-nav"
-                            style="background: linear-gradient(135deg, #0d9488, #0891b2);">
-                            <i class="fas fa-building me-2"></i>Industri
+                </ul>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a href="{{ route('login') }}" class="btn btn-login-nav">
+                            <i class="fas fa-chalkboard-teacher me-2"></i>Login Guru
                         </a>
                     </li>
                     <li class="nav-item ms-lg-2">
                         <a href="{{ route('login') }}" class="btn btn-login-nav">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                            <i class="fas fa-user-shield me-2"></i>Login Admin
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <a href="{{ route('login.industri.form') }}" class="btn btn-login-nav">
+                            <i class="fas fa-building me-2"></i>Login Industri
                         </a>
                     </li>
                 </ul>
@@ -90,8 +90,8 @@
                         sekolah, siswa, dan perusahaan dalam satu platform.
                     </p>
                     <div>
-                        <a href="{{ route('login') }}" class="btn btn-hero">
-                            <i class="fas fa-rocket me-2"></i>Mulai Sekarang
+                        <a href="{{ route('login.siswa.form') }}" class="btn btn-hero">
+                            <i class="fas fa-user-graduate me-2"></i>Login Siswa
                         </a>
                         <a href="#features" class="btn btn-outline-hero">
                             <i class="fas fa-info-circle me-2"></i>Pelajari

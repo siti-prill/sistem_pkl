@@ -42,6 +42,23 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Kategori Jurusan <span class="text-red-500">*</span>
+                    </label>
+                    <select name="kategori" class="form-input" required>
+                        <option value="">Pilih Kategori</option>
+                        <option value="RPL" {{ old('kategori') == 'RPL' ? 'selected' : '' }}>RPL</option>
+                        <option value="TKJ" {{ old('kategori') == 'TKJ' ? 'selected' : '' }}>TKJ</option>
+                        <option value="DKV" {{ old('kategori') == 'DKV' ? 'selected' : '' }}>DKV</option>
+                        <option value="PSPT" {{ old('kategori') == 'PSPT' ? 'selected' : '' }}>PSPT</option>
+                        <option value="Semua" {{ old('kategori') == 'Semua' ? 'selected' : '' }}>Semua</option>
+                    </select>
+                    @error('kategori')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Deskripsi
                     </label>
                     <textarea name="deskripsi" rows="4" class="form-input" 

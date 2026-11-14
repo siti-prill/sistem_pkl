@@ -31,6 +31,7 @@ class SettingController extends Controller
             'footer_instagram' => setting('footer_instagram', ''),
             'footer_youtube' => setting('footer_youtube', ''),
             'footer_github' => setting('footer_github', ''),
+            'footer_copyright' => setting('footer_copyright', ''),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -52,10 +53,14 @@ class SettingController extends Controller
             Setting::set('logo_path', $path);
         }
 
-        $request->validate($this->footerFields);
+        // Simpan field footer hanya jika form footer yang disubmit,
+        // agar penyimpanan logo tidak ikut mengosongkan konten footer.
+        if ($request->hasAny(array_keys($this->footerFields))) {
+            $request->validate($this->footerFields);
 
-        foreach (array_keys($this->footerFields) as $field) {
-            Setting::set($field, $request->input($field, ''));
+            foreach (array_keys($this->footerFields) as $field) {
+                Setting::set($field, $request->input($field, ''));
+            }
         }
 
         return redirect()->route('admin.settings.index')

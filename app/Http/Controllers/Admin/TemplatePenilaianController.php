@@ -53,10 +53,9 @@ class TemplatePenilaianController extends Controller
 
     public function create()
     {
-        $lastUrutan = TemplatePenilaian::max('urutan') ?? 0;
-        $komponens = TemplatePenilaian::where('tipe', 'komponen')->orderBy('kategori')->orderBy('urutan')->get();
-        $jurusanList = TemplatePenilaian::JURUSAN_TEMPLATE_LIST;
-        return view('admin.template-penilaian.create', compact('lastUrutan', 'komponens', 'jurusanList'));
+        // Tidak ada halaman create terpisah: seluruh pengelolaan template
+        // dilakukan langsung di halaman index (tambah item via AJAX).
+        return redirect()->route('admin.template-penilaian.index');
     }
 
     public function store(Request $request)
@@ -108,17 +107,14 @@ class TemplatePenilaianController extends Controller
 
     public function show(TemplatePenilaian $templatePenilaian)
     {
-        $templatePenilaian->load('children');
-        return view('admin.template-penilaian.show', ['template' => $templatePenilaian]);
+        // Tidak ada halaman show terpisah: detail item dilihat di halaman index.
+        return redirect()->route('admin.template-penilaian.index', $templatePenilaian->jurusan ? ['jurusan' => $templatePenilaian->jurusan] : []);
     }
 
     public function edit(TemplatePenilaian $templatePenilaian)
     {
-        $komponens = TemplatePenilaian::where('tipe', 'komponen')
-            ->where('id', '!=', $templatePenilaian->id)
-            ->orderBy('kategori')->orderBy('urutan')->get();
-        $jurusanList = TemplatePenilaian::JURUSAN_TEMPLATE_LIST;
-        return view('admin.template-penilaian.edit', ['template' => $templatePenilaian, 'komponens' => $komponens, 'jurusanList' => $jurusanList]);
+        // Tidak ada halaman edit terpisah: pengeditan dilakukan inline di index.
+        return redirect()->route('admin.template-penilaian.index', $templatePenilaian->jurusan ? ['jurusan' => $templatePenilaian->jurusan] : []);
     }
 
     public function update(Request $request,int $id)

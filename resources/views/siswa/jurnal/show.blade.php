@@ -41,10 +41,18 @@
             </div>
 
             @if($jurnal->dokumentasi)
+                @php $isUrl = \Illuminate\Support\Str::startsWith($jurnal->dokumentasi, ['http://', 'https://']); @endphp
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Dokumentasi</h3>
-                    <img src="/storage/{{ $jurnal->dokumentasi }}" 
-                         alt="Dokumentasi" class="rounded-lg max-h-96 w-auto">
+                    @if($isUrl)
+                        <a href="{{ $jurnal->dokumentasi }}" target="_blank" rel="noopener"
+                           class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm">
+                            <i class="fab fa-google-drive mr-2"></i> Buka Dokumentasi (Google Drive)
+                        </a>
+                    @else
+                        <img src="{{ route('siswa.jurnal.dokumentasi', $jurnal) }}"
+                             alt="Dokumentasi" class="rounded-lg max-h-96 w-auto">
+                    @endif
                 </div>
             @endif
 

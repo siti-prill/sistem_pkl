@@ -92,18 +92,20 @@ Route::middleware(['auth'])->group(function () {
     // ==================== SISWA ROUTES ====================
     Route::middleware(['role:siswa'])->prefix('siswa')->name('siswa.')->group(function () {
         Route::get('/dashboard', function () {
-            if (session('login_mode') === 'pengajuan') {
-                $siswa = auth()->user()->siswa;
-                $pengajuan = \App\Models\PengajuanPkl::where('siswa_id', $siswa->id)->first();
+            // Akses terpadu: siswa dapat mengelola pengajuan PKL dan jurnal dalam satu akun.
+            // Arahkan ke pengajuan jika belum ada/diterima, jika sudah diterima ke jurnal.
+            $siswa = auth()->user()->siswa;
+            $pengajuan = $siswa ? \App\Models\PengajuanPkl::where('siswa_id', $siswa->id)->latest()->first() : null;
 
-                if (!$pengajuan) {
-                    return redirect()->route('siswa.pengajuan.create');
-                } elseif ($pengajuan->status !== 'diterima') {
-                    return redirect()->route('siswa.pengajuan.index');
-                }
+            if (!$pengajuan) {
+                return redirect()->route('siswa.pengajuan.index');
             }
 
-            return redirect()->route('siswa.jurnal.index');
+            if ($pengajuan->status === 'diterima') {
+                return redirect()->route('siswa.jurnal.index');
+            }
+
+            return redirect()->route('siswa.pengajuan.index');
         })->name('dashboard');
 
         // Route Pengajuan untuk Siswa
@@ -113,6 +115,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('jurnal', JurnalController::class);
         Route::post('/jurnal/{jurnal}/submit', [JurnalController::class, 'submit'])->name('jurnal.submit');
+        Route::get('/jurnal/{jurnal}/dokumentasi', [JurnalController::class, 'dokumentasi'])->name('jurnal.dokumentasi');
     });
 
     // ==================== GURU ROUTES ====================
@@ -123,7 +126,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
         Route::get('/monitoring/{id}', [MonitoringController::class, 'show'])->name('monitoring.show');
         Route::post('/komentar/{jurnal_id}', [MonitoringController::class, 'storeKomentar'])->name('komentar.store');
-        Route::resource('nilai', NilaiController::class);
+        // Catatan: method update tidak ada - pengeditan nilai dilakukan lewat
+        // form create (store menyimpan ulang seluruh nilai penempatan).
+        Route::resource('nilai', NilaiController::class)->except(['update']);
 
         // Route Nilai Kesimpulan
         Route::get('/kesimpulan', [\App\Http\Controllers\Guru\KesimpulanController::class, 'index'])->name('kesimpulan.index');
@@ -153,6 +158,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/raport/pdf', [LaporanController::class, 'raportPdf'])->name('raport.pdf');
         Route::get('/nilai/cetak/{penempatan_id}', [LaporanController::class, 'nilaiCetak'])->name('nilai.cetak');
     });
+
+    // Dokumentasi jurnal (akses: siswa pemilik, guru pembimbing, admin)
+    Route::get('/jurnal/{jurnal}/dokumentasi', \App\Http\Controllers\JurnalDokumentasiController::class)
+        ->name('jurnal.dokumentasi');
 
     // Profile (Breeze - bisa diakses semua role: admin, guru, siswa)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

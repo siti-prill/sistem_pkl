@@ -117,6 +117,11 @@
                                     <input type="url" name="footer_github" value="{{ $settings['footer_github'] }}"
                                         placeholder="https://github.com/..." class="form-control">
                                 </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Teks Copyright</label>
+                                    <input type="text" name="footer_copyright" value="{{ $settings['footer_copyright'] }}"
+                                        placeholder="© {{ date('Y') }} SMK 2. All rights reserved." class="form-control">
+                                </div>
                             </div>
                             <div class="d-flex gap-2 mt-4">
                                 <button type="submit" class="btn btn-primary">

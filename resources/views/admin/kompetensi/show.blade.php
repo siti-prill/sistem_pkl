@@ -28,6 +28,14 @@
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Nama Kompetensi</h3>
                     <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $kompetensi->nama_kompetensi }}</p>
                 </div>
+                <div>
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Kategori</h3>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <span class="px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">
+                            {{ $kompetensi->kategori ?? '-' }}
+                        </span>
+                    </p>
+                </div>
                 <div class="md:col-span-2">
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Deskripsi</h3>
                     <p class="text-gray-700 dark:text-gray-300">{{ $kompetensi->deskripsi ?? '-' }}</p>

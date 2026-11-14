@@ -25,7 +25,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $request->session()->put('login_mode', 'regular');
+        // Siswa menggunakan akses terpadu (pengajuan + jurnal); role lain mode reguler
+        if (auth()->user()->role === 'siswa') {
+            $request->session()->forget('login_mode');
+        } else {
+            $request->session()->put('login_mode', 'regular');
+        }
 
         return redirect()->intended(route('dashboard'));
     }

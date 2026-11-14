@@ -15,6 +15,7 @@ class JurnalHarian extends Model
         'tanggal',
         'aktivitas',
         'dokumentasi',
+        'dokumentasi_disk',
         'status'
     ];
 

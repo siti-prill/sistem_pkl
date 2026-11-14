@@ -108,8 +108,9 @@
                             </div>
                             <p class="text-muted mt-2 mb-0">{{ Str::limit($jurnal->aktivitas, 150) }}</p>
                             @if($jurnal->dokumentasi)
+                                @php $isUrl = \Illuminate\Support\Str::startsWith($jurnal->dokumentasi, ['http://', 'https://']); @endphp
                                 <small class="text-primary">
-                                    <i class="fas fa-image me-1"></i> Ada dokumentasi
+                                    <i class="fas {{ $isUrl ? 'fa-link' : 'fa-image' }} me-1"></i> Ada dokumentasi
                                 </small>
                             @endif
                             @if($jurnal->komentarJurnal->count() > 0)

@@ -20,17 +20,19 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Siswa <span class="text-red-500">*</span>
+                        Pengajuan PKL <span class="text-red-500">*</span>
                     </label>
-                    <select name="siswa_id" class="form-input" required>
-                        <option value="">Pilih Siswa</option>
-                        @foreach($siswas as $siswa)
-                            <option value="{{ $siswa->id }}" {{ old('siswa_id') == $siswa->id ? 'selected' : '' }}>
-                                {{ $siswa->nama_siswa }} ({{ $siswa->nis }})
+                    <select name="pengajuan_id" class="form-input" required>
+                        <option value="">Pilih Pengajuan (Siswa)</option>
+                        @forelse($pengajuans as $pengajuan)
+                            <option value="{{ $pengajuan->id }}" {{ old('pengajuan_id') == $pengajuan->id ? 'selected' : '' }}>
+                                {{ $pengajuan->siswa->nama_siswa }} ({{ $pengajuan->siswa->nis }}) — {{ $pengajuan->pilihan_1 }}{{ $pengajuan->industri_1 ? ' - ' . $pengajuan->industri_1 : '' }}
                             </option>
-                        @endforeach
+                        @empty
+                            <option value="" disabled>Tidak ada pengajuan yang siap ditempatkan</option>
+                        @endforelse
                     </select>
-                    @error('siswa_id')
+                    @error('pengajuan_id')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>

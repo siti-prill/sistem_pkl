@@ -7,7 +7,6 @@ use App\Http\Requests\JurnalRequest;
 use App\Models\JurnalHarian;
 use App\Models\PenempatanPkl;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class JurnalController extends Controller
 {
@@ -91,10 +90,8 @@ class JurnalController extends Controller
         $data['penempatan_id'] = $penempatan->id;
         $data['status'] = 'draft';
 
-        // Upload file jika ada (nama file dibuat server — jangan pakai nama asli user)
-        if ($request->hasFile('dokumentasi')) {
-            $data['dokumentasi'] = $request->file('dokumentasi')->store('dokumentasi', 'public');
-        }
+        // Dokumentasi berupa link (mis. link file/foto di Google Drive)
+        $data['dokumentasi'] = !empty($data['dokumentasi']) ? $data['dokumentasi'] : null;
 
         // Cek duplikat
         $exists = JurnalHarian::where('penempatan_id', $penempatan->id)
@@ -150,14 +147,7 @@ class JurnalController extends Controller
         $data = $request->validated();
         unset($data['penempatan_id'], $data['status']);
 
-        if ($request->hasFile('dokumentasi')) {
-            // Hapus file lama
-            if ($jurnal->dokumentasi) {
-                Storage::disk('public')->delete($jurnal->dokumentasi);
-            }
-
-            $data['dokumentasi'] = $request->file('dokumentasi')->store('dokumentasi', 'public');
-        }
+        $data['dokumentasi'] = !empty($data['dokumentasi']) ? $data['dokumentasi'] : null;
 
         $jurnal->update($data);
 
@@ -172,10 +162,6 @@ class JurnalController extends Controller
         if ($jurnal->status == 'submitted') {
             return redirect()->route('siswa.jurnal.index')
                 ->with('error', 'Jurnal yang sudah disubmit tidak dapat dihapus.');
-        }
-
-        if ($jurnal->dokumentasi) {
-            Storage::disk('public')->delete($jurnal->dokumentasi);
         }
 
         $jurnal->delete();
@@ -196,6 +182,12 @@ class JurnalController extends Controller
 
         return redirect()->route('siswa.jurnal.index')
             ->with('success', 'Jurnal berhasil disubmit.');
+    }
+
+    public function dokumentasi(JurnalHarian $jurnal)
+    {
+        // Akses via route siswa; delegasi ke controller umum agar perilaku konsisten (data lama)
+        return app(\App\Http\Controllers\JurnalDokumentasiController::class)($jurnal);
     }
 
     private function authorizeJurnal($jurnal)

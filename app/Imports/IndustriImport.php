@@ -35,6 +35,11 @@ class IndustriImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             $password = trim((string) ($row['password'] ?? 'password')) ?: 'password';
             $kategori = trim((string) ($row['kategori'] ?? 'Semua')) ?: 'Semua';
 
+            // Pastikan kategori valid agar tidak bentrok dengan validasi form
+            if (!in_array($kategori, ['RPL', 'TKJ', 'DKV', 'PSPT', 'Semua'], true)) {
+                $kategori = 'Semua';
+            }
+
             $user = User::create([
                 'name'     => $nama,
                 'email'    => $emailLogin,

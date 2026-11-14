@@ -60,7 +60,30 @@ return [
             'report' => false,
         ],
 
+        // Google Drive - untuk dokumentasi jurnal, dsb.
+        // Butuh: composer require masbug/flysystem-google-drive-ext google/apiclient
+        // Mode 1 (Service Account): isi GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON
+        // Mode 2 (OAuth, jika key service account diblokir organisasi): isi CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN
+        'google' => [
+            'driver' => 'google',
+            'service_account' => env('GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON'),
+            'client_id' => env('GOOGLE_DRIVE_CLIENT_ID'),
+            'client_secret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
+            'refresh_token' => env('GOOGLE_DRIVE_REFRESH_TOKEN'),
+            'folder_id' => env('GOOGLE_DRIVE_FOLDER_ID'),
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Disk untuk upload dokumentasi jurnal PKL
+    |--------------------------------------------------------------------------
+    | Gunakan "google" agar foto jurnal tersimpan di Google Drive.
+    */
+    'jurnal_dokumentasi_disk' => env('JURNAL_DOKUMENTASI_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------

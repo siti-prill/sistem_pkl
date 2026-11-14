@@ -20,7 +20,7 @@ class JurnalRequest extends FormRequest
         return [
             'tanggal' => 'required|date',
             'aktivitas' => 'required|string',
-            'dokumentasi' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'dokumentasi' => 'nullable|url|max:2048',
         ];
     }
 
@@ -29,9 +29,8 @@ class JurnalRequest extends FormRequest
         return [
             'tanggal.required' => 'Tanggal wajib diisi.',
             'aktivitas.required' => 'Aktivitas wajib diisi.',
-            'dokumentasi.image' => 'File harus berupa gambar.',
-            'dokumentasi.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif.',
-            'dokumentasi.max' => 'Ukuran gambar maksimal 2MB.',
+            'dokumentasi.url' => 'Dokumentasi harus berupa link/URL yang valid (contoh: link Google Drive).',
+            'dokumentasi.max' => 'Link dokumentasi terlalu panjang (maksimal 2048 karakter).',
         ];
     }
 }
