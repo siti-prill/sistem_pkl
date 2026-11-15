@@ -11,7 +11,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 @auth
-                    @if (auth()->user()->role == 'admin')
+                    @if (auth()->user()?->role == 'admin')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
                                 href="{{ route('admin.dashboard') }}">
@@ -46,7 +46,7 @@
                                 <i class="fas fa-people-arrows me-1"></i> Penempatan
                             </a>
                         </li>
-                    @elseif(auth()->user()->role == 'guru')
+                    @elseif(auth()->user()?->role == 'guru')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('guru.monitoring.*') ? 'active' : '' }}"
                                 href="{{ route('guru.monitoring.index') }}">
@@ -59,7 +59,7 @@
                                 <i class="fas fa-star me-1"></i> Penilaian
                             </a>
                         </li>
-                    @elseif(auth()->user()->role == 'siswa')
+                    @elseif(auth()?->user()->role == 'siswa')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('siswa.pengajuan.*') ? 'active' : '' }}"
                                 href="{{ route('siswa.pengajuan.index') }}">
@@ -100,7 +100,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                             data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
+                            <i class="fas fa-user-circle me-1"></i> {{ Auth::user()?->name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>

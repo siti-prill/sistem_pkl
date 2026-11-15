@@ -89,12 +89,16 @@
         @forelse($jurnals as $jurnal)
             <div class="card mb-3">
                 <div class="card-body">
-                    <div class="d-flex flex-wrap justify-content-between align-items-start">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
                         <div>
                             <div class="d-flex align-items-center gap-3">
+                                <!-- TANGGAL & HARI KE-XX -->
                                 <h5 class="mb-0">
                                     <i class="fas fa-calendar-alt me-2 text-primary"></i>
                                     {{ \Carbon\Carbon::parse($jurnal->tanggal)->format('d F Y') }}
+                                    <span class="text-muted fs-6 ms-2 fw-normal">
+                                        (Hari ke-{{ \Carbon\Carbon::parse($penempatan->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($jurnal->tanggal)) + 1 }})
+                                    </span>
                                 </h5>
                                 @if($jurnal->status == 'submitted')
                                     <span class="badge bg-success">
@@ -106,25 +110,26 @@
                                     </span>
                                 @endif
                             </div>
-                            <p class="text-muted mt-2 mb-0">{{ Str::limit($jurnal->aktivitas, 150) }}</p>
-                            @if($jurnal->dokumentasi)
-                                @php $isUrl = \Illuminate\Support\Str::startsWith($jurnal->dokumentasi, ['http://', 'https://']); @endphp
-                                <small class="text-primary">
-                                    <i class="fas {{ $isUrl ? 'fa-link' : 'fa-image' }} me-1"></i> Ada dokumentasi
-                                </small>
-                            @endif
+                            
+                            <!-- TULISAN LIHAT DETAIL (Menggantikan Ikon Mata) -->
+                            <div class="mt-2">
+                                <a href="{{ route('siswa.jurnal.show', $jurnal) }}" class="text-decoration-none fw-semibold text-primary">
+                                    <i class="fas fa-arrow-right me-1"></i> Lihat Detail
+                                </a>
+                            </div>
+
+                            <!-- Komentar tetap ditampilkan -->
                             @if($jurnal->komentarJurnal->count() > 0)
-                                <div class="mt-1">
+                                <div class="mt-2">
                                     <small class="text-info">
                                         <i class="fas fa-comment me-1"></i> {{ $jurnal->komentarJurnal->count() }} komentar
                                     </small>
                                 </div>
                             @endif
                         </div>
+
+                        <!-- Bagian Tombol Aksi Kanan (Ikon Mata sudah dihilangkan) -->
                         <div class="d-flex gap-2 mt-2 mt-sm-0">
-                            <a href="{{ route('siswa.jurnal.show', $jurnal) }}" class="btn btn-info btn-sm">
-                                <i class="fas fa-eye"></i>
-                            </a>
                             @if($jurnal->status == 'draft')
                                 <a href="{{ route('siswa.jurnal.edit', $jurnal) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>

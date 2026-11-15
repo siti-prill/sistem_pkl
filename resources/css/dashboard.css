@@ -1,0 +1,565 @@
+/* =========================================================
+   DASHBOARD THEME — Refined Edition
+   Test CSS - Hapus ini setelah berhasil
+   ========================================================= */
+
+/* ---------- 1. DESIGN TOKENS ---------- */
+:root {
+  /* Brand */
+  --brand: #4f46e5;
+  --brand-hover: #4338ca;
+  --brand-soft: rgba(79, 70, 229, 0.15);
+  --brand-light: rgba(79, 70, 229, 0.08);
+
+  /* Sidebar */
+  --sidebar-bg: #1a1a2e;
+  --sidebar-bg-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-text: rgba(255, 255, 255, 0.72);
+  --sidebar-text-hover: #ffffff;
+  --sidebar-text-muted: rgba(255, 255, 255, 0.35);
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 80px;
+
+  /* Surface */
+  --bg: #f0f2f5;
+  --surface: #ffffff;
+  --surface-muted: #f0f2f5;
+  --border: #e5e7eb;
+
+  /* Text */
+  --text: #1a1a2e;
+  --text-muted: #6c757d;
+  --text-soft: #9ca3af;
+
+  /* State */
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+
+  /* Effects */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 50px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-index scale */
+  --z-sidebar: 1050;
+  --z-overlay: 1040;
+  --z-header: 1030;
+}
+
+/* Dark mode tokens */
+body.dark-mode {
+  --bg: #0f0f1e;
+  --surface: #1a1a2e;
+  --surface-muted: #12122a;
+  --border: #2d2d4a;
+  --text: #f0f2f5;
+  --text-muted: #9ca3af;
+  --text-soft: #6b7280;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- 2. BASE ---------- */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  transition: background-color var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fokus yang konsisten & accessible */
+*:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- 3. SIDEBAR ---------- */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text-hover);
+  z-index: var(--z-sidebar);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition), width var(--transition);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Brand */
+.sidebar-brand {
+  padding: 20px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  background: var(--sidebar-bg);
+  z-index: 1;
+}
+
+.sidebar-brand i {
+  font-size: 26px;
+  color: var(--brand);
+  filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.4));
+  transition: transform var(--transition);
+}
+
+.sidebar-brand:hover i {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.sidebar-brand h3 {
+  font-weight: 700;
+  font-size: 19px;
+  margin: 0;
+  color: var(--sidebar-text-hover);
+  letter-spacing: -0.3px;
+}
+
+.sidebar-brand small {
+  font-size: 11px;
+  color: var(--sidebar-text-muted);
+  display: block;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
+
+/* Menu */
+.sidebar-menu {
+  padding: 16px 12px 24px;
+}
+
+.sidebar-menu .menu-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--sidebar-text-muted);
+  padding: 0 12px;
+  margin: 18px 0 6px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.sidebar-menu .menu-label:first-child {
+  margin-top: 4px;
+}
+
+.sidebar-menu .nav-item {
+  margin-bottom: 2px;
+}
+
+.sidebar-menu .nav-link {
+  color: var(--sidebar-text);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  transition: background var(--transition), color var(--transition),
+              padding var(--transition);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  position: relative;
+}
+
+.sidebar-menu .nav-link i {
+  width: 20px;
+  text-align: center;
+  font-size: 16px;
+  transition: color var(--transition), transform var(--transition);
+  flex-shrink: 0;
+}
+
+.sidebar-menu .nav-link:hover {
+  color: var(--sidebar-text-hover);
+  background: var(--sidebar-bg-hover);
+}
+
+.sidebar-menu .nav-link:hover i {
+  color: var(--brand);
+  transform: translateX(1px);
+}
+
+.sidebar-menu .nav-link.active {
+  color: var(--sidebar-text-hover);
+  background: var(--brand-soft);
+  font-weight: 600;
+}
+
+.sidebar-menu .nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: var(--brand);
+  border-radius: 0 3px 3px 0;
+}
+
+.sidebar-menu .nav-link.active i {
+  color: var(--brand);
+}
+
+/* Badge di menu (opsional) */
+.sidebar-menu .nav-badge {
+  margin-left: auto;
+  background: var(--brand);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+/* ---------- 4. MAIN CONTENT ---------- */
+.main-content {
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  transition: margin-left var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- 5. TOP HEADER ---------- */
+.top-header {
+  background: var(--surface);
+  padding: 14px 28px;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  backdrop-filter: saturate(180%) blur(6px);
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.top-header .page-title h4 {
+  margin: 0;
+  font-weight: 650;
+  font-size: 18px;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+
+.top-header .page-title small {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  display: block;
+  margin-top: 2px;
+}
+
+.top-header .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-header .header-actions .btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition),
+              transform var(--transition), box-shadow var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.top-header .header-actions .btn-icon:hover {
+  background: var(--brand);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+}
+
+.top-header .header-actions .btn-icon:active {
+  transform: translateY(0);
+}
+
+/* User info */
+.top-header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 14px 5px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-muted);
+  cursor: pointer;
+  transition: background var(--transition), box-shadow var(--transition);
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid transparent;
+}
+
+.top-header .user-info:hover {
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.top-header .user-info .avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand), #7c74ff);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
+}
+
+.top-header .user-info .user-meta {
+  line-height: 1.2;
+}
+
+.top-header .user-info .user-meta strong {
+  font-size: 13.5px;
+  display: block;
+}
+
+.top-header .user-info .user-meta small {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ---------- 6. CONTENT ---------- */
+.content-wrapper {
+  padding: 24px 28px;
+  flex: 1;
+}
+
+/* ---------- 7. CARDS ---------- */
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  height: 100%;
+  transition: transform var(--transition), box-shadow var(--transition),
+              border-color var(--transition);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(79, 70, 229, 0.35);
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 4px 0 2px;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.stat-change {
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.stat-change.up {
+  color: var(--success);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.stat-change.down {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Chart */
+.chart-container {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+
+.chart-container:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ---------- 8. SIDEBAR TOGGLE (MOBILE) ---------- */
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+
+.sidebar-toggle:hover {
+  background: var(--surface-muted);
+}
+
+/* Overlay saat sidebar terbuka di mobile */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: var(--z-overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition), visibility var(--transition);
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---------- 9. ANIMATION ---------- */
+.animate-fadeIn {
+  animation: fadeIn 0.45s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hargai preferensi user yang kurangi animasi */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- 10. RESPONSIVE ---------- */
+@media (max-width: 992px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .sidebar-toggle {
+    display: inline-flex;
+  }
+
+  .top-header {
+    padding: 12px 16px;
+  }
+
+  .content-wrapper {
+    padding: 18px 16px;
+  }
+
+  .stat-number {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .top-header .page-title small {
+    display: none;
+  }
+
+  .top-header .user-info .user-meta {
+    display: none;
+  }
+
+  .top-header .user-info {
+    padding: 5px;
+  }
+
+  .content-wrapper {
+    padding: 14px 12px;
+  }
+}
+
+/* ---------- 11. DARK MODE OVERRIDES ---------- */
+body.dark-mode .sidebar {
+  background: #14142a;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .top-header {
+  border-bottom: 1px solid var(--border);
+}
+
+body.dark-mode .stat-card:hover {
+  border-color: rgba(124, 116, 255, 0.5);
+}
+
+body.dark-mode .btn-icon:hover {
+  box-shadow: 0 4px 12px rgba(124, 116, 255, 0.5);
+}

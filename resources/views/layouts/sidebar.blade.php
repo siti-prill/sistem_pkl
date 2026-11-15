@@ -14,7 +14,7 @@
 
     <div class="sidebar-menu">
         @auth
-            @if (auth()->user()->role == 'admin')
+            @if (auth()->user()?->role == 'admin')
                 <div class="menu-label">Menu Utama</div>
 
                 <div class="nav-item">
@@ -86,7 +86,7 @@
                         <span>Pengaturan</span>
                     </a>
                 </div>
-            @elseif(auth()->user()->role == 'guru')
+            @elseif(auth()->user()?->role == 'guru')
                 <div class="menu-label">Menu Guru</div>
 
                 <div class="nav-item">
@@ -104,15 +104,7 @@
                         <span>Penilaian</span>
                     </a>
                 </div>
-
-                {{-- <div class="nav-item">
-                    <a href="{{ route('guru.kesimpulan.index') }}"
-                        class="nav-link {{ request()->routeIs('guru.kesimpulan.*') ? 'active' : '' }}">
-                        <i class="fas fa-award"></i>
-                        <span>Kesimpulan Akhir</span>
-                    </a>
-                </div> --}}
-            @elseif(auth()->user()->role == 'siswa')
+            @elseif(auth()->user()?->role == 'siswa')
                 <div class="menu-label">PKL</div>
 
                 <div class="nav-item">
@@ -130,7 +122,7 @@
                         <span>Jurnal Harian</span>
                     </a>
                 </div>
-            @elseif(auth()->user()->role == 'industri')
+            @elseif(auth()->user()?->role == 'industri')
                 <div class="menu-label">Penilaian</div>
 
                 <div class="nav-item">
@@ -143,7 +135,7 @@
             @endif
 
             {{-- ========== BAGIAN LAPORAN untuk GURU ========== --}}
-            @if (auth()->user()->role == 'guru')
+            @if (auth()->user()?->role == 'guru')
                 <div class="menu-label">Laporan</div>
 
                 <div class="nav-item">
@@ -156,10 +148,10 @@
             @endif
 
             {{-- BAGIAN LAPORAN untuk SISWA --}}
-            @if (auth()->user()->role == 'siswa')
+            @if (auth()->user()?->role == 'siswa')
                 @php
                     $sudahDinilai = \App\Models\MonitoringNilai::whereHas('penempatan', function ($q) {
-                        $q->where('siswa_id', auth()->user()->siswa->id ?? 0);
+                        $q->where('siswa_id', auth()?->user()->siswa->id ?? 0);
                     })->exists();
                 @endphp
 
@@ -194,7 +186,7 @@
             @endif
 
             {{-- ========== BAGIAN AKUN ========== --}}
-            @if (auth()->check())
+            @if (auth()?->check())
                 <div class="menu-label">Akun</div>
 
                 <div class="nav-item">

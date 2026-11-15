@@ -67,6 +67,7 @@ class JurnalController extends Controller
         return view('siswa.jurnal.create', compact('penempatan'));
     }
 
+
     public function store(JurnalRequest $request)
     {
         $siswa = auth()->user()->siswa;
@@ -75,8 +76,7 @@ class JurnalController extends Controller
             abort(403, 'Data siswa tidak ditemukan.');
         }
 
-        // Penempatan SELALU diambil dari akun siswa yang login,
-        // bukan dari input request (mencegah IDOR).
+        // Ambil penempatan aktif milik siswa yang login
         $penempatan = PenempatanPkl::where('siswa_id', $siswa->id)
             ->where('status', 'aktif')
             ->first();
@@ -87,19 +87,25 @@ class JurnalController extends Controller
         }
 
         $data = $request->validated();
+
+        // Status mengikuti pilihan siswa
         $data['penempatan_id'] = $penempatan->id;
-        $data['status'] = 'draft';
+        $data['status'] = $request->input('status') === 'submitted'
+            ? 'submitted'
+            : 'draft';
 
-        // Dokumentasi berupa link (mis. link file/foto di Google Drive)
-        $data['dokumentasi'] = !empty($data['dokumentasi']) ? $data['dokumentasi'] : null;
+        $data['dokumentasi'] = !empty($data['dokumentasi'])
+            ? $data['dokumentasi']
+            : null;
 
-        // Cek duplikat
+        // Cek jurnal ganda berdasarkan tanggal
         $exists = JurnalHarian::where('penempatan_id', $penempatan->id)
             ->whereDate('tanggal', $data['tanggal'])
             ->exists();
 
         if ($exists) {
-            return back()->with('error', 'Jurnal untuk tanggal ini sudah ada.');
+            return back()->withInput()
+                ->with('error', 'Jurnal untuk tanggal ini sudah ada.');
         }
 
         try {
@@ -107,13 +113,18 @@ class JurnalController extends Controller
                 JurnalHarian::create($data);
             });
         } catch (\Illuminate\Database\QueryException $e) {
-            // UNIQUE (penempatan_id, tanggal) menangkap race condition
-            return back()->with('error', 'Jurnal untuk tanggal ini sudah ada.');
+            return back()->withInput()
+                ->with('error', 'Jurnal untuk tanggal ini sudah ada.');
         }
 
+        $pesan = $data['status'] === 'submitted'
+            ? 'Jurnal berhasil dikirim ke guru pembimbing.'
+            : 'Jurnal berhasil disimpan sebagai draft.';
+
         return redirect()->route('siswa.jurnal.index')
-            ->with('success', 'Jurnal berhasil disimpan.');
+            ->with('success', $pesan);
     }
+
 
     public function show(JurnalHarian $jurnal)
     {

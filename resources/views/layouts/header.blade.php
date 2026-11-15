@@ -17,7 +17,7 @@
 
         <a href="#" class="user-info text-decoration-none" data-bs-toggle="dropdown">
             <div class="avatar">
-                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                {{ strtoupper(substr(Auth::user()?->name, 0, 1)) }}
             </div>
             <span class="d-none d-sm-inline">{{ Auth::user()->name }}</span>
             <i class="fas fa-chevron-down text-muted ms-1" style="font-size: 10px;"></i>

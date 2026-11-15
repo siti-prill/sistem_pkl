@@ -14,14 +14,21 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Custom CSS -->
+    
+    <!-- CUSTOM CSS -->
+    <!-- Memuat style.css bawaan Anda -->
     <link rel="stylesheet" href="/css/style.css?v={{ @filemtime(public_path('css/style.css')) }}">
+    <!-- Memuat dashboard.css (CSS baru yang kita buat kemarin) -->
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     @stack('styles')
 </head>
@@ -60,13 +67,15 @@
                     <div class="dropdown">
                         <a href="#" class="user-info text-decoration-none" data-bs-toggle="dropdown">
                             <div class="avatar">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                {{-- Menggunakan nullsafe operator (PHP 8) --}}
+                                {{ strtoupper(substr(Auth::user()?->name ?? 'G', 0, 1)) }}
                             </div>
-                            <span class="d-none d-sm-inline">{{ Auth::user()->name }}</span>
+                            <span class="d-none d-sm-inline">{{ Auth::user()?->name ?? 'Guest' }}</span>
                             <i class="fas fa-chevron-down text-muted ms-1" style="font-size: 10px;"></i>
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-end">
+                            @auth
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                     <i class="fas fa-user me-2"></i> Profile
@@ -83,6 +92,13 @@
                                     </button>
                                 </form>
                             </li>
+                            @else
+                            <li>
+                                <a class="dropdown-item" href="{{ route('login') }}">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                                </a>
+                            </li>
+                            @endauth
                         </ul>
                     </div>
                 </div>
@@ -125,6 +141,7 @@
 
     <!-- ============ SCRIPTS ============ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         // Cek jika ada session 'error' dari Controller
         @if (session('error'))
@@ -147,20 +164,25 @@
                 showConfirmButton: false
             });
         @endif
+
         // Toggle Sidebar
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('show');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if(overlay) overlay.classList.toggle('show');
         }
 
         // Close sidebar on outside click (mobile)
         document.addEventListener('click', function(event) {
             const sidebar = document.querySelector('.sidebar');
             const toggleBtn = document.querySelector('.sidebar-toggle');
+            const overlay = document.querySelector('.sidebar-overlay');
 
             if (window.innerWidth <= 992) {
                 if (sidebar && toggleBtn) {
                     if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
                         sidebar.classList.remove('show');
+                        if(overlay) overlay.classList.remove('show');
                     }
                 }
             }

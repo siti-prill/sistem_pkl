@@ -38,12 +38,6 @@
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $siswa->user->email }}</p>
                     </div>
                     <div>
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Password</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">
-                            Tidak dapat dilihat. Gunakan fitur "Lupa Password" atau minta user mengganti password sendiri.
-                        </p>
-                    </div>
-                    <div>
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">No Telepon</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $siswa->no_telepon ?? '-' }}</p>
                     </div>

@@ -41,8 +41,9 @@
                 data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto align-items-center">
+                <ul class="navbar-nav align-items-center gap-3 ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="#features">Fitur</a>
                     </li>
@@ -54,25 +55,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Kontak</a>
                     </li>
-                </ul>
-                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
                         <a href="{{ route('login') }}" class="btn btn-login-nav">
-                            <i class="fas fa-chalkboard-teacher me-2"></i>Login Guru
-                        </a>
-                    </li>
-                    <li class="nav-item ms-lg-2">
-                        <a href="{{ route('login') }}" class="btn btn-login-nav">
-                            <i class="fas fa-user-shield me-2"></i>Login Admin
-                        </a>
-                    </li>
-                    <li class="nav-item ms-lg-2">
-                        <a href="{{ route('login.industri.form') }}" class="btn btn-login-nav">
-                            <i class="fas fa-building me-2"></i>Login Industri
+                            <i class="fas fa-chalkboard-teacher me-2"></i>Login
                         </a>
                     </li>
                 </ul>
             </div>
+
         </div>
     </nav>
 
@@ -91,7 +81,7 @@
                     </p>
                     <div>
                         <a href="{{ route('login.siswa.form') }}" class="btn btn-hero">
-                            <i class="fas fa-user-graduate me-2"></i>Login Siswa
+                            <i class="fas fa-user-graduate me-2"></i>Login Sekarang
                         </a>
                         <a href="#features" class="btn btn-outline-hero">
                             <i class="fas fa-info-circle me-2"></i>Pelajari
@@ -150,6 +140,20 @@
 
             <!-- Grid Responsif: col-12 (HP), col-sm-6 (Tablet), col-lg-4 (PC) -->
             <div class="row g-4 justify-content-center">
+
+                <!-- Card 6: Pengajuan Tempat PKL -->
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="feature-card h-100" role="button" data-bs-toggle="modal"
+                        data-bs-target="#featureModal" data-feature="pengajuan">
+                        <div class="feature-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <h5>Pengajuan Tempat PKL</h5>
+                        <p>Siswa dapat mengajukan pilihan tempat PKL yang akan diverifikasi oleh admin.</p>
+                        <span class="detail-link"><i class="fas fa-arrow-right me-1"></i>Selengkapnya</span>
+                    </div>
+                </div>
+
                 <!-- Card 1: Manajemen Siswa -->
                 <div class="col-12 col-sm-6 col-lg-4">
                     <div class="feature-card h-100" role="button" data-bs-toggle="modal" data-bs-target="#featureModal"
@@ -163,23 +167,10 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Mitra Industri -->
-                <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="feature-card h-100" role="button" data-bs-toggle="modal" data-bs-target="#featureModal"
-                        data-feature="industri">
-                        <div class="feature-icon bg-success bg-opacity-10 text-success">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <h5>Mitra Industri</h5>
-                        <p>Daftar perusahaan mitra, kuota PKL, dan contact person terintegrasi.</p>
-                        <span class="detail-link"><i class="fas fa-arrow-right me-1"></i>Selengkapnya</span>
-                    </div>
-                </div>
-
                 <!-- Card 3: Monitoring & Laporan -->
                 <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="feature-card h-100" role="button" data-bs-toggle="modal"
-                        data-bs-target="#featureModal" data-feature="monitoring">
+                    <div class="feature-card h-100" role="button" data-bs-toggle="modal" data-bs-target="#featureModal"
+                        data-feature="monitoring">
                         <div class="feature-icon bg-warning bg-opacity-10 text-warning">
                             <i class="fas fa-chart-line"></i>
                         </div>
@@ -187,7 +178,7 @@
                         <p>Pantau aktivitas siswa dan cetak laporan jurnal & nilai dalam PDF.</p>
                         <span class="detail-link"><i class="fas fa-arrow-right me-1"></i>Selengkapnya</span>
                     </div>
-                </div>
+                </div>                
 
                 <!-- Card 4: Bimbingan Online -->
                 <div class="col-12 col-sm-6 col-lg-4">
@@ -215,28 +206,15 @@
                     </div>
                 </div>
 
-                <!-- Card 6: Pengajuan Tempat PKL -->
+                <!-- Card 2: Mitra Industri -->
                 <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="feature-card h-100" role="button" data-bs-toggle="modal"
-                        data-bs-target="#featureModal" data-feature="pengajuan">
-                        <div class="feature-icon bg-primary bg-opacity-10 text-primary">
-                            <i class="fas fa-paper-plane"></i>
+                    <div class="feature-card h-100" role="button" data-bs-toggle="modal" data-bs-target="#featureModal"
+                        data-feature="industri">
+                        <div class="feature-icon bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-building"></i>
                         </div>
-                        <h5>Pengajuan Tempat PKL</h5>
-                        <p>Siswa dapat mengajukan pilihan tempat PKL yang akan diverifikasi oleh admin.</p>
-                        <span class="detail-link"><i class="fas fa-arrow-right me-1"></i>Selengkapnya</span>
-                    </div>
-                </div>
-
-                <!-- Card 7: Aman & Terpercaya -->
-                <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="feature-card h-100" role="button" data-bs-toggle="modal"
-                        data-bs-target="#featureModal" data-feature="aman">
-                        <div class="feature-icon bg-opacity-10" style="background-color: #ede9fe; color: #7c3aed;">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h5>Aman & Terpercaya</h5>
-                        <p>Sistem dengan autentikasi user dan role management yang aman.</p>
+                        <h5>Mitra Industri</h5>
+                        <p>Daftar perusahaan mitra, kuota PKL, dan contact person terintegrasi.</p>
                         <span class="detail-link"><i class="fas fa-arrow-right me-1"></i>Selengkapnya</span>
                     </div>
                 </div>
@@ -250,6 +228,19 @@
                         </div>
                         <h5>Penilaian Industri</h5>
                         <p>Industri dapat langsung menilai siswa sesuai template dari sekolah secara online.</p>
+                        <span class="detail-link"><i class="fas fa-arrow-right me-1"></i>Selengkapnya</span>
+                    </div>
+                </div>
+
+                <!-- Card 7: Aman & Terpercaya -->
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="feature-card h-100" role="button" data-bs-toggle="modal"
+                        data-bs-target="#featureModal" data-feature="aman">
+                        <div class="feature-icon bg-opacity-10" style="background-color: #ede9fe; color: #7c3aed;">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h5>Aman & Terpercaya</h5>
+                        <p>Sistem dengan autentikasi user dan role management yang aman.</p>
                         <span class="detail-link"><i class="fas fa-arrow-right me-1"></i>Selengkapnya</span>
                     </div>
                 </div>

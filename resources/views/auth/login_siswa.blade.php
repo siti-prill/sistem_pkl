@@ -75,6 +75,33 @@
         .form-control:focus {
             border-color: #4f46e5;
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+            z-index: 1;
+        }
+
+        /* Menyesuaikan border input group agar menyatu dengan rapi */
+        .input-group .form-control {
+            border-right: none;
+        }
+        
+        .input-group .btn-toggle-password {
+            border: 2px solid #e5e7eb;
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+            color: #6c757d;
+            background-color: #fff;
+            padding: 0 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group .btn-toggle-password:hover {
+            color: #4f46e5;
+            background-color: #f8f9fa;
+        }
+
+        /* Mengatasi fokus outline pada tombol mata */
+        .input-group .btn-toggle-password:focus {
+            box-shadow: none;
+            border-color: #e5e7eb;
         }
 
         .btn-login {
@@ -140,18 +167,27 @@
 
                 <div class="mb-3">
                     <label class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                        placeholder="Masukkan password" required>
+                    <!-- Menggunakan Input Group untuk Tombol Mata -->
+                    <div class="input-group">
+                        <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror"
+                            placeholder="Masukkan password" required>
+                        <button class="btn btn-toggle-password" type="button" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </button>
+                        @error('password')
+                            <!-- Pesan error diletakkan di luar input-group agar tidak merusak desain -->
+                        @enderror
+                    </div>
                     @error('password')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="text-danger mt-1" style="font-size: 0.875em;">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <button type="submit" class="btn-login">
+                <button type="submit" class="btn-login mt-2">
                     <i class="fas fa-sign-in-alt me-2"></i> Login
                 </button>
 
-                <div class="text-center mt-2">
+                <div class="text-center mt-3">
                     <a href="{{ route('landing') }}" class="text-decoration-none"
                         style="color: #4f46e5; font-weight: 500; font-size: 14px;">
                         <i class="fas fa-arrow-left me-1"></i> Kembali ke Halaman Awal
@@ -161,6 +197,24 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script Toggle Password -->
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 
 </html>

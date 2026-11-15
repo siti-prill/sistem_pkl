@@ -302,12 +302,6 @@
                 </div>
 
                 <div class="mb-3 d-flex justify-content-between align-items-center">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="remember" id="remember_me">
-                        <label class="form-check-label" for="remember_me">
-                            <i class="fas fa-check-circle me-1"></i> Ingat Saya
-                        </label>
-                    </div>
                     @if (Route::has('password.request'))
                         <a class="forgot-link" href="{{ route('password.request') }}">
                             <i class="fas fa-key me-1"></i> Lupa Password?

@@ -87,8 +87,8 @@
         </form>
     </div>
 
-    <!-- Table -->
-    <div class="table-container">
+    <!-- Table Penempatan -->
+    <div class="table-container mb-8">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
@@ -142,5 +142,146 @@
             {{ $penempatans->withQueryString()->links() }}
         </div>
     </div>
+
+    <!-- LIST JURNAL HARIAN -->
+    <div class="mt-8">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+            <i class="fas fa-book-open mr-2 text-indigo-500"></i> Jurnal Harian Siswa (Terbaru)
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @foreach($penempatans as $penempatan)
+                <!-- Menggunakan optional chaining (?->) untuk mencegah error jika relasi null -->
+                @forelse($penempatan->jurnals?->where('status', 'submitted')->take(5) ?? [] as $jurnal)
+                    <!-- Card Jurnal -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 flex justify-between items-center border border-gray-100 dark:border-gray-700">
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-gray-800 dark:text-white">
+                                    {{ \Carbon\Carbon::parse($jurnal->tanggal)->format('d F Y') }}
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+                                    Hari ke-{{ \Carbon\Carbon::parse($penempatan->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($jurnal->tanggal)) + 1 }}
+                                </span>
+                            </div>
+                            <span class="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                                <i class="fas fa-user mr-1 text-xs"></i> {{ $penempatan->siswa->nama_siswa }}
+                            </span>
+                        </div>
+                        <button type="button" class="btn-primary btn-sm" onclick="showDetailJurnal({{ $jurnal->id }})">
+                            <i class="fas fa-eye mr-1"></i> Lihat Detail
+                        </button>
+                    </div>
+
+                    <!-- Modal Pop Up -->
+                    <div id="modal-jurnal-{{ $jurnal->id }}" class="fixed inset-0 bg-gray-950/60 backdrop-blur-sm hidden items-center justify-center z-[100] p-4 transition-all duration-300">
+                        <!-- Backdrop klik untuk close -->
+                        <div class="absolute inset-0" onclick="closeDetailJurnal({{ $jurnal->id }})"></div>
+
+                        <div class="relative bg-white dark:bg-gray-800 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col z-10">
+                            
+                            <!-- Header Modal -->
+                            <div class="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-4 flex items-center justify-between shrink-0">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                                        <i class="fas fa-book-open text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white">Detail Jurnal</h3>
+                                        <p class="text-sm text-indigo-100">{{ $penempatan->siswa->nama_siswa }}</p>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="closeDetailJurnal({{ $jurnal->id }})" class="w-8 h-8 rounded-lg bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <!-- Isi Modal -->
+                            <div class="p-6 overflow-y-auto space-y-5">
+                                <!-- Aktivitas -->
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                                        <i class="fas fa-tasks text-indigo-500"></i> Aktivitas
+                                    </h4>
+                                    <div class="bg-gray-50 dark:bg-gray-700/60 border border-gray-100 dark:border-gray-700 rounded-xl p-4">
+                                        <p class="text-sm leading-7 text-gray-700 dark:text-gray-200 whitespace-pre-wrap">{{ $jurnal->aktivitas }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Dokumentasi -->
+                                @if($jurnal->dokumentasi)
+                                    @php $isUrl = \Illuminate\Support\Str::startsWith($jurnal->dokumentasi, ['http://', 'https://']); @endphp
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                                            <i class="fas fa-images text-purple-500"></i> Dokumentasi
+                                        </h4>
+                                        <a href="{{ $isUrl ? $jurnal->dokumentasi : route('jurnal.dokumentasi', $jurnal) }}" target="_blank" rel="noopener" class="flex items-center justify-between p-3 rounded-xl border border-indigo-100 dark:border-gray-700 bg-indigo-50/50 hover:bg-indigo-100 transition">
+                                            <span class="font-semibold text-sm text-gray-800 dark:text-white">
+                                                <i class="fas {{ $isUrl ? 'fa-link' : 'fa-image' }} text-indigo-500 mr-2"></i> Buka Dokumentasi
+                                            </span>
+                                            <i class="fas fa-external-link-alt text-indigo-500"></i>
+                                        </a>
+                                    </div>
+                                @endif
+
+                                <!-- Komentar -->
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                                        <i class="fas fa-comments text-teal-500"></i> Komentar ({{ $jurnal->komentarJurnal->count() }})
+                                    </h4>
+                                    
+                                    @if($jurnal->komentarJurnal->count() > 0)
+                                        <div class="space-y-2 mb-3">
+                                            @foreach($jurnal->komentarJurnal as $komentar)
+                                                <div class="p-3 bg-gray-50 dark:bg-gray-700/60 rounded-xl border border-gray-100 dark:border-gray-700">
+                                                    <div class="flex justify-between items-start mb-1">
+                                                        <p class="font-semibold text-sm text-gray-800 dark:text-white">{{ $komentar->guru->nama_guru ?? 'Guru' }}</p>
+                                                        <span class="text-xs text-gray-400">{{ \Carbon\Carbon::parse($komentar->created_at)->format('d/m/Y H:i') }}</span>
+                                                    </div>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-300">{{ $komentar->komentar }}</p>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p class="text-sm text-gray-500 italic mb-3">Belum ada komentar.</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                @endforelse
+            @endforeach
+        </div>
+    </div>
 </div>
+
+<!-- Script Modal -->
+<script>
+    function showDetailJurnal(id) {
+        const modal = document.getElementById('modal-jurnal-' + id);
+        if (modal) { 
+            modal.classList.remove('hidden'); 
+            modal.classList.add('flex'); 
+            document.body.style.overflow = 'hidden';
+        }
+    }
+    function closeDetailJurnal(id) {
+        const modal = document.getElementById('modal-jurnal-' + id);
+        if (modal) { 
+            modal.classList.add('hidden'); 
+            modal.classList.remove('flex'); 
+            document.body.style.overflow = '';
+        }
+    }
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.querySelectorAll('[id^="modal-jurnal-"]').forEach(modal => {
+                if (!modal.classList.contains('hidden')) {
+                    closeDetailJurnal(modal.id.replace('modal-jurnal-', ''));
+                }
+            });
+        }
+    });
+</script>
 @endsection
