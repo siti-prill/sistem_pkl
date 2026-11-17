@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Sistem PKL')</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- CUSTOM CSS -->
+    <!-- Memuat style.css bawaan Anda -->
+    <link rel="stylesheet" href="/css/style.css?v={{ @filemtime(public_path('css/style.css')) }}">
+    <!-- Memuat dashboard.css (CSS baru yang kita buat kemarin) -->
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @stack('styles')
+</head>
+
+<body class="@if (session('theme') === 'dark') dark-mode @endif">
+    <div id="app">
+        <!-- ============ SIDEBAR ============ -->
+        @include('layouts.sidebar')
+
+        <!-- ============ MAIN CONTENT ============ -->
+        <div class="main-content">
+
+            <!-- ======================================== -->
+            <!-- TOP HEADER (Sticky) -->
+            <!-- ======================================== -->
+            <header class="top-header">
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Sidebar Toggle (Mobile) -->
+                    <button class="sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <div class="page-title">
+                        <h4>@yield('page-title', 'Dashboard')</h4>
+                        <small>@yield('page-subtitle', 'Overview PKL')</small>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <!-- Theme Toggle -->
+                    <button class="btn-icon" onclick="toggleTheme()" title="Toggle Theme">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+
+                    <!-- User Info -->
+                    <div class="dropdown">
+                        <a href="#" class="user-info text-decoration-none" data-bs-toggle="dropdown">
+                            <div class="avatar">
+                                {{-- Menggunakan nullsafe operator (PHP 8) --}}
+                                {{ strtoupper(substr(Auth::user()?->name ?? 'G', 0, 1)) }}
+                            </div>
+                            <span class="d-none d-sm-inline">{{ Auth::user()?->name ?? 'Guest' }}</span>
+                            <i class="fas fa-chevron-down text-muted ms-1" style="font-size: 10px;"></i>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @auth
+                            <li>
+                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                    <i class="fas fa-user me-2"></i> Profile
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                            @else
+                            <li>
+                                <a class="dropdown-item" href="{{ route('login') }}">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                                </a>
+                            </li>
+                            @endauth
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ======================================== -->
+            <!-- CONTENT -->
+            <!-- ======================================== -->
+            <div class="content-wrapper">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @yield('content')
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ SCRIPTS ============ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Cek jika ada session 'error' dari Controller
+        @if (session('error'))
+            Swal.fire({
+                icon: 'warning',
+                title: 'Akses Ditolak',
+                text: "{{ session('error') }}",
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Mengerti'
+            });
+        @endif
+
+        // Cek jika ada session 'success' (opsional untuk notifikasi sukses)
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: "{{ session('success') }}",
+                timer: 3000,
+                showConfirmButton: false
+            });
+        @endif
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('show');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if(overlay) overlay.classList.toggle('show');
+        }
+
+        // Close sidebar on outside click (mobile)
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const toggleBtn = document.querySelector('.sidebar-toggle');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            if (window.innerWidth <= 992) {
+                if (sidebar && toggleBtn) {
+                    if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+                        sidebar.classList.remove('show');
+                        if(overlay) overlay.classList.remove('show');
+                    }
+                }
+            }
+        });
+
+        // Toggle Theme
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.add('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load theme from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            }
+
+            // Auto dismiss alerts
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+
+        // Confirm Delete
+        function confirmDelete(event) {
+            if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                event.preventDefault();
+                return false;
+            }
+            return true;
+        }
+
+        // Format number
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Scroll Reveal Animation
+        (function() {
+            const cards = document.querySelectorAll('.card');
+            if (!cards.length) return;
+
+            if (!('IntersectionObserver' in window)) {
+                cards.forEach(function(el) {
+                    el.classList.add('revealed');
+                });
+                return;
+            }
+
+            cards.forEach(function(el) {
+                if (el.closest('.d-none, [hidden], .modal')) {
+                    el.classList.add('revealed');
+                    return;
+                }
+                el.classList.add('reveal');
+            });
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.08,
+                rootMargin: '0px 0px -30px 0px'
+            });
+
+            cards.forEach(function(el) {
+                if (el.classList.contains('reveal')) observer.observe(el);
+            });
+        })();
+    </script>
+
+    @stack('scripts')
+</body>
+
+</html>

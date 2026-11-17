@@ -11,7 +11,7 @@
     </div>
 
     <div class="header-actions">
-        <button class="btn-icon" onclick="toggleTheme()" title="Toggle Theme">
+        <button type="button" class="btn-icon" onclick="toggleTheme()" title="Toggle Theme">
             <i class="fas fa-moon" id="themeIcon"></i>
         </button>
 

@@ -4,8 +4,57 @@
 @section('page-title', 'Dashboard')
 @section('page-subtitle', 'Overview PKL')
 
+@push('styles')
+<style>
+    /* ========== CHART RESPONSIVE ========== */
+    .chart-container {
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        width: 100%;
+        height: clamp(220px, 40vh, 340px);
+    }
+
+    .chart-wrapper canvas {
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
+    }
+
+    /* HP: chart lebih pendek & compact */
+    @media (max-width: 575.98px) {
+        .chart-wrapper {
+            height: 240px;
+        }
+        .chart-container {
+            padding: 0.75rem;
+        }
+        .chart-container h5 {
+            font-size: 0.95rem;
+        }
+    }
+
+    /* Tablet */
+    @media (min-width: 576px) and (max-width: 991.98px) {
+        .chart-wrapper {
+            height: 280px;
+        }
+    }
+
+    /* Monitor besar */
+    @media (min-width: 1400px) {
+        .chart-wrapper {
+            height: 320px;
+        }
+    }
+</style>
+@endpush
+
 @section('content')
-    <!-- Stats Cards -->
+    <!-- ========== STATS CARDS ========== -->
     <div class="row g-3 g-lg-4 mb-4">
         <!-- Card 1: Total Siswa -->
         <div class="col-6 col-xl-3">
@@ -88,60 +137,44 @@
         </div>
     </div>
 
-    <!-- Charts -->
+    <!-- ========== CHARTS ========== -->
     <div class="row g-3 g-lg-4 mb-4">
-        <div class="col-lg-6">
-            <div class="chart-container">
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                    <h5 class="fw-semibold mb-0">
+        <!-- Line Chart -->
+        <div class="col-8 col-lg-6">
+            <div class="chart-container card shadow-sm h-100 p-3 p-lg-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <h5 class="fw-semibold mb-0 fs-6 fs-md-5">
                         <i class="fas fa-chart-line text-primary me-2"></i> Aktivitas Jurnal
                     </h5>
                     <span class="text-muted small">
                         <i class="far fa-calendar-alt me-1"></i> Minggu ini vs Minggu lalu
                     </span>
                 </div>
-                <div class="chart-wrapper" style="position: relative; height: 280px; width: 100%;">
+                <div class="chart-wrapper">
                     <canvas id="jurnalLineChart"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="chart-container">
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                    <h5 class="fw-semibold mb-0">
+
+        <!-- Doughnut Chart -->
+        <div class="col-12 col-lg-6">
+            <div class="chart-container card shadow-sm h-100 p-3 p-lg-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <h5 class="fw-semibold mb-0 fs-6 fs-md-5">
                         <i class="fas fa-chart-pie text-primary me-2"></i> Status PKL
                     </h5>
                     <span class="text-muted small">
                         <i class="far fa-clock me-1"></i> Real-time
                     </span>
                 </div>
-                <div class="chart-wrapper" style="position: relative; height: 280px; width: 100%;">
+                <div class="chart-wrapper">
                     <canvas id="statusChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bar Chart -->
-    <div class="row g-3 g-lg-4 mb-4">
-        <div class="col-12">
-            <div class="chart-container">
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                    <h5 class="fw-semibold mb-0">
-                        <i class="fas fa-building text-primary me-2"></i> Perusahaan Teratas
-                    </h5>
-                    <span class="text-muted small">
-                        <i class="fas fa-trophy me-1"></i> Top 5
-                    </span>
-                </div>
-                <div class="chart-wrapper" style="position: relative; height: 260px; width: 100%;">
-                    <canvas id="industriChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Siswa Belum Jurnal -->
+    <!-- ========== SISWA BELUM JURNAL ========== -->
     <div class="card card-hover shadow-sm mb-4">
         <div class="card-header bg-transparent d-flex flex-wrap justify-content-between align-items-center py-3">
             <h5 class="mb-0">
@@ -170,8 +203,9 @@
                         <tbody>
                             @foreach ($siswaBelumJurnal as $item)
                                 <tr>
-                                    <td class="px-3 px-lg-4 py-3"><span
-                                            class="fw-semibold">{{ $item->siswa->nis ?? '-' }}</span></td>
+                                    <td class="px-3 px-lg-4 py-3">
+                                        <span class="fw-semibold">{{ $item->siswa->nis ?? '-' }}</span>
+                                    </td>
                                     <td class="px-3 px-lg-4 py-3">{{ $item->siswa->nama_siswa ?? '-' }}</td>
                                     <td class="px-3 px-lg-4 py-3 d-none d-md-table-cell">
                                         <span class="badge bg-info bg-opacity-10 text-info">
@@ -179,12 +213,13 @@
                                         </span>
                                     </td>
                                     <td class="px-3 px-lg-4 py-3 d-none d-lg-table-cell">
-                                        {{ $item->industri->nama_perusahaan ?? '-' }}</td>
+                                        {{ $item->industri->nama_perusahaan ?? '-' }}
+                                    </td>
                                     <td class="px-3 px-lg-4 py-3 text-center">
                                         <button onclick="showWarning('{{ $item->siswa->nama_siswa ?? '' }}')"
                                             class="btn btn-warning btn-sm">
-                                            <i class="fas fa-bell me-1"></i> <span
-                                                class="d-none d-sm-inline">Ingatkan</span>
+                                            <i class="fas fa-bell me-1"></i>
+                                            <span class="d-none d-sm-inline">Ingatkan</span>
                                         </button>
                                     </td>
                                 </tr>
@@ -204,9 +239,9 @@
         </div>
     </div>
 
-    <!-- Quick Actions -->
+    <!-- ========== QUICK ACTIONS ========== -->
     <div class="row g-3 g-lg-4">
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-6">
             <div class="card card-hover shadow-sm text-center p-3">
                 <div class="text-primary mb-2">
                     <i class="fas fa-user-plus fa-2x"></i>
@@ -218,7 +253,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-6">
             <div class="card card-hover shadow-sm text-center p-3">
                 <div class="text-success mb-2">
                     <i class="fas fa-building fa-2x"></i>
@@ -230,151 +265,157 @@
                 </a>
             </div>
         </div>
-        <div class="col-6 col-md-4">
-            <div class="card card-hover shadow-sm text-center p-3">
-                <div class="text-info mb-2">
-                    <i class="fas fa-file-pdf fa-2x"></i>
-                </div>
-                <h6 class="fw-semibold mb-1">Cetak Laporan</h6>
-                <p class="text-muted small mb-2 d-none d-sm-block">Download laporan PDF</p>
-                <a href="{{ route('laporan.jurnal') }}" class="btn btn-info btn-sm w-100 text-white">
-                    <i class="fas fa-print me-1"></i> Cetak
-                </a>
-            </div>
-        </div>
-    </div>
-    </div>
 @endsection
 
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const isDark = document.body.classList.contains('dark-mode');
-            const textColor = isDark ? '#e5e7eb' : '#1f2937';
-            const gridColor = isDark ? '#374151' : '#e5e7eb';
-            const legendColor = isDark ? '#e5e7eb' : '#374151';
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const isDark = document.body.classList.contains('dark-mode');
+        const isMobile = window.matchMedia('(max-width: 575.98px)').matches;
 
-            const labelsMinggu = {!! json_encode($jurnalPerMinggu['labels'] ?? ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!};
+        const textColor   = isDark ? '#e5e7eb' : '#1f2937';
+        const gridColor   = isDark ? '#374151' : '#e5e7eb';
+        const legendColor = isDark ? '#e5e7eb' : '#374151';
 
-            // ============ JURNAL CHART (Line) ============
-            const lineCtx = document.getElementById('jurnalLineChart').getContext('2d');
-            new Chart(lineCtx, {
-                type: 'line',
-                data: {
-                    labels: labelsMinggu,
-                    datasets: [{
-                        label: 'Minggu Ini',
-                        data: {!! json_encode($jurnalPerMinggu['data'] ?? [0, 0, 0, 0, 0, 0, 0], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!},
-                        borderColor: '#3B82F6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        borderWidth: 2,
-                        pointBackgroundColor: '#3B82F6',
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    }, {
-                        label: 'Minggu Lalu',
-                        data: {!! json_encode($jurnalMingguLalu ?? [0, 0, 0, 0, 0, 0, 0], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!},
-                        borderColor: '#EF4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                        tension: 0.4,
-                        fill: true,
-                        borderWidth: 2,
-                        pointBackgroundColor: '#EF4444',
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    }]
+        const labelsMinggu = {!! json_encode($jurnalPerMinggu['labels'] ?? ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!};
+
+        // ============ JURNAL CHART (Line) ============
+        const lineCtx = document.getElementById('jurnalLineChart').getContext('2d');
+        new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: labelsMinggu,
+                datasets: [{
+                    label: 'Minggu Ini',
+                    data: {!! json_encode($jurnalPerMinggu['data'] ?? [0,0,0,0,0,0,0], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!},
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 2,
+                    pointBackgroundColor: '#3B82F6',
+                    pointRadius: isMobile ? 3 : 4,
+                    pointHoverRadius: isMobile ? 5 : 6
+                }, {
+                    label: 'Minggu Lalu',
+                    data: {!! json_encode($jurnalMingguLalu ?? [0,0,0,0,0,0,0], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!},
+                    borderColor: '#EF4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 2,
+                    pointBackgroundColor: '#EF4444',
+                    pointRadius: isMobile ? 3 : 4,
+                    pointHoverRadius: isMobile ? 5 : 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                usePointStyle: true,
-                                color: legendColor,
-                                padding: 16
-                            }
+                plugins: {
+                    legend: {
+                        position: isMobile ? 'bottom' : 'top',
+                        labels: {
+                            usePointStyle: true,
+                            color: legendColor,
+                            padding: isMobile ? 10 : 16,
+                            boxWidth: isMobile ? 8 : 12,
+                            font: { size: isMobile ? 11 : 12 }
                         }
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: textColor,
-                                stepSize: 1,
-                                precision: 0
-                            },
-                            grid: {
-                                color: gridColor,
-                                drawBorder: false
-                            },
-                            border: {
-                                display: false
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: textColor
-                            },
-                            grid: {
-                                display: false
-                            },
-                            border: {
-                                display: false
-                            }
-                        }
+                    tooltip: {
+                        backgroundColor: isDark ? '#111827' : '#1f2937',
+                        padding: 10,
+                        titleFont: { size: isMobile ? 12 : 13 },
+                        bodyFont: { size: isMobile ? 11 : 12 }
                     }
-                }
-            });
-
-            // ============ STATUS CHART (Doughnut) ============
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Aktif', 'Selesai', 'Batal'],
-                    datasets: [{
-                        data: [{{ $statusData['aktif'] ?? 0 }}, {{ $statusData['selesai'] ?? 0 }},
-                            {{ $statusData['batal'] ?? 0 }}
-                        ],
-                        backgroundColor: ['#3B82F6', '#10B981', '#F59E0B'],
-                        borderWidth: 0,
-                        hoverOffset: 6
-                    }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '65%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                usePointStyle: true,
-                                color: legendColor
-                            }
-                        }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: textColor,
+                            stepSize: 1,
+                            precision: 0,
+                            font: { size: isMobile ? 10 : 12 }
+                        },
+                        grid: { color: gridColor, drawBorder: false },
+                        border: { display: false }
+                    },
+                    x: {
+                        ticks: {
+                            color: textColor,
+                            font: { size: isMobile ? 10 : 12 },
+                            maxRotation: 0
+                        },
+                        grid: { display: false },
+                        border: { display: false }
                     }
                 }
-            });
+            }
+        });
 
-            // ============ INDUSTRI CHART (Bar Horizontal) ============
-            const industriCtx = document.getElementById('industriChart').getContext('2d');
+        // ============ STATUS CHART (Doughnut) ============
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Aktif', 'Selesai', 'Batal'],
+                datasets: [{
+                    data: [
+                        {{ $statusData['aktif'] ?? 0 }},
+                        {{ $statusData['selesai'] ?? 0 }},
+                        {{ $statusData['batal'] ?? 0 }}
+                    ],
+                    backgroundColor: ['#3B82F6', '#10B981', '#F59E0B'],
+                    borderWidth: 0,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: isMobile ? '60%' : '65%',
+                layout: { padding: isMobile ? 4 : 8 },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: isMobile ? 12 : 20,
+                            usePointStyle: true,
+                            boxWidth: isMobile ? 8 : 12,
+                            color: legendColor,
+                            font: { size: isMobile ? 11 : 12 }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: isDark ? '#111827' : '#1f2937',
+                        padding: 10
+                    }
+                }
+            }
+        });
+
+        // ============ INDUSTRI CHART (Bar Horizontal) ============
+        const industriCanvas = document.getElementById('industriChart');
+        if (industriCanvas) {
+            const industriCtx = industriCanvas.getContext('2d');
             new Chart(industriCtx, {
                 type: 'bar',
                 data: {
-                    labels: {!! json_encode($topIndustri->pluck('nama_perusahaan')->values()->all(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!},
+                    labels: {!! json_encode($topIndustri->pluck('nama_perusahaan')->values()->all() ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!},
                     datasets: [{
                         label: 'Jumlah Siswa',
-                        data: {!! json_encode($topIndustri->pluck('penempatan_count')->values()->all(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!},
+                        data: {!! json_encode($topIndustri->pluck('penempatan_count')->values()->all() ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!},
                         backgroundColor: 'rgba(59, 130, 246, 0.5)',
                         borderColor: '#3B82F6',
                         borderWidth: 2,
                         borderRadius: 8,
-                        maxBarThickness: 24
+                        maxBarThickness: isMobile ? 18 : 24
                     }]
                 },
                 options: {
@@ -382,8 +423,10 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            display: false
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDark ? '#111827' : '#1f2937',
+                            padding: 10
                         }
                     },
                     scales: {
@@ -392,57 +435,53 @@
                             ticks: {
                                 color: textColor,
                                 stepSize: 1,
-                                precision: 0
+                                precision: 0,
+                                font: { size: isMobile ? 10 : 12 }
                             },
-                            grid: {
-                                color: gridColor,
-                                drawBorder: false
-                            },
-                            border: {
-                                display: false
-                            }
+                            grid: { color: gridColor, drawBorder: false },
+                            border: { display: false }
                         },
                         y: {
                             ticks: {
                                 color: textColor,
-                                maxRotation: 0
+                                maxRotation: 0,
+                                font: { size: isMobile ? 10 : 12 }
                             },
-                            grid: {
-                                display: false
-                            },
-                            border: {
-                                display: false
-                            }
+                            grid: { display: false },
+                            border: { display: false }
                         }
                     }
                 }
             });
-        });
-
-        function showWarning(nama) {
-            Swal.fire({
-                title: 'Ingatkan Siswa',
-                html: `Anda akan mengingatkan <strong>${nama}</strong> untuk mengisi jurnal hari ini.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                confirmButtonText: 'Kirim Pengingat',
-                cancelButtonText: 'Batal',
-                background: document.body.classList.contains('dark-mode') ? '#1a1a2e' : '#ffffff',
-                color: document.body.classList.contains('dark-mode') ? '#f0f2f5' : '#1a1a2e'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Berhasil!',
-                        text: 'Pengingat berhasil dikirim.',
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        background: document.body.classList.contains('dark-mode') ? '#1a1a2e' : '#ffffff',
-                        color: document.body.classList.contains('dark-mode') ? '#f0f2f5' : '#1a1a2e'
-                    });
-                }
-            });
         }
-    </script>
+    });
+
+    // ============ WARNING SWEETALERT ============
+    function showWarning(nama) {
+        const isDark = document.body.classList.contains('dark-mode');
+        Swal.fire({
+            title: 'Ingatkan Siswa',
+            html: `Anda akan mengingatkan <strong>${nama}</strong> untuk mengisi jurnal hari ini.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Kirim Pengingat',
+            cancelButtonText: 'Batal',
+            background: isDark ? '#1a1a2e' : '#ffffff',
+            color: isDark ? '#f0f2f5' : '#1a1a2e'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'Pengingat berhasil dikirim.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    background: isDark ? '#1a1a2e' : '#ffffff',
+                    color: isDark ? '#f0f2f5' : '#1a1a2e'
+                });
+            }
+        });
+    }
+</script>
 @endpush

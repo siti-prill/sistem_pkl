@@ -220,6 +220,7 @@ body {
     border: none;
     background: var(--body-bg);
     color: var(--text-secondary);
+    cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;

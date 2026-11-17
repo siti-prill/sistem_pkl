@@ -92,7 +92,7 @@
 
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <button onclick="toggleTheme()" class="btn btn-outline-light btn-sm me-2" id="themeToggle">
+                    <button type="button" onclick="toggleTheme()" class="btn btn-outline-light btn-sm me-2" id="themeToggle">
                         <i class="fas fa-moon" id="themeIcon"></i>
                     </button>
                 </li>

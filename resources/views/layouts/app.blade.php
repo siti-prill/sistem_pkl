@@ -28,7 +28,6 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     @stack('styles')
 </head>
@@ -65,14 +64,14 @@
 
                     <!-- User Info -->
                     <div class="dropdown">
-                        <a href="#" class="user-info text-decoration-none" data-bs-toggle="dropdown">
+                        <button type="button" class="user-info text-decoration-none border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="avatar">
                                 {{-- Menggunakan nullsafe operator (PHP 8) --}}
                                 {{ strtoupper(substr(Auth::user()?->name ?? 'G', 0, 1)) }}
                             </div>
                             <span class="d-none d-sm-inline">{{ Auth::user()?->name ?? 'Guest' }}</span>
                             <i class="fas fa-chevron-down text-muted ms-1" style="font-size: 10px;"></i>
-                        </a>
+                        </button>
 
                         <ul class="dropdown-menu dropdown-menu-end">
                             @auth

@@ -56,7 +56,7 @@ class NewPasswordController extends Controller
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         return $status == Password::PASSWORD_RESET
-                    ? redirect()->route('login')->with('status', __($status))
+			? redirect()->route(\App\Models\Siswa::where('user_id', \App\Models\User::where('email', $request->email)->value('id'))->exists() ? 'login.siswa.form' : 'login')->with('status', __($status))
                     : back()->withInput($request->only('email'))
                         ->withErrors(['email' => __($status)]);
     }

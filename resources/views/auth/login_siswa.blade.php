@@ -183,6 +183,14 @@
                     @enderror
                 </div>
 
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    @if (Route::has('password.request'))
+                        <a class="forgot-link" href="{{ route('password.request') }}">
+                            <i class="fas fa-key me-1"></i> Lupa Password?
+                        </a>
+                    @endif
+                </div>
+
                 <button type="submit" class="btn-login mt-2">
                     <i class="fas fa-sign-in-alt me-2"></i> Login
                 </button>
